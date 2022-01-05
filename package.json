@@ -11,12 +11,16 @@
     "framer-motion": "^5.5.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-hook-form": "^7.22.5",
+    "react-router": "^6.2.1",
+    "react-router-dom": "^6.2.1",
     "styled-components": "^5.3.3",
     "styled-icons": "^10.45.0"
   },
   "devDependencies": {
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10",
+    "@types/styled-components": "^5.1.19",
     "@vitejs/plugin-react": "^1.0.7",
     "typescript": "^4.4.4",
     "vite": "^2.7.2"
