@@ -65,3 +65,12 @@ h1, h2 {
 }
 
 `
+
+export const Main = styled.main`
+	height: 100vh;
+	overflow: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: ${({ theme }) => theme.primaryColor};
+`
