@@ -1,6 +1,8 @@
 import React from "react"
 import { useForm } from "react-hook-form"
+import { toast } from "react-toastify"
 import styled from "styled-components"
+import { supabase } from "../../supabaseClient"
 import Button from "./Button"
 import FormTitle from "./FormTitle"
 
@@ -20,19 +22,34 @@ const AuthForm = ({ registerMode }: Props) => {
 		handleSubmit,
 		formState: { errors, isSubmitting }
 	} = useForm()
-	const onSubmit = (data: FormData) => console.log(data)
-	console.log(errors)
+	const onSubmit = async (data: FormData) => {
+		console.log(data)
+		try {
+			if (registerMode) {
+				console.log("yes")
+				const { error } = await supabase.auth.signUp(data)
+				console.log(error)
+				if (error) throw error
+			} else {
+				const { error } = await supabase.auth.signIn(data)
+				console.log(error)
+				if (error) throw error
+			}
+		} catch (error: any) {
+			toast.error(error.error_description || error.message)
+		}
+	}
 
 	if (registerMode) {
 		return (
 			<Container>
 				<FormTitle title="come chat with anybody !" />
 				<Form onSubmit={handleSubmit(onSubmit)}>
-					<input type="text" placeholder="Username" {...register("username", { required: true, min: 3 })} />
-					<input type="email" placeholder="Email" {...register("email", { required: true, min: 5 })} />
-					<input type="password" placeholder="Password" {...register("password", { required: true, min: 6 })} />
+					<input type="text" placeholder="Username" {...register("username", { required: true, minLength: 3 })} />
+					<input type="email" placeholder="Email" {...register("email", { required: true, minLength: 5 })} />
+					<input type="password" placeholder="Password" {...register("password", { required: true, minLength: 6 })} />
 
-					<Button type="submit" content="Register" />
+					<Button type="submit" content="Register" isSubmitting={isSubmitting} />
 				</Form>
 			</Container>
 		)
@@ -41,10 +58,10 @@ const AuthForm = ({ registerMode }: Props) => {
 		<Container>
 			<FormTitle title="let's start with hello !" />
 			<Form onSubmit={handleSubmit(onSubmit)}>
-				<input type="email" placeholder="Email" {...register("email", { required: true, min: 5 })} />
-				<input type="password" placeholder="Password" {...register("password", { required: true, min: 6 })} />
+				<input type="email" placeholder="Email" {...register("email", { required: true, minLength: 5 })} />
+				<input type="password" placeholder="Password" {...register("password", { required: true, minLength: 6 })} />
 
-				<Button type="submit" content="Login" />
+				<Button type="submit" content="Login" isSubmitting={isSubmitting} />
 			</Form>
 		</Container>
 	)

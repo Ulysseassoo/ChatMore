@@ -10,7 +10,7 @@ const AppTitle = () => {
 }
 
 const Title = styled.h1`
-	font-size: 4.5rem;
+	font-size: 4.2rem;
 	color: ${({ theme }) => theme.white};
 	letter-spacing: 2px;
 	text-transform: uppercase;

@@ -8,12 +8,16 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.7.1",
+    "@supabase/supabase-js": "^1.29.1",
     "framer-motion": "^5.5.5",
     "react": "^17.0.2",
+    "react-content-loader": "^6.1.0",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.22.5",
+    "react-loader-spinner": "^4.0.0",
     "react-router": "^6.2.1",
     "react-router-dom": "^6.2.1",
+    "react-toastify": "^8.1.0",
     "styled-components": "^5.3.3",
     "styled-icons": "^10.45.0"
   },

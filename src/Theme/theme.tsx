@@ -4,6 +4,7 @@ export const lightTheme = {
 	primaryColor: "#191716",
 	secondaryColor: "#E0E2DB",
 	accentColor: "#E6AF2E",
+	accentColorHover: "#AA8325",
 	headerMenuColor: "#2B2826",
 	lineBreakColor: "#404040",
 	importantColor: "#EA4848",

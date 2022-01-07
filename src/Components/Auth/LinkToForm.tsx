@@ -1,4 +1,5 @@
 import React from "react"
+import { Link } from "react-router-dom"
 import styled from "styled-components"
 
 type Props = {
@@ -11,7 +12,7 @@ const LinkToForm = ({ content, href, linkTo }: Props) => {
 	return (
 		<Container>
 			{content}
-			<Link href={href}>{linkTo}</Link>
+			<NewLink to={href}>{linkTo}</NewLink>
 		</Container>
 	)
 }
@@ -23,9 +24,13 @@ const Container = styled.span`
 	font-weight: normal;
 	display: inline-block;
 `
-const Link = styled.a`
+const NewLink = styled(Link)`
 	color: ${({ theme }) => theme.accentColor};
 	text-decoration: none;
+	transition: 0.3s ease;
+	&:hover {
+		color: ${({ theme }) => theme.accentColorHover};
+	}
 `
 
 export default LinkToForm

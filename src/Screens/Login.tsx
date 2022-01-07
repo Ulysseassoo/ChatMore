@@ -8,13 +8,14 @@ import LinkToForm from "../Components/Auth/LinkToForm"
 
 const Login: React.FC = () => {
 	return (
-		<Main>
+		<Main initial={{ translateX: "-100%" }} animate={{ translateX: 0 }} exit={{ translateX: "100%" }} transition={{ duration: 0.5 }}>
 			<Container>
 				<AppTitle />
 				<ImageContainer>
 					<img src={Logo} alt="ChatMore Logo" />
 				</ImageContainer>
 				<AuthForm />
+				<Separator />
 				<LinkToForm content="Don't have any account ? " href="/register" linkTo="Sign Up" />
 			</Container>
 		</Main>
@@ -37,8 +38,16 @@ const ImageContainer = styled.div`
 	background-color: ${({ theme }) => theme.headerMenuColor};
 	justify-content: center;
 	border-radius: 1rem;
-	width: 250px;
-	height: 250px;
+	width: 200px;
+	height: 200px;
+`
+
+const Separator = styled.div`
+	height: 2px;
+	display: inline-block;
+	background-color: ${({ theme }) => theme.secondaryColor};
+	width: 100%;
+	margin: 2rem 0;
 `
 
 export default Login

@@ -1,3 +1,4 @@
+import { motion } from "framer-motion"
 import styled, { createGlobalStyle } from "styled-components"
 
 export const GlobalStyles = createGlobalStyle`
@@ -56,6 +57,10 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 /* Font Styles */
+body {
+  background-color: #191716;
+  overflow: hidden;
+}
 p, span {
     font-family: 'Hind Guntur', sans-serif;
 }
@@ -66,7 +71,7 @@ h1, h2 {
 
 `
 
-export const Main = styled.main`
+export const Main = styled(motion.main)`
 	height: 100vh;
 	overflow: hidden;
 	display: flex;
