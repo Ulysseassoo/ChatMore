@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import styled, { createGlobalStyle } from "styled-components"
+import styled, { createGlobalStyle, css } from "styled-components"
 
 export const GlobalStyles = createGlobalStyle`
 /*
@@ -71,11 +71,22 @@ h1, h2 {
 
 `
 
-export const Main = styled(motion.main)`
+type FlexContainer = {
+	theme: any
+	chat?: boolean
+}
+
+export const Main = styled(motion.main)<FlexContainer>`
 	height: 100vh;
 	overflow: hidden;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	background-color: ${({ theme }) => theme.primaryColor};
+	${({ chat }) =>
+		chat &&
+		css`
+			flex-direction: column;
+			justify-content: initial;
+		`}
 `

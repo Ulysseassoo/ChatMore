@@ -99,6 +99,12 @@ const Form = styled.form`
 		&:last-child {
 			margin-bottom: 2rem;
 		}
+		@media (max-width: 520px) {
+			font-size: 0.9rem;
+		}
+	}
+	@media (max-width: 520px) {
+		padding: 1rem;
 	}
 `
 

@@ -13,7 +13,6 @@ const Authentication = ({ children }: Props) => {
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		// We listen to the session to check the changes
 		const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
 			console.log(event, session)
 			switch (event) {
@@ -25,7 +24,6 @@ const Authentication = ({ children }: Props) => {
 					break
 			}
 		})
-
 		// Check active session and set user
 		const session = supabase.auth.session()
 		if (!session) {

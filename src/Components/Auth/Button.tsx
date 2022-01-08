@@ -36,6 +36,9 @@ const Container = styled.button`
 	&:hover {
 		background-color: ${({ theme }) => theme.accentColorHover};
 	}
+	@media (max-width: 520px) {
+		font-size: 0.9rem;
+	}
 `
 
 export default Button

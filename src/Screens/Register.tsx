@@ -40,14 +40,24 @@ const ImageContainer = styled.div`
 	border-radius: 1rem;
 	width: 200px;
 	height: 200px;
+	@media (max-width: 520px) {
+		width: 150px;
+		height: 150px;
+	}
 `
 
 const Separator = styled.div`
-	height: 2px;
+	padding: 1px;
 	display: inline-block;
 	background-color: ${({ theme }) => theme.secondaryColor};
 	width: 100%;
 	margin: 2rem 0;
+	@media (max-width: 520px) {
+		width: 90%;
+	}
+	@media (max-height: 700px) {
+		margin: 1rem;
+	}
 `
 
 export default Register

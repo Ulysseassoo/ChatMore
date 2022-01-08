@@ -31,6 +31,9 @@ const NewLink = styled(Link)`
 	&:hover {
 		color: ${({ theme }) => theme.accentColorHover};
 	}
+	@media (max-width: 520px) {
+		font-size: 1.1rem;
+	}
 `
 
 export default LinkToForm
