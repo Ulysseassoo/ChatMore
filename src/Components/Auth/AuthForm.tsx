@@ -1,7 +1,10 @@
 import React from "react"
 import { useForm } from "react-hook-form"
+import { useNavigate } from "react-router"
 import { toast } from "react-toastify"
 import styled from "styled-components"
+import { useAppDispatch, useAppSelector } from "../../redux/hooks"
+import { update } from "../../redux/user/userSlice"
 import { supabase } from "../../supabaseClient"
 import Button from "./Button"
 import FormTitle from "./FormTitle"
@@ -17,29 +20,33 @@ type FormData = {
 }
 
 const AuthForm = ({ registerMode }: Props) => {
+	const dispatch = useAppDispatch()
+	const selector = useAppSelector
+	let navigate = useNavigate()
+
 	const {
 		register,
 		handleSubmit,
 		formState: { errors, isSubmitting }
 	} = useForm()
 	const onSubmit = async (data: FormData) => {
-		console.log(data)
 		try {
 			if (registerMode) {
 				console.log("yes")
 				const { error } = await supabase.auth.signUp(data)
-				console.log(error)
 				if (error) throw error
 			} else {
 				const { error } = await supabase.auth.signIn(data)
-				console.log(error)
 				if (error) throw error
 			}
+			const session = supabase.auth.session()
+			const user: any = session?.user
+			navigate("/")
+			dispatch(update(user))
 		} catch (error: any) {
 			toast.error(error.error_description || error.message)
 		}
 	}
-
 	if (registerMode) {
 		return (
 			<Container>

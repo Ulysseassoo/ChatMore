@@ -11,32 +11,27 @@ import { lightTheme } from "./Theme/theme"
 import { useLocation } from "react-router-dom"
 import "react-toastify/dist/ReactToastify.css"
 import { supabase } from "./supabaseClient"
+import Authentication from "./Helpers/Authentication"
 
 const App: React.FC = () => {
 	const location = useLocation()
 
 	// const [session, setSession] = useState(null)
 
-	// useEffect(() => {
-	//   setSession(supabase.auth.session())
-
-	//   supabase.auth.onAuthStateChange((_event, session) => {
-	// 	setSession(session)
-	//   })
-	// }, [])
-
 	return (
 		<ThemeProvider theme={lightTheme}>
-			<GlobalStyles />
-			<ToastContainer />
-			<AnimatePresence exitBeforeEnter initial={false}>
-				{/* In order that the animations knows that we changed pages */}
-				<Routes location={location} key={location.pathname}>
-					<Route path="/" element={<Homepage />} />
-					<Route path="/login" element={<Login />} />
-					<Route path="/register" element={<Register />} />
-				</Routes>
-			</AnimatePresence>
+			<Authentication>
+				<GlobalStyles />
+				<ToastContainer />
+				<AnimatePresence exitBeforeEnter initial={false}>
+					{/* In order that the animations knows that we changed pages */}
+					<Routes location={location} key={location.pathname}>
+						<Route path="/" element={<Homepage />} />
+						<Route path="/login" element={<Login />} />
+						<Route path="/register" element={<Register />} />
+					</Routes>
+				</AnimatePresence>
+			</Authentication>
 		</ThemeProvider>
 	)
 }
