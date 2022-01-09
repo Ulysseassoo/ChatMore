@@ -1,7 +1,6 @@
 import React, { useEffect } from "react"
 import { useAppSelector } from "../redux/hooks"
 import { selectLoggedIn } from "../redux/user/userSlice"
-import { supabase } from "../supabaseClient"
 import { Main } from "../Theme/global"
 
 import styled from "styled-components"
