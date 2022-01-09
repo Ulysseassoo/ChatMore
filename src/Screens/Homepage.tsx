@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import { useAppSelector } from "../redux/hooks"
-import { selectUser } from "../redux/user/userSlice"
+import { selectLoggedIn } from "../redux/user/userSlice"
 import { supabase } from "../supabaseClient"
 import { Main } from "../Theme/global"
 
@@ -11,9 +11,9 @@ import ChatContainer from "../Components/Homepage/ChatContainer"
 
 const Homepage: React.FC = () => {
 	const selector = useAppSelector
-	// {selector(selectUser) && selector(selectUser).id}
-	// <a onClick={() => supabase.auth.signOut()}>Logout</a>
-
+	if (selector(selectLoggedIn) === false) {
+		return <Main></Main>
+	}
 	return (
 		<Main chat>
 			<Header />
