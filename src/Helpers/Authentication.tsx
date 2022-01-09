@@ -20,6 +20,9 @@ const Authentication = ({ children }: Props) => {
 					dispatch(logout())
 					navigate("/login")
 					break
+				case "TOKEN_REFRESHED":
+					const user: any = session?.user
+					dispatch(update(user))
 				default:
 					break
 			}

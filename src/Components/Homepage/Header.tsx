@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "styled-components"
-import Logo from "../assets/Logo.png"
+import Logo from "../../assets/Logo.png"
 import AppTitle from "../Auth/AppTitle"
 
 const Header = () => {
@@ -23,6 +23,7 @@ const Container = styled.header`
 	display: flex;
 	gap: 1rem;
 	align-items: center;
+	box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
 `
 
 const ImageContainer = styled.div`
