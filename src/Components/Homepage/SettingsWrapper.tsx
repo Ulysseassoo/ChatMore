@@ -1,10 +1,13 @@
-import React, { ProfilerProps } from "react"
+import React, { ProfilerProps, useEffect, useState } from "react"
 import styled, { css } from "styled-components"
 import { ArrowBack } from "@styled-icons/boxicons-regular/ArrowBack"
-import { useAppSelector } from "../../redux/hooks"
-import { selectUser } from "../../redux/user/userSlice"
+import { useAppDispatch, useAppSelector } from "../../redux/hooks"
+import { selectUser, updateProfileData } from "../../redux/user/userSlice"
 import { Edit2 } from "@styled-icons/feather/Edit2"
 import Picture from "../../assets/profile.jpg"
+import { useForm } from "react-hook-form"
+import { toast } from "react-toastify"
+import { supabase } from "../../supabaseClient"
 
 type Props = {
 	name: string
@@ -12,7 +15,7 @@ type Props = {
 
 type FlexStyle = {
 	flex: string
-	profile?: boolean
+	$profile: boolean
 }
 
 type PictureProps = {
@@ -20,8 +23,99 @@ type PictureProps = {
 	defaultPicture: string
 }
 
+type FormData = {
+	username: string
+	about: string
+	phone: string
+}
+
 const SettingsWrapper = ({ name }: Props) => {
+	const online = window.navigator.onLine
 	const userSelector = useAppSelector(selectUser)
+	const dispatch = useAppDispatch()
+	const [editMode, setEditMode] = useState(false)
+
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		formState: { errors }
+	} = useForm()
+	const onSubmit = async (data: FormData) => {
+		const { about, username, phone } = data
+		const updates = {
+			id: userSelector.id,
+			username,
+			about,
+			phone,
+			updated_at: new Date()
+		}
+		try {
+			let { error, data: newData }: { error: any; data: any } = await supabase.from("profiles").upsert(updates, {
+				returning: "representation" //
+			})
+			if (error) throw Error
+			dispatch(updateProfileData(newData[0]))
+			setEditMode(false)
+		} catch (error: any) {
+			toast.error(error.error_description || error.message)
+		}
+	}
+
+	useEffect(() => {
+		if (editMode) {
+			setValue("username", userSelector.username)
+			setValue("about", userSelector.about)
+			setValue("phone", userSelector.phone)
+		}
+	}, [editMode])
+
+	if (editMode) {
+		return (
+			<Container>
+				<Item>
+					<Label htmlFor={name}>
+						<ArrowBack />
+					</Label>
+					<Title>{name}</Title>
+				</Item>
+				<ProfileInformations>
+					<Flex flex="45%" $profile={false}>
+						<ImageBackground avatarPicture={userSelector.avatar_url} defaultPicture={Picture}></ImageBackground>
+					</Flex>
+					<Form onSubmit={handleSubmit(onSubmit)}>
+						<Flex flex="55%" $profile>
+							<Header>
+								<ImageContainer>
+									<img src={userSelector.avatar_url !== null ? userSelector.avatar_url : Picture} alt="profile picture" />
+								</ImageContainer>
+								<Column>
+									<ProfileName>
+										<Input type="text" {...register("username", {})} />
+									</ProfileName>
+									<Status>{online ? "Online" : "Offline"}</Status>
+								</Column>
+							</Header>
+							<About>
+								<SubTitle>About me</SubTitle>
+								<Text>
+									<Input type="textarea" placeholder="Some facts about you..." {...register("about", {})} />
+								</Text>
+							</About>
+							<Between>
+								<SubTitle>Phone</SubTitle>
+								<Text>
+									<Input type="text" placeholder="Your phone number ?" {...register("phone", {})} />
+								</Text>
+							</Between>
+						</Flex>
+						<Submit type="submit" value="Update" />
+					</Form>
+				</ProfileInformations>
+			</Container>
+		)
+	}
+
 	return (
 		<Container>
 			<Item>
@@ -31,21 +125,30 @@ const SettingsWrapper = ({ name }: Props) => {
 				<Title>{name}</Title>
 			</Item>
 			<ProfileInformations>
-				<Flex flex="45%">
+				<Flex flex="45%" $profile={false}>
 					<ImageBackground avatarPicture={userSelector.avatar_url} defaultPicture={Picture}></ImageBackground>
 				</Flex>
-				<Flex flex="55%" profile>
+				<Flex flex="55%" $profile>
 					<Header>
 						<ImageContainer>
 							<img src={userSelector.avatar_url !== null ? userSelector.avatar_url : Picture} alt="profile picture" />
 						</ImageContainer>
 						<Column>
 							<ProfileName>
-								{userSelector.username} <Edit2 />{" "}
+								{userSelector.username}
+								<Edit2 onClick={() => setEditMode(true)} />
 							</ProfileName>
-							<Status>Online</Status>
+							<Status>{online ? "Online" : "Offline"}</Status>
 						</Column>
 					</Header>
+					<About>
+						<SubTitle>About me</SubTitle>
+						<Text>{userSelector.about}</Text>
+					</About>
+					<Between>
+						<SubTitle>Phone</SubTitle>
+						<Text>{userSelector.phone}</Text>
+					</Between>
 				</Flex>
 			</ProfileInformations>
 		</Container>
@@ -97,15 +200,49 @@ const ProfileInformations = styled.div`
 `
 const Flex = styled.div<FlexStyle>`
 	flex: ${({ flex }) => flex};
-	${({ profile }) =>
-		profile &&
+	${({ $profile }) =>
+		$profile &&
 		css`
 			background: ${({ theme }) => theme.primaryColor};
 			border-radius: 50px 50px 0 0;
 			position: relative;
 			top: -35px;
 			box-shadow: rgba(0, 0, 0, 0.1) 0px -2px 1px 0px, rgba(0, 0, 0, 0.06) 0px -2px 1px 0px;
+			display: flex;
+			flex-direction: column;
+			gap: 3rem;
 		`}
+`
+
+const Form = styled.form`
+	background: ${({ theme }) => theme.primaryColor};
+	border-radius: 50px 50px 0 0;
+	position: relative;
+	top: -35px;
+	flex: 55%;
+`
+
+const Input = styled.input`
+	border: none;
+	border-bottom: 1px solid ${({ theme }) => theme.lineBreakColor};
+	color: ${({ theme }) => theme.textColor};
+	font-size: 0.8rem;
+	background: none;
+`
+
+const Submit = styled.input`
+	background-color: ${({ theme }) => theme.accentColor};
+	padding: 0.3rem;
+	border-radius: 0.3rem;
+	border: none;
+	transition: 0.2s ease;
+	color: ${({ theme }) => theme.white};
+	padding: 0.2rem 1rem;
+	margin-left: 1rem;
+	&:hover {
+		background-color: ${({ theme }) => theme.accentColorHover};
+	}
+	cursor: pointer;
 `
 
 const ImageBackground = styled.div<PictureProps>`
@@ -152,6 +289,7 @@ const ProfileName = styled.p`
 		width: 20px;
 		position: relative;
 		top: -5px;
+		cursor: pointer;
 	}
 `
 
@@ -160,6 +298,32 @@ const Status = styled.span`
 	font-weight: 600;
 	font-size: 0.9rem;
 	color: ${({ theme }) => theme.textColor};
+`
+
+const About = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	align-items: start;
+	padding: 0 1.5rem;
+`
+
+const SubTitle = styled.p`
+	color: ${({ theme }) => theme.white};
+	font-size: 1.1rem;
+	font-weight: 600;
+`
+
+const Text = styled.p`
+	color: ${({ theme }) => theme.textColor};
+	font-size: 0.8rem;
+`
+
+const Between = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 1.5rem;
 `
 
 export default SettingsWrapper

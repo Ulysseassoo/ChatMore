@@ -25,6 +25,14 @@ type userState = {
 	username: string
 	avatar_url: string
 	email: string
+	phone: string
+	about: string
+}
+
+type userProfile = {
+	username: string
+	phone: string
+	about: string
 }
 
 type authState = {
@@ -39,7 +47,9 @@ const initialState: authState = {
 		username: "",
 		email: "",
 		avatar_url: "",
-		updated_at: ""
+		updated_at: "",
+		phone: "",
+		about: ""
 	},
 	session: {
 		id: undefined,
@@ -70,13 +80,16 @@ export const userSlice = createSlice({
 		updateProfile: (state, action: PayloadAction<userState>) => {
 			return { ...state, user: { ...state.user, ...action.payload } }
 		},
+		updateProfileData: (state, action: PayloadAction<userProfile>) => {
+			return { ...state, user: { ...state.user, ...action.payload } }
+		},
 		logout: (state) => {
 			return { ...state, user: initialState.user, session: initialState.session, loggedIn: false }
 		}
 	}
 })
 
-export const { updateSession, updateProfile, logout } = userSlice.actions
+export const { updateSession, updateProfile, logout, updateProfileData } = userSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectUser = (state: RootState) => state.auth.user
