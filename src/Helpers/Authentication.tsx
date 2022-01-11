@@ -1,7 +1,7 @@
 import React, { useEffect } from "react"
 import { useNavigate } from "react-router"
 import { useAppDispatch } from "../redux/hooks"
-import { logout, update } from "../redux/user/userSlice"
+import { logout, updateProfile, updateSession } from "../redux/user/userSlice"
 import { supabase } from "../supabaseClient"
 
 type Props = {
@@ -12,6 +12,15 @@ const Authentication = ({ children }: Props) => {
 	const navigate = useNavigate()
 	const dispatch = useAppDispatch()
 
+	const getUserProfile = async (user: any) => {
+		try {
+			let { error, data: newData }: { error: any; data: any } = await supabase.from("profiles").select("*").eq("id", user.id)
+			dispatch(updateProfile(newData[0]))
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
 	useEffect(() => {
 		const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
 			console.log(event, session)
@@ -21,8 +30,8 @@ const Authentication = ({ children }: Props) => {
 					navigate("/login")
 					break
 				case "TOKEN_REFRESHED":
-					const user: any = session?.user
-					dispatch(update(user))
+					const userSession: any = session?.user
+					dispatch(updateSession(userSession))
 				default:
 					break
 			}
@@ -34,8 +43,9 @@ const Authentication = ({ children }: Props) => {
 			return
 		}
 		// Update the user data if session is active
-		const user: any = session?.user
-		dispatch(update(user))
+		const userSession: any = session?.user
+		dispatch(updateSession(userSession))
+		getUserProfile(userSession)
 
 		return () => {
 			listener?.unsubscribe()

@@ -6,26 +6,37 @@ import { ThreeDotsVertical } from "@styled-icons/bootstrap/ThreeDotsVertical"
 import { Settings2Outline } from "@styled-icons/evaicons-outline/Settings2Outline"
 import { LogOut } from "@styled-icons/feather/LogOut"
 import { supabase } from "../../supabaseClient"
+import { useAppSelector } from "../../redux/hooks"
+import { selectUser } from "../../redux/user/userSlice"
+
+type Props = {
+	setActiveSettings: React.Dispatch<React.SetStateAction<boolean>>
+}
 
 type IconStyling = {
 	theme: any
 	red?: boolean
 }
 
-const ProfileHeader = () => {
-	const [activeDropdown, setActiveDropdown] = useState(false)
+const ProfileHeader = ({ setActiveSettings }: Props) => {
+	const [activeDropdown, setActiveDropdown] = useState<boolean>(false)
+	const userSelector = useAppSelector(selectUser)
 
 	return (
 		<Container>
 			<ImageContainer>
-				<img src={Picture} alt="profile picture" />
+				<img src={userSelector.avatar_url !== null ? userSelector.avatar_url : Picture} alt="profile picture" />
 			</ImageContainer>
 			<IconsWrapper>
 				<MessageSquareAdd />
 				<ThreeDotsVertical onClick={() => setActiveDropdown((prevState) => !prevState)} />
 				{activeDropdown && (
 					<Dropdown>
-						<Item>
+						<Item
+							onClick={() => {
+								setActiveSettings(true)
+								setActiveDropdown(false)
+							}}>
 							<Settings2Outline /> Settings
 						</Item>
 						<Item

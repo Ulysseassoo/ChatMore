@@ -4,7 +4,7 @@ import { useNavigate } from "react-router"
 import { toast } from "react-toastify"
 import styled from "styled-components"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
-import { update } from "../../redux/user/userSlice"
+import { updateSession, updateProfile } from "../../redux/user/userSlice"
 import { supabase } from "../../supabaseClient"
 import Button from "./Button"
 import FormTitle from "./FormTitle"
@@ -41,8 +41,29 @@ const AuthForm = ({ registerMode }: Props) => {
 			}
 			const session = supabase.auth.session()
 			const user: any = session?.user
+			if (registerMode) {
+				const updates = {
+					id: user.id,
+					username: data.username,
+					email: data.email,
+					updated_at: new Date()
+				}
+				let { error, data: newData }: { error: any; data: any } = await supabase.from("profiles").upsert(updates, {
+					returning: "representation" // Don't return the value after inserting
+				})
+				dispatch(updateProfile(newData[0]))
+				if (error) {
+					throw error
+				}
+			} else {
+				let { error, data: newData }: { error: any; data: any } = await supabase.from("profiles").select("*").eq("id", user.id)
+				dispatch(updateProfile(newData[0]))
+				if (error) {
+					throw error
+				}
+			}
 			navigate("/")
-			dispatch(update(user))
+			dispatch(updateSession(user))
 		} catch (error: any) {
 			toast.error(error.error_description || error.message)
 		}

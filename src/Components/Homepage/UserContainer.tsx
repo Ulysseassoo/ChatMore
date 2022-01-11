@@ -1,10 +1,14 @@
+import { useState } from "react"
 import styled from "styled-components"
 import ProfileHeader from "./ProfileHeader"
+import Settings from "./Settings"
 
 const UserContainer = () => {
+	const [activeSettings, setActiveSettings] = useState<boolean>(false)
 	return (
 		<Container>
-			<ProfileHeader />
+			<ProfileHeader setActiveSettings={setActiveSettings} />
+			<Settings activeSettings={activeSettings} setActiveSettings={setActiveSettings} />
 		</Container>
 	)
 }
@@ -15,6 +19,7 @@ const Container = styled.div`
 	border-right: 1px solid ${({ theme }) => theme.lineBreakColor};
 	display: flex;
 	flex-direction: column;
+	position: relative;
 `
 
 export default UserContainer
