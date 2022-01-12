@@ -80,20 +80,16 @@ const SettingsWrapper = ({ name }: Props) => {
 				const avatar_url: any = imageData?.Key
 				const { data: urlData, error: urlError }: { data: any; error: any } = await supabase.storage
 					.from("avatars")
-					.download(avatar_url.split("/")[1])
-				console.log(urlData)
+					.getPublicUrl(avatar_url.split("/")[1])
 				if (urlError) throw Error
-				const url = URL.createObjectURL(urlData)
-				console.log(url)
 				const updates = {
 					id: userSelector.id,
-					avatar_url: url,
+					avatar_url: urlData.publicURL,
 					updated_at: new Date()
 				}
 				let { error: newError, data: newData }: { error: any; data: any } = await supabase.from("profiles").upsert(updates, {
 					returning: "representation" //
 				})
-				dispatch(updateProfileData(newData[0]))
 				if (newError) throw Error
 				dispatch(updateProfileData(newData[0]))
 				toast.success("Your profile picture has been updated !")
@@ -310,8 +306,9 @@ const ImageBackgroundInput = styled.div<PictureProps>`
 	&:before {
 		content: "Changez votre photo de profil ici";
 		background-color: rgba(0, 0, 0, 0.322);
+		font-weight: 600;
 		border-radius: 50%;
-		font-size: 0.5rem;
+		font-size: 0.55rem;
 		display: flex;
 		place-items: center;
 		text-align: center;
