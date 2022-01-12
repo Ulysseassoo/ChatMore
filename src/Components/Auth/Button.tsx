@@ -7,6 +7,7 @@ type Props = {
 	content: string
 	type?: any
 	isSubmitting: boolean
+	$settings?: boolean
 }
 
 const Button = ({ content, type, isSubmitting }: Props) => {

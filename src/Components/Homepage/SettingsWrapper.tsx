@@ -8,6 +8,7 @@ import Picture from "../../assets/profile.jpg"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import { supabase } from "../../supabaseClient"
+import Button from "../Auth/Button"
 
 type Props = {
 	name: string
@@ -27,6 +28,7 @@ type FormData = {
 	username: string
 	about: string
 	phone: string
+	image: FileList
 }
 
 const SettingsWrapper = ({ name }: Props) => {
@@ -39,26 +41,67 @@ const SettingsWrapper = ({ name }: Props) => {
 		register,
 		handleSubmit,
 		setValue,
-		formState: { errors }
+		resetField,
+		formState: { errors, isSubmitting }
 	} = useForm()
 	const onSubmit = async (data: FormData) => {
-		const { about, username, phone } = data
-		const updates = {
-			id: userSelector.id,
-			username,
-			about,
-			phone,
-			updated_at: new Date()
-		}
-		try {
-			let { error, data: newData }: { error: any; data: any } = await supabase.from("profiles").upsert(updates, {
-				returning: "representation" //
-			})
-			if (error) throw Error
-			dispatch(updateProfileData(newData[0]))
-			setEditMode(false)
-		} catch (error: any) {
-			toast.error(error.error_description || error.message)
+		const { about, username, phone, image } = data
+		if (image.length === 0) {
+			const updates = {
+				id: userSelector.id,
+				username,
+				about,
+				phone,
+				updated_at: new Date()
+			}
+			try {
+				let { error, data: newData }: { error: any; data: any } = await supabase.from("profiles").upsert(updates, {
+					returning: "representation" //
+				})
+				if (error) throw Error
+				dispatch(updateProfileData(newData[0]))
+				setEditMode(false)
+				toast.success("Your informations has been updated !")
+			} catch (error: any) {
+				toast.error(error.error_description || error.message)
+			}
+		} else {
+			const file = image[0]
+			const fileExt = file.name.split(".").pop()
+			const fileName = `${Math.random()}.${fileExt}`
+			const filePath = `${fileName}`
+			try {
+				let { error: uploadError, data: imageData } = await supabase.storage.from("avatars").upload(filePath, file)
+
+				if (uploadError) {
+					throw uploadError
+				}
+				console.log(imageData)
+				const avatar_url: any = imageData?.Key
+				const { data: urlData, error: urlError }: { data: any; error: any } = await supabase.storage
+					.from("avatars")
+					.download(avatar_url.split("/")[1])
+				console.log(urlData)
+				if (urlError) throw Error
+				const url = URL.createObjectURL(urlData)
+				console.log(url)
+				const updates = {
+					id: userSelector.id,
+					avatar_url: url,
+					updated_at: new Date()
+				}
+				let { error: newError, data: newData }: { error: any; data: any } = await supabase.from("profiles").upsert(updates, {
+					returning: "representation" //
+				})
+				dispatch(updateProfileData(newData[0]))
+				if (newError) throw Error
+				dispatch(updateProfileData(newData[0]))
+				toast.success("Your profile picture has been updated !")
+			} catch (error: any) {
+				console.log(error)
+				toast.error(error.error_description || error.message)
+			}
+			resetField("image")
 		}
 	}
 
@@ -87,7 +130,10 @@ const SettingsWrapper = ({ name }: Props) => {
 						<Flex flex="55%" $profile>
 							<Header>
 								<ImageContainer>
-									<img src={userSelector.avatar_url !== null ? userSelector.avatar_url : Picture} alt="profile picture" />
+									<img
+										src={userSelector.avatar_url !== null ? `${import.meta.env.VITE_SUPABASE_URL}${userSelector.avatar_url}` : Picture}
+										alt="profile picture"
+									/>
 								</ImageContainer>
 								<Column>
 									<ProfileName>
@@ -109,7 +155,9 @@ const SettingsWrapper = ({ name }: Props) => {
 								</Text>
 							</Between>
 						</Flex>
-						<Submit type="submit" value="Update" />
+						<Submit>
+							<Button type="submit" content="Update" isSubmitting={isSubmitting} />
+						</Submit>
 					</Form>
 				</ProfileInformations>
 			</Container>
@@ -131,7 +179,10 @@ const SettingsWrapper = ({ name }: Props) => {
 				<Flex flex="55%" $profile>
 					<Header>
 						<ImageContainer>
-							<img src={userSelector.avatar_url !== null ? userSelector.avatar_url : Picture} alt="profile picture" />
+							<ImageForm onChange={handleSubmit(onSubmit)}>
+								<ImageInput type="file" {...register("image", {})} />
+								<ImageBackgroundInput avatarPicture={userSelector.avatar_url} defaultPicture={Picture} />
+							</ImageForm>
 						</ImageContainer>
 						<Column>
 							<ProfileName>
@@ -222,6 +273,12 @@ const Form = styled.form`
 	flex: 55%;
 `
 
+const ImageForm = styled.form`
+	height: 100%;
+	width: 100%;
+	position: relative;
+`
+
 const Input = styled.input`
 	border: none;
 	border-bottom: 1px solid ${({ theme }) => theme.lineBreakColor};
@@ -230,19 +287,8 @@ const Input = styled.input`
 	background: none;
 `
 
-const Submit = styled.input`
-	background-color: ${({ theme }) => theme.accentColor};
-	padding: 0.3rem;
-	border-radius: 0.3rem;
-	border: none;
-	transition: 0.2s ease;
-	color: ${({ theme }) => theme.white};
-	padding: 0.2rem 1rem;
-	margin-left: 1rem;
-	&:hover {
-		background-color: ${({ theme }) => theme.accentColorHover};
-	}
-	cursor: pointer;
+const Submit = styled.div`
+	padding: 1rem;
 `
 
 const ImageBackground = styled.div<PictureProps>`
@@ -250,6 +296,38 @@ const ImageBackground = styled.div<PictureProps>`
 	height: 100%;
 	background: center no-repeat url(${({ avatarPicture, defaultPicture }) => (avatarPicture !== null ? avatarPicture : defaultPicture)});
 	background-size: cover;
+`
+
+const ImageBackgroundInput = styled.div<PictureProps>`
+	height: 100%;
+	width: 100%;
+	background: center no-repeat url(${({ avatarPicture, defaultPicture }) => (avatarPicture !== null ? avatarPicture : defaultPicture)});
+	background-size: cover;
+	border: 3px solid ${({ theme }) => theme.secondaryColor};
+	border-radius: 50%;
+	transition: 0.4s ease-in;
+	cursor: pointer;
+	&:before {
+		content: "Changez votre photo de profil ici";
+		background-color: rgba(0, 0, 0, 0.322);
+		border-radius: 50%;
+		font-size: 0.5rem;
+		display: flex;
+		place-items: center;
+		text-align: center;
+		height: 100%;
+		width: 100%;
+		color: ${({ theme }) => theme.white};
+	}
+`
+
+const ImageInput = styled.input`
+	height: 100%;
+	width: 100%;
+	opacity: 0;
+	cursor: pointer;
+	position: absolute;
+	inset: 0;
 `
 
 const Header = styled.div`
