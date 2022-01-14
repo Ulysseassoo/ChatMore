@@ -9,6 +9,7 @@ import { supabase } from "../../supabaseClient"
 import { useAppSelector } from "../../redux/hooks"
 import { selectUser } from "../../redux/user/userSlice"
 import Modal from "./Modal"
+import { AnimatePresence } from "framer-motion"
 
 type Props = {
 	setActiveSettings: React.Dispatch<React.SetStateAction<boolean>>
@@ -52,7 +53,7 @@ const ProfileHeader = ({ setActiveSettings }: Props) => {
 					</Dropdown>
 				)}
 			</IconsWrapper>
-			{activeModal && <Modal setActiveModal={setActiveModal} />}
+			<AnimatePresence>{activeModal && <Modal setActiveModal={setActiveModal} />}</AnimatePresence>
 		</Container>
 	)
 }

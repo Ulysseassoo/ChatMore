@@ -3,11 +3,21 @@ import type { RootState } from "../store"
 
 type RoomState = {
 	room: string
-	users: {}[]
+	users: User[]
 	messages: []
 }
 type State = {
 	rooms: RoomState[]
+}
+
+type User = {
+	id: string
+	username: string
+	email: string
+	avatar_url: string
+	updated_at: string
+	phone: string
+	about: string
 }
 
 const initialState: State = {
@@ -25,5 +35,7 @@ export const roomSlice = createSlice({
 })
 
 export const { fetchUserRooms } = roomSlice.actions
+
+export const selectRooms = (state: RootState) => state.chatrooms.rooms
 
 export default roomSlice.reducer

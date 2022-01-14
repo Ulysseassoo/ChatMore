@@ -5,6 +5,10 @@ import styled from "styled-components"
 import { useAppSelector } from "../../redux/hooks"
 import { selectUser } from "../../redux/user/userSlice"
 import { supabase } from "../../supabaseClient"
+import { ArrowBack } from "@styled-icons/boxicons-regular/ArrowBack"
+import { motion } from "framer-motion"
+import { selectRooms } from "../../redux/room/roomSlice"
+import User from "./User"
 
 type Props = {
 	setActiveModal: React.Dispatch<React.SetStateAction<boolean>>
@@ -16,6 +20,7 @@ type FormData = {
 
 const Modal = ({ setActiveModal }: Props) => {
 	const userSelector = useAppSelector(selectUser)
+	const roomsSelector = useAppSelector(selectRooms)
 
 	const {
 		register,
@@ -49,30 +54,75 @@ const Modal = ({ setActiveModal }: Props) => {
 		}
 	}
 
+	const variants = {
+		visible: { x: 0 },
+		hidden: { x: "-100%" }
+	}
+
 	return (
-		<Container>
-			<Form onSubmit={handleSubmit(onSubmit)}>
-				<Title>Add a new User (username)</Title>
-				<Input type="text" autoFocus placeholder="username" {...register("username", {})} />
-			</Form>
+		<Container animate="visible" initial="hidden" transition={{ ease: "easeOut", duration: 0.3 }} variants={variants} exit="hidden">
+			<Flex onClick={() => setActiveModal(false)}>
+				<ArrowBack />
+				New Chat
+			</Flex>
+			<Wrapper>
+				<Form onSubmit={handleSubmit(onSubmit)}>
+					<Title>Add a new User (username)</Title>
+					<Input type="text" autoFocus placeholder="username" {...register("username", {})} />
+				</Form>
+			</Wrapper>
+			{roomsSelector.map((room) => {
+				return (
+					<User
+						username={room.users[0].username}
+						about={room.users[0].about}
+						avatar_url={room.users[0].avatar_url}
+						room_id={room.room}
+						key={room.room}
+					/>
+				)
+			})}
 		</Container>
 	)
 }
 
-const Container = styled.div`
+const Container = styled(motion.div)`
 	position: absolute;
+	inset: 0;
+	height: 100%;
+	width: 100%;
+	z-index: 10;
+	display: flex;
+	border: 1px solid ${({ theme }) => theme.lineBreakColor};
+	background-color: ${({ theme }) => theme.primaryColor};
+	flex-direction: column;
+`
+
+const Wrapper = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: space-evenly;
 	flex-direction: column;
-	border: 1px solid ${({ theme }) => theme.lineBreakColor};
-	border-radius: 0 0 5px 5px;
-	background-color: ${({ theme }) => theme.headerMenuColor};
-	height: 100px;
 	width: 100%;
-	top: 81px;
-	right: 0;
-	z-index: 10;
+	border-bottom: 1px solid ${({ theme }) => theme.lineBreakColor};
+	background-color: ${({ theme }) => theme.primaryColor};
+	padding: 1rem;
+`
+
+const Flex = styled.div`
+	display: flex;
+	gap: 1rem;
+	color: ${({ theme }) => theme.white};
+	width: 100%;
+	align-items: center;
+	height: 80px;
+	padding: 1rem;
+	cursor: pointer;
+	background-color: ${({ theme }) => theme.headerMenuColor};
+	& svg {
+		width: 30px;
+		height: 30px;
+	}
 `
 
 const Title = styled.p`

@@ -10,8 +10,17 @@ const Users = () => {
 	const dispatch = useAppDispatch()
 	type RoomState = {
 		room: string
-		users: {}[]
+		users: User[]
 		messages: []
+	}
+	type User = {
+		id: string
+		username: string
+		email: string
+		avatar_url: string
+		updated_at: string
+		phone: string
+		about: string
 	}
 	type RoomsState = {
 		rooms: RoomState[]
@@ -19,7 +28,7 @@ const Users = () => {
 
 	type RoomInnerJoinData = {
 		room: string
-		user: {}
+		user: User
 	}
 
 	const checkChatRooms = async () => {
@@ -37,7 +46,7 @@ const Users = () => {
 			}
 			roomData.forEach((room: RoomInnerJoinData) => {
 				roomNew.room = room.room
-				roomNew.users.push(room.user)
+				if (room.user.id !== userSelector.id) roomNew.users.push(room.user)
 			})
 			roomNew.messages = roomMessages
 			newRooms.rooms.push(roomNew)

@@ -27,6 +27,7 @@ const App: React.FC = () => {
 					{/* In order that the animations knows that we changed pages */}
 					<Routes location={location} key={location.pathname}>
 						<Route path="/" element={<Homepage />} />
+						<Route path="/:id" element={<Homepage />} />
 						<Route path="/login" element={<Login />} />
 						<Route path="/register" element={<Register />} />
 					</Routes>
