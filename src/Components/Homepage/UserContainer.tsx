@@ -2,12 +2,14 @@ import { useState } from "react"
 import styled from "styled-components"
 import ProfileHeader from "./ProfileHeader"
 import Settings from "./Settings"
+import Users from "./Users"
 
 const UserContainer = () => {
 	const [activeSettings, setActiveSettings] = useState<boolean>(false)
 	return (
 		<Container>
 			<ProfileHeader setActiveSettings={setActiveSettings} />
+			<Users />
 			<Settings activeSettings={activeSettings} setActiveSettings={setActiveSettings} />
 		</Container>
 	)

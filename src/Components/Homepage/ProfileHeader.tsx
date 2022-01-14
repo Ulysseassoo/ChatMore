@@ -8,6 +8,7 @@ import { LogOut } from "@styled-icons/feather/LogOut"
 import { supabase } from "../../supabaseClient"
 import { useAppSelector } from "../../redux/hooks"
 import { selectUser } from "../../redux/user/userSlice"
+import Modal from "./Modal"
 
 type Props = {
 	setActiveSettings: React.Dispatch<React.SetStateAction<boolean>>
@@ -20,6 +21,7 @@ type IconStyling = {
 
 const ProfileHeader = ({ setActiveSettings }: Props) => {
 	const [activeDropdown, setActiveDropdown] = useState<boolean>(false)
+	const [activeModal, setActiveModal] = useState<boolean>(false)
 	const userSelector = useAppSelector(selectUser)
 
 	return (
@@ -28,7 +30,7 @@ const ProfileHeader = ({ setActiveSettings }: Props) => {
 				<img src={userSelector.avatar_url !== null ? userSelector.avatar_url : Picture} alt="profile picture" />
 			</ImageContainer>
 			<IconsWrapper>
-				<MessageSquareAdd />
+				<MessageSquareAdd onClick={() => setActiveModal(true)} />
 				<ThreeDotsVertical onClick={() => setActiveDropdown((prevState) => !prevState)} />
 				{activeDropdown && (
 					<Dropdown>
@@ -50,6 +52,7 @@ const ProfileHeader = ({ setActiveSettings }: Props) => {
 					</Dropdown>
 				)}
 			</IconsWrapper>
+			{activeModal && <Modal setActiveModal={setActiveModal} />}
 		</Container>
 	)
 }
