@@ -2,12 +2,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "../store"
 
 type RoomState = {
-	room: string
+	room: number
 	users: User[]
-	messages: []
+	messages: Message[]
+	index?: number
 }
 type State = {
 	rooms: RoomState[]
+	isLoading?: boolean
 }
 
 type User = {
@@ -20,8 +22,18 @@ type User = {
 	about: string
 }
 
+type Message = {
+	id?: number
+	created_at: Date
+	content: string
+	room: number
+	user: string
+	view?: boolean
+}
+
 const initialState: State = {
-	rooms: []
+	rooms: [],
+	isLoading: true
 }
 
 export const roomSlice = createSlice({
@@ -29,13 +41,26 @@ export const roomSlice = createSlice({
 	initialState,
 	reducers: {
 		fetchUserRooms: (state, action: PayloadAction<State>) => {
-			return { ...state, ...action.payload }
+			return { ...state, ...action.payload, isLoading: false }
+		},
+		updateRoomMessage: (state, action: PayloadAction<RoomState>) => {
+			const { index } = action.payload
+			const data = [...state.rooms]
+			data[index!] = { ...state.rooms[index!], ...action.payload }
+			return {
+				...state,
+				rooms: data
+			}
+		},
+		Loading: (state) => {
+			return { ...state, isLoading: true }
 		}
 	}
 })
 
-export const { fetchUserRooms } = roomSlice.actions
+export const { fetchUserRooms, Loading, updateRoomMessage } = roomSlice.actions
 
 export const selectRooms = (state: RootState) => state.chatrooms.rooms
+export const selectIsLoading = (state: RootState) => state.chatrooms.isLoading
 
 export default roomSlice.reducer

@@ -71,17 +71,20 @@ const Modal = ({ setActiveModal }: Props) => {
 					<Input type="text" autoFocus placeholder="username" {...register("username", {})} />
 				</Form>
 			</Wrapper>
-			{roomsSelector.map((room) => {
-				return (
-					<User
-						username={room.users[0].username}
-						about={room.users[0].about}
-						avatar_url={room.users[0].avatar_url}
-						room_id={room.room}
-						key={room.room}
-					/>
-				)
-			})}
+			<ScrollContainer>
+				{roomsSelector.map((room) => {
+					return (
+						<User
+							username={room.users[0].username}
+							about={room.users[0].about}
+							avatar_url={room.users[0].avatar_url}
+							room_id={room.room}
+							setActiveModal={setActiveModal}
+							key={room.room}
+						/>
+					)
+				})}
+			</ScrollContainer>
 		</Container>
 	)
 }
@@ -148,6 +151,13 @@ const Input = styled.input`
 	&:focus {
 		outline: 1px solid ${({ theme }) => theme.accentColor};
 	}
+`
+
+const ScrollContainer = styled.div`
+	width: 100%;
+	overflow-y: scroll;
+	height: 100%;
+	scrollbar-width: thin;
 `
 
 export default Modal
