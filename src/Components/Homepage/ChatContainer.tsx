@@ -32,7 +32,6 @@ const ChatContainer = () => {
 	const params = useParams()
 	const roomsSelector = useAppSelector(selectRooms)
 	const isLoading = useAppSelector(selectIsLoading)
-	console.log(isLoading)
 	const findRoom: (id: number) => RoomState = (id) => {
 		const selectedRoom: any = roomsSelector.find((room) => room.room === id)
 		return selectedRoom

@@ -11,7 +11,7 @@ const Chat = () => {
 	return (
 		<Container>
 			{chatRoom?.messages.map((message) => {
-				return <Message {...message} />
+				return <Message {...message} key={message.id} />
 			})}
 		</Container>
 	)

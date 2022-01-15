@@ -18,10 +18,10 @@ type ContainerProps = {
 	view: boolean
 }
 
-const Message = ({ content, created_at, user, view }: Props) => {
+const Message = ({ content, created_at, user, view, id }: Props) => {
 	const userID = useAppSelector(selectUser).id
 	return (
-		<Container userID={userID} messageUserID={user} view={view!}>
+		<Container userID={userID} messageUserID={user} view={view!} key={id}>
 			{content}{" "}
 			<Time>
 				{new Date(created_at).getHours()}:{new Date(created_at).getMinutes()}

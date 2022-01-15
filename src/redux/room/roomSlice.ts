@@ -1,6 +1,10 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createSlice, PayloadAction, PayloadActionCreator } from "@reduxjs/toolkit"
 import type { RootState } from "../store"
 
+type AddMessage = {
+	room_index: number
+	message: Message[]
+}
 type RoomState = {
 	room: number
 	users: User[]
@@ -52,13 +56,22 @@ export const roomSlice = createSlice({
 				rooms: data
 			}
 		},
+		addMessageToRoom: (state, action: PayloadAction<AddMessage>) => {
+			const { room_index, message } = action.payload
+			const data = [...state.rooms]
+			data[room_index!] = { ...state.rooms[room_index!], messages: [...message, ...state.rooms[room_index!].messages] }
+			return {
+				...state,
+				rooms: data
+			}
+		},
 		Loading: (state) => {
 			return { ...state, isLoading: true }
 		}
 	}
 })
 
-export const { fetchUserRooms, Loading, updateRoomMessage } = roomSlice.actions
+export const { fetchUserRooms, Loading, updateRoomMessage, addMessageToRoom } = roomSlice.actions
 
 export const selectRooms = (state: RootState) => state.chatrooms.rooms
 export const selectIsLoading = (state: RootState) => state.chatrooms.isLoading

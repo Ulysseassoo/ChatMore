@@ -123,7 +123,7 @@ const User = ({ username, about, avatar_url, room_id, setActiveModal, last_messa
 		)
 	}
 	return (
-		<Container onClick={() => goToChat()}>
+		<Container onClick={() => goToChat()} room_id={room_id}>
 			<ImageContainer>
 				<img src={avatar_url !== null ? avatar_url : Picture} alt="profile picture" />
 			</ImageContainer>

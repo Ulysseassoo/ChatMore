@@ -5,12 +5,15 @@ import { Send } from "@styled-icons/feather/Send"
 import { useForm } from "react-hook-form"
 import { useParams } from "react-router"
 import { selectUser } from "../../redux/user/userSlice"
-import { useAppSelector } from "../../redux/hooks"
+import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import { createMessage } from "../../Services/APIs"
 import { toast } from "react-toastify"
+import { selectRooms, addMessageToRoom } from "../../redux/room/roomSlice"
 
 const SendMessage = () => {
 	const userSelector = useAppSelector(selectUser)
+	const chatRoom = useAppSelector(selectRooms)
+	const dispatch = useAppDispatch()
 	const params = useParams()
 
 	const { id } = params
@@ -39,7 +42,11 @@ const SendMessage = () => {
 			user: userSelector.id
 		}
 		try {
-			const message = await createMessage(newMessage)
+			const message: Message[] = await createMessage(newMessage)
+			const roomIndex = chatRoom.find((room) => room.room === parseInt(params.id!))?.index
+			// Add function to add message in a room
+			console.log(message)
+			dispatch(addMessageToRoom({ message: message, room_index: roomIndex! }))
 			reset()
 		} catch (error: any) {
 			toast.error(error.error_description || error.message)
