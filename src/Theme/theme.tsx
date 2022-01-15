@@ -8,5 +8,6 @@ export const lightTheme = {
 	headerMenuColor: "#2B2826",
 	lineBreakColor: "#404040",
 	importantColor: "#EA4848",
-	profileColor: "#1F1D1B"
+	profileColor: "#1F1D1B",
+	viewColor: "#1492E6"
 }
