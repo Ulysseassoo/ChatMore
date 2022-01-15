@@ -43,10 +43,6 @@ const SendMessage = () => {
 		}
 		try {
 			const message: Message[] = await createMessage(newMessage)
-			const roomIndex = chatRoom.find((room) => room.room === parseInt(params.id!))?.index
-			// Add function to add message in a room
-			console.log(message)
-			dispatch(addMessageToRoom({ message: message, room_index: roomIndex! }))
 			reset()
 		} catch (error: any) {
 			toast.error(error.error_description || error.message)

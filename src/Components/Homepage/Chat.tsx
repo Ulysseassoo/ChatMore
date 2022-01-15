@@ -18,7 +18,7 @@ const Chat = () => {
 }
 
 const Container = styled.div`
-	flex: 1;
+	height: calc(100% - 210px);
 	display: flex;
 	flex-direction: column-reverse;
 	gap: 1.2rem;

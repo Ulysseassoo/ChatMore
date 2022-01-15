@@ -7,13 +7,15 @@ import styled from "styled-components"
 import Header from "../Components/Homepage/Header"
 import UserContainer from "../Components/Homepage/UserContainer"
 import ChatContainer from "../Components/Homepage/ChatContainer"
-import { selectIsLoading } from "../redux/room/roomSlice"
 
 const Homepage: React.FC = () => {
 	const selector = useAppSelector
+
 	if (selector(selectLoggedIn) === false) {
 		return <Main></Main>
 	}
+
+	// Check in Realtime if we receive a new message
 	return (
 		<Main chat>
 			<Header />

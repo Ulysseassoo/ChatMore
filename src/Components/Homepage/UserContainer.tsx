@@ -1,11 +1,15 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import styled from "styled-components"
+import { useAppDispatch, useAppSelector } from "../../redux/hooks"
+import { addMessageToRoom, selectRooms } from "../../redux/room/roomSlice"
+import { supabase } from "../../supabaseClient"
 import ProfileHeader from "./ProfileHeader"
 import Settings from "./Settings"
 import Users from "./Users"
 
 const UserContainer = () => {
 	const [activeSettings, setActiveSettings] = useState<boolean>(false)
+
 	return (
 		<Container>
 			<ProfileHeader setActiveSettings={setActiveSettings} />
