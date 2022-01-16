@@ -10,22 +10,28 @@ const Chat = () => {
 	const chatRoom = useAppSelector(selectRooms).find((room) => room.room === parseInt(id!))
 	return (
 		<Container>
-			{chatRoom?.messages.map((message) => {
-				return <Message {...message} key={message.id} />
-			})}
+			<ChatMessages>
+				{chatRoom?.messages.map((message) => {
+					return <Message {...message} key={message.id} />
+				})}
+			</ChatMessages>
 		</Container>
 	)
 }
 
 const Container = styled.div`
-	height: calc(100% - 210px);
-	display: flex;
-	flex-direction: column-reverse;
-	gap: 1.2rem;
+	height: calc(100vh - 210px);
 	padding: 1rem;
 	width: 100%;
+`
+
+const ChatMessages = styled.div`
 	overflow-y: scroll;
 	scrollbar-width: thin;
+	gap: 1.4rem;
+	display: flex;
+	flex-direction: column-reverse;
+	height: 100%;
 `
 
 export default Chat

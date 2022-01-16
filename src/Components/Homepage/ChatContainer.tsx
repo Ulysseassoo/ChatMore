@@ -61,11 +61,8 @@ const ChatContainer = () => {
 const Container = styled.div<ContainerProps>`
 	flex: 1;
 	background-color: ${({ theme }) => theme.headerMenuColor};
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	gap: 1rem;
+	transition: 0.15s ease-in;
+
 	${({ id }) =>
 		id &&
 		css`

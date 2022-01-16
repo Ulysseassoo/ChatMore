@@ -2,29 +2,49 @@ import React from "react"
 import styled, { css } from "styled-components"
 import Picture from "../../assets/profile.jpg"
 import { Search, ThreeDotsVertical } from "styled-icons/bootstrap"
+import { Cross } from "@styled-icons/entypo/Cross"
 
 type Props = {
-	avatar_url: string
+	avatar_url?: string
 	username: string
+	profile?: boolean
 }
 
-const ChatHeader = ({ avatar_url, username }: Props) => {
+type ContainerProps = {
+	profile?: boolean
+}
+
+const ChatHeader = ({ avatar_url, username, profile }: Props) => {
+	if (profile) {
+		return (
+			<Container profile={profile}>
+				<Label htmlFor="profile" profile={profile}>
+					<Cross />
+				</Label>
+				<Flex>
+					<Username profile>Profile Informations</Username>
+				</Flex>
+			</Container>
+		)
+	}
 	return (
 		<Container>
-			<Flex>
-				<ImageContainer>
-					<img src={avatar_url !== null ? avatar_url : Picture} alt="profile picture" />
-				</ImageContainer>
-				<Username>{username}</Username>
-			</Flex>
-			<IconsWrapper>
-				<Search />
-				<ThreeDotsVertical />
-			</IconsWrapper>
+			<Label htmlFor="profile">
+				<Flex>
+					<ImageContainer>
+						<img src={avatar_url !== null ? avatar_url : Picture} alt="profile picture" />
+					</ImageContainer>
+					<Username>{username}</Username>
+				</Flex>
+				<IconsWrapper>
+					<Search />
+					<ThreeDotsVertical />
+				</IconsWrapper>
+			</Label>
 		</Container>
 	)
 }
-const Container = styled.div`
+const Container = styled.div<ContainerProps>`
 	width: 100%;
 	padding: 1rem;
 	display: flex;
@@ -33,6 +53,32 @@ const Container = styled.div`
 	height: 80px;
 	background-color: ${({ theme }) => theme.headerMenuColor};
 	cursor: pointer;
+	${({ profile }) =>
+		profile &&
+		css`
+			justify-content: initial;
+			gap: 0.5rem;
+			cursor: initial;
+			& svg {
+				width: 40px;
+				height: 40px;
+				color: ${({ theme }) => theme.secondaryColor};
+				cursor: pointer;
+			}
+		`}
+`
+const Label = styled.label<ContainerProps>`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background-color: ${({ theme }) => theme.headerMenuColor};
+	width: 100%;
+	cursor: pointer;
+	${({ profile }) =>
+		profile &&
+		css`
+			width: initial;
+		`}
 `
 const ImageContainer = styled.div`
 	height: 50px;
@@ -62,10 +108,11 @@ const IconsWrapper = styled.div`
 	}
 `
 
-const Username = styled.p`
+const Username = styled.p<ContainerProps>`
 	font-size: 1.2rem;
 	color: ${({ theme }) => theme.secondaryColor};
-	font-weight: 600;
+	font-weight: ${({ profile }) => (profile ? "initial" : 600)};
+	display: contents;
 `
 
 const Flex = styled.div`

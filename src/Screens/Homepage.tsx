@@ -7,6 +7,7 @@ import styled from "styled-components"
 import Header from "../Components/Homepage/Header"
 import UserContainer from "../Components/Homepage/UserContainer"
 import ChatContainer from "../Components/Homepage/ChatContainer"
+import ProfilContainer from "../Components/Homepage/ProfilContainer"
 
 const Homepage: React.FC = () => {
 	const selector = useAppSelector
@@ -22,6 +23,7 @@ const Homepage: React.FC = () => {
 			<Container>
 				<UserContainer />
 				<ChatContainer />
+				<ProfilContainer />
 			</Container>
 		</Main>
 	)
