@@ -1,7 +1,7 @@
 import React, { useEffect } from "react"
 import styled from "styled-components"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
-import { fetchUserRooms, Loading, selectIsLoading, selectRooms, addMessageToRoom } from "../../redux/room/roomSlice"
+import { fetchUserRooms, Loading, selectIsLoading, selectRooms, addMessageToRoom, deleteMessageInRoom } from "../../redux/room/roomSlice"
 import { selectUser } from "../../redux/user/userSlice"
 import { getRoom, getRoomMessages, getUserRooms } from "../../Services/APIs"
 import { supabase } from "../../supabaseClient"
@@ -69,13 +69,18 @@ const Users = () => {
 				if (roomIndex === undefined) return
 				dispatch(addMessageToRoom({ message: [payload.new], room_index: roomIndex! }))
 			})
+			.on("DELETE", (payload) => {
+				console.log(payload)
+				const roomIndex = chatRooms.find((room) => room.room === parseInt(payload.old.room))?.index
+				if (roomIndex === undefined) return
+				dispatch(deleteMessageInRoom({ message: payload.old, room_index: roomIndex! }))
+			})
 			.subscribe()
 		return () => {
 			mySubscription.unsubscribe()
 		}
 	}, [chatRooms])
 	useEffect(() => {
-		console.log("mounted")
 		if (userSelector.id !== "") {
 			dispatch(Loading)
 			checkChatRooms()

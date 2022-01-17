@@ -11,18 +11,18 @@ type Props = {
 }
 
 type ContainerProps = {
-	profile?: boolean
+	$profile?: boolean
 }
 
 const ChatHeader = ({ avatar_url, username, profile }: Props) => {
 	if (profile) {
 		return (
-			<Container profile={profile}>
-				<Label htmlFor="profile" profile={profile}>
+			<Container $profile={profile}>
+				<Label htmlFor="profile" $profile={profile}>
 					<Cross />
 				</Label>
 				<Flex>
-					<Username profile>Profile Informations</Username>
+					<Username $profile={profile}>Profile Informations</Username>
 				</Flex>
 			</Container>
 		)
@@ -53,8 +53,8 @@ const Container = styled.div<ContainerProps>`
 	height: 80px;
 	background-color: ${({ theme }) => theme.headerMenuColor};
 	cursor: pointer;
-	${({ profile }) =>
-		profile &&
+	${({ $profile }) =>
+		$profile &&
 		css`
 			justify-content: initial;
 			gap: 0.5rem;
@@ -74,8 +74,8 @@ const Label = styled.label<ContainerProps>`
 	background-color: ${({ theme }) => theme.headerMenuColor};
 	width: 100%;
 	cursor: pointer;
-	${({ profile }) =>
-		profile &&
+	${({ $profile }) =>
+		$profile &&
 		css`
 			width: initial;
 		`}
@@ -111,7 +111,7 @@ const IconsWrapper = styled.div`
 const Username = styled.p<ContainerProps>`
 	font-size: 1.2rem;
 	color: ${({ theme }) => theme.secondaryColor};
-	font-weight: ${({ profile }) => (profile ? "initial" : 600)};
+	font-weight: ${({ $profile }) => ($profile ? "initial" : 600)};
 	display: contents;
 `
 

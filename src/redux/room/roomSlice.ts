@@ -5,6 +5,11 @@ type AddMessage = {
 	room_index: number
 	message: Message[]
 }
+
+type DeleteMessage = {
+	room_index: number
+	message: Message
+}
 type RoomState = {
 	room: number
 	users: User[]
@@ -65,13 +70,23 @@ export const roomSlice = createSlice({
 				rooms: data
 			}
 		},
+		deleteMessageInRoom: (state, action: PayloadAction<DeleteMessage>) => {
+			const { room_index, message } = action.payload
+			const data = [...state.rooms]
+			const filteredMessages = data[room_index!].messages.filter((element) => element.id !== message.id)
+			data[room_index!] = { ...state.rooms[room_index!], messages: filteredMessages }
+			return {
+				...state,
+				rooms: data
+			}
+		},
 		Loading: (state) => {
 			return { ...state, isLoading: true }
 		}
 	}
 })
 
-export const { fetchUserRooms, Loading, updateRoomMessage, addMessageToRoom } = roomSlice.actions
+export const { fetchUserRooms, Loading, updateRoomMessage, addMessageToRoom, deleteMessageInRoom } = roomSlice.actions
 
 export const selectRooms = (state: RootState) => state.chatrooms.rooms
 export const selectIsLoading = (state: RootState) => state.chatrooms.isLoading
