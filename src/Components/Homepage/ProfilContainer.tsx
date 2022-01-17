@@ -79,6 +79,9 @@ const Checkbox = styled.input`
 	display: none;
 	&:checked + div {
 		width: 400px;
+		@media screen and (max-width: 910px) {
+			width: 800px;
+		}
 	}
 `
 

@@ -2,14 +2,16 @@ import React, { useEffect } from "react"
 import styled from "styled-components"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import { fetchUserRooms, Loading, selectIsLoading, selectRooms, addMessageToRoom, deleteMessageInRoom } from "../../redux/room/roomSlice"
-import { selectUser } from "../../redux/user/userSlice"
+import { selectLoggedIn, selectSession, selectUser } from "../../redux/user/userSlice"
 import { getRoom, getRoomMessages, getUserRooms } from "../../Services/APIs"
 import { supabase } from "../../supabaseClient"
 import User from "./User"
 
 const Users = () => {
 	const userSelector = useAppSelector(selectUser)
+	const sessionSelector = useAppSelector(selectSession)
 	const hasLoaded = useAppSelector(selectIsLoading)
+	const isLoggedIn = useAppSelector(selectLoggedIn)
 	const chatRooms = useAppSelector(selectRooms)
 	const dispatch = useAppDispatch()
 	type RoomState = {
@@ -38,7 +40,9 @@ const Users = () => {
 
 	// Arrange chat rooms in a more convenient way in order to have the room id, the messages and the users in that room
 	const checkChatRooms = async () => {
-		const data = await getUserRooms(userSelector.id)
+		dispatch(Loading)
+		const user = supabase.auth.user()
+		const data = await getUserRooms(user?.id!)
 		let newRooms: RoomsState = {
 			rooms: []
 		}
@@ -53,7 +57,7 @@ const Users = () => {
 			}
 			roomData.forEach((room: RoomInnerJoinData) => {
 				roomNew.room = room.room
-				if (room.user.id !== userSelector.id) roomNew.users.push(room.user)
+				if (room.user.id !== sessionSelector.id!) roomNew.users.push(room.user)
 			})
 			roomNew.messages = roomMessages
 			newRooms.rooms.push(roomNew)
@@ -61,32 +65,11 @@ const Users = () => {
 		// Push them into redux
 		dispatch(fetchUserRooms(newRooms))
 	}
-	useEffect(() => {
-		// Listening to the database on any insert or update, to update state
-		const mySubscription = supabase
-			.from("message")
-			.on("INSERT", (payload) => {
-				const roomIndex = chatRooms.find((room) => room.room === parseInt(payload.new.room))?.index
-				if (roomIndex === undefined) return
-				dispatch(addMessageToRoom({ message: [payload.new], room_index: roomIndex! }))
-			})
-			.on("DELETE", (payload) => {
-				const roomIndex = chatRooms.find((room) => room.room === parseInt(payload.old.room))?.index
-				if (roomIndex === undefined) return
-				dispatch(deleteMessageInRoom({ message: payload.old, room_index: roomIndex! }))
-			})
-			.subscribe()
-		return () => {
-			mySubscription.unsubscribe()
-		}
-	}, [chatRooms])
+
 	useEffect(() => {
 		// We check when we have the user ID and stock the rooms
-		if (userSelector.id !== "") {
-			dispatch(Loading)
-			checkChatRooms()
-		}
-	}, [userSelector.id])
+		checkChatRooms()
+	}, [])
 
 	if (hasLoaded) {
 		return <Container></Container>

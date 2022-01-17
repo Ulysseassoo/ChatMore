@@ -214,6 +214,9 @@ const Container = styled.div`
 	right: 100%;
 	transition: 0.3s ease;
 	top: 0;
+	@media screen and (max-width: 910px) {
+		width: 100%;
+	}
 `
 
 const Label = styled.label``

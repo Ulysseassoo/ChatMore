@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useParams } from "react-router"
+import { useLocation, useParams } from "react-router"
 import styled, { css } from "styled-components"
 import Image from "../../assets/ChatImage.png"
 import { useAppSelector } from "../../redux/hooks"
@@ -10,6 +10,7 @@ import SendMessage from "./SendMessage"
 
 type ContainerProps = {
 	id?: string
+	location?: string
 }
 
 type User = {
@@ -30,6 +31,7 @@ type RoomState = {
 
 const ChatContainer = () => {
 	const params = useParams()
+	const { pathname } = useLocation()
 	const roomsSelector = useAppSelector(selectRooms)
 	const isLoading = useAppSelector(selectIsLoading)
 	const findRoom: (id: number) => RoomState = (id) => {
@@ -40,7 +42,7 @@ const ChatContainer = () => {
 	if (params?.id && !isLoading) {
 		const { id } = params
 		return (
-			<Container id={id}>
+			<Container id={id} location={pathname}>
 				<ChatHeader avatar_url={findRoom(parseInt(id)).users[0].avatar_url} username={findRoom(parseInt(id)).users[0].username} />
 				<Chat />
 				<SendMessage />
@@ -48,7 +50,7 @@ const ChatContainer = () => {
 		)
 	}
 	return (
-		<Container>
+		<Container location={pathname}>
 			<ImageContainer>
 				<img src={Image} alt="Image starting a chat" />
 				<p>Start a conversation by clicking on any discussion !</p>
@@ -74,6 +76,10 @@ const Container = styled.div<ContainerProps>`
 			display: initial;
 			align-items: initial;
 		`}
+	@media screen and (max-width: 910px) {
+		display: ${({ location }) => (location === "/" ? "none" : "flex")};
+		flex-direction: column;
+	}
 `
 const ImageContainer = styled.div`
 	height: 450px;

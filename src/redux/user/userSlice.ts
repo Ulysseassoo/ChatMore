@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "../store"
+import _ from "underscore"
 
 // Define a type for the slice state
 type sessionState = {
@@ -93,6 +94,7 @@ export const { updateSession, updateProfile, logout, updateProfileData } = userS
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectUser = (state: RootState) => state.auth.user
+export const userIsEqual = (state: RootState) => (state.auth.user, _.isEqual)
 export const selectSession = (state: RootState) => state.auth.session
 export const selectLoggedIn = (state: RootState) => state.auth.loggedIn
 

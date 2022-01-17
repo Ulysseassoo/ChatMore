@@ -89,7 +89,6 @@ const User = ({ username, about, avatar_url, room_id, setActiveModal, last_messa
 				const messages: Message[] = await updateRoomMessages(data)
 				room!.messages = messages
 				room.index = 1
-				console.log(chatRooms, typeof chatRooms)
 				dispatch(updateRoomMessage(room))
 			} catch (error: any) {
 				console.log(error)

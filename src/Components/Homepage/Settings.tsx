@@ -73,6 +73,9 @@ const Container = styled.div<ContainerStyle>`
 	& input[type="checkbox"]:checked + div {
 		right: 0%;
 	}
+	@media screen and (max-width: 910px) {
+		width: 100%;
+	}
 `
 
 const Wrapper = styled.div`
