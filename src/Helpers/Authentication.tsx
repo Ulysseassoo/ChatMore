@@ -1,6 +1,7 @@
 import React, { useEffect } from "react"
 import { useNavigate } from "react-router"
 import { useAppDispatch } from "../redux/hooks"
+import { EmptyRooms } from "../redux/room/roomSlice"
 import { logout, updateProfile, updateSession } from "../redux/user/userSlice"
 import { supabase } from "../supabaseClient"
 
@@ -27,6 +28,7 @@ const Authentication = ({ children }: Props) => {
 			switch (event) {
 				case "SIGNED_OUT":
 					dispatch(logout())
+					dispatch(EmptyRooms())
 					navigate("/login")
 					break
 				case "TOKEN_REFRESHED":

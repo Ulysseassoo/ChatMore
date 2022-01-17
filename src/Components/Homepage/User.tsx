@@ -100,7 +100,7 @@ const User = ({ username, about, avatar_url, room_id, setActiveModal, last_messa
 			<Container
 				onClick={() => {
 					goToChat()
-					// updateUserMessages(messagesViewed(), user_id)
+					updateUserMessages(messagesViewed(), user_id)
 				}}
 				room_id={room_id}
 				actualRoom={parseInt(params.id!)}>

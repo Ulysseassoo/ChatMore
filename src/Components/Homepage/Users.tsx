@@ -36,6 +36,7 @@ const Users = () => {
 		user: User
 	}
 
+	// Arrange chat rooms in a more convenient way in order to have the room id, the messages and the users in that room
 	const checkChatRooms = async () => {
 		const data = await getUserRooms(userSelector.id)
 		let newRooms: RoomsState = {
@@ -57,20 +58,19 @@ const Users = () => {
 			roomNew.messages = roomMessages
 			newRooms.rooms.push(roomNew)
 		}
+		// Push them into redux
 		dispatch(fetchUserRooms(newRooms))
 	}
 	useEffect(() => {
+		// Listening to the database on any insert or update, to update state
 		const mySubscription = supabase
 			.from("message")
 			.on("INSERT", (payload) => {
 				const roomIndex = chatRooms.find((room) => room.room === parseInt(payload.new.room))?.index
-				console.log(roomIndex)
-				console.log(payload)
 				if (roomIndex === undefined) return
 				dispatch(addMessageToRoom({ message: [payload.new], room_index: roomIndex! }))
 			})
 			.on("DELETE", (payload) => {
-				console.log(payload)
 				const roomIndex = chatRooms.find((room) => room.room === parseInt(payload.old.room))?.index
 				if (roomIndex === undefined) return
 				dispatch(deleteMessageInRoom({ message: payload.old, room_index: roomIndex! }))
@@ -81,6 +81,7 @@ const Users = () => {
 		}
 	}, [chatRooms])
 	useEffect(() => {
+		// We check when we have the user ID and stock the rooms
 		if (userSelector.id !== "") {
 			dispatch(Loading)
 			checkChatRooms()

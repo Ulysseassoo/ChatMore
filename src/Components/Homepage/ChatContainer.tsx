@@ -62,13 +62,17 @@ const Container = styled.div<ContainerProps>`
 	flex: 1;
 	background-color: ${({ theme }) => theme.headerMenuColor};
 	transition: 0.15s ease-in;
-
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	${({ id }) =>
 		id &&
 		css`
 			gap: 0;
 			background-color: ${({ theme }) => theme.primaryColor};
 			justify-content: initial;
+			display: initial;
+			align-items: initial;
 		`}
 `
 const ImageContainer = styled.div`

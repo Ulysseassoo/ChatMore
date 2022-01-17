@@ -32,7 +32,7 @@ const ProfilContainer = () => {
 		const selectedRoom: any = roomsSelector.find((room) => room.room === id)
 		return selectedRoom
 	}
-	if (!isLoading) {
+	if (!isLoading && id) {
 		return (
 			<>
 				<Checkbox id="profile" type="checkbox" />

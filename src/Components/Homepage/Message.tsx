@@ -5,6 +5,7 @@ import { selectUser } from "../../redux/user/userSlice"
 import { ArrowIosDownward } from "@styled-icons/evaicons-solid/ArrowIosDownward"
 import { DeleteBin } from "@styled-icons/remix-line/DeleteBin"
 import { deleteMessage } from "../../Services/APIs"
+import { AnimatePresence, motion } from "framer-motion"
 import { toast } from "react-toastify"
 
 type Props = {
@@ -33,13 +34,17 @@ const Message = ({ content, created_at, user, view, id }: Props) => {
 
 	const deleteMessageFromID = async (id: number) => {
 		try {
-			const { error }: { error: any } = await deleteMessage(id)
-			if (error) throw error
+			const data = await deleteMessage(id)
+			toast.success("Message deleted !")
 			setActiveDropdown(false)
 		} catch (error: any) {
-			// console.log(error)
-			// toast.error(error.error_description || error.message)
+			toast.error(error.error_description || error.message)
 		}
+	}
+
+	const variants = {
+		visible: { height: "100%", opacity: 100 },
+		hidden: { height: 0, opacity: 0 }
 	}
 
 	return (
@@ -49,13 +54,15 @@ const Message = ({ content, created_at, user, view, id }: Props) => {
 				{new Date(created_at).getHours()}:{new Date(created_at).getMinutes()}
 			</Time>
 			{userID === user && <ArrowIosDownward onClick={() => setActiveDropdown((prev) => !prev)} />}
-			{activeDropdown && (
-				<Dropdown>
-					<Item red onClick={() => deleteMessageFromID(id!)}>
-						<DeleteBin /> Delete
-					</Item>
-				</Dropdown>
-			)}
+			<AnimatePresence>
+				{activeDropdown && (
+					<Dropdown animate="visible" initial="hidden" transition={{ ease: "easeOut", duration: 0.2 }} variants={variants} exit="hidden">
+						<Item red onClick={() => deleteMessageFromID(id!)}>
+							<DeleteBin /> Delete
+						</Item>
+					</Dropdown>
+				)}
+			</AnimatePresence>
 		</Container>
 	)
 }
@@ -111,7 +118,7 @@ const Time = styled.span`
 	display: inline-block;
 `
 
-const Dropdown = styled.div`
+const Dropdown = styled(motion.div)`
 	position: absolute;
 	display: flex;
 	align-items: center;
@@ -125,6 +132,7 @@ const Dropdown = styled.div`
 	top: 18px;
 	right: 10px;
 	z-index: 10;
+	overflow: hidden;
 `
 
 const Item = styled.div<IconStyling>`

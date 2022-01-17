@@ -55,8 +55,13 @@ export const roomSlice = createSlice({
 		updateRoomMessage: (state, action: PayloadAction<RoomState>) => {
 			const { index } = action.payload
 			const data = [...state.rooms]
-			data[index!] = { ...state.rooms[index!], ...action.payload }
-			return {
+			const viewedMessages = data[index!].messages.map((element) => {
+				element.view = true
+				return element
+			})
+			data[index!] = { ...state.rooms[index!], messages: viewedMessages }
+			// Immer error, so to fix we put the void here
+			return void {
 				...state,
 				rooms: data
 			}
@@ -82,11 +87,14 @@ export const roomSlice = createSlice({
 		},
 		Loading: (state) => {
 			return { ...state, isLoading: true }
+		},
+		EmptyRooms: () => {
+			return initialState
 		}
 	}
 })
 
-export const { fetchUserRooms, Loading, updateRoomMessage, addMessageToRoom, deleteMessageInRoom } = roomSlice.actions
+export const { fetchUserRooms, Loading, updateRoomMessage, addMessageToRoom, deleteMessageInRoom, EmptyRooms } = roomSlice.actions
 
 export const selectRooms = (state: RootState) => state.chatrooms.rooms
 export const selectIsLoading = (state: RootState) => state.chatrooms.isLoading
