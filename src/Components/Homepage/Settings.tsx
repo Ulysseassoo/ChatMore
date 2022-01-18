@@ -23,19 +23,19 @@ const Settings = ({ activeSettings, setActiveSettings }: Props) => {
 		{
 			Icon: User,
 			name: "Profile"
-		},
-		{
-			Icon: Notifications,
-			name: "Notifications"
-		},
-		{
-			Icon: DarkTheme,
-			name: "Theme"
-		},
-		{
-			Icon: UserX,
-			name: "Bloqued Users"
 		}
+		// {
+		// 	Icon: Notifications,
+		// 	name: "Notifications"
+		// },
+		// {
+		// 	Icon: DarkTheme,
+		// 	name: "Theme"
+		// },
+		// {
+		// 	Icon: UserX,
+		// 	name: "Bloqued Users"
+		// }
 	]
 
 	return (

@@ -28,6 +28,9 @@ type FormData = {
 	username: string
 	about: string
 	phone: string
+}
+
+type ImageFormData = {
 	image: FileList
 }
 
@@ -41,63 +44,62 @@ const SettingsWrapper = ({ name }: Props) => {
 		register,
 		handleSubmit,
 		setValue,
-		resetField,
 		formState: { errors, isSubmitting }
 	} = useForm()
 	const onSubmit = async (data: FormData) => {
-		const { about, username, phone, image } = data
-		if (image.length === 0) {
+		const { about, username, phone } = data
+		const updates = {
+			id: userSelector.id,
+			username,
+			about,
+			phone,
+			updated_at: new Date()
+		}
+		try {
+			let { error, data: newData }: { error: any; data: any } = await supabase.from("profiles").upsert(updates, {
+				returning: "representation" //
+			})
+			if (error) throw Error
+			dispatch(updateProfileData(newData[0]))
+			toast.success("Your informations has been updated !")
+			setEditMode(false)
+		} catch (error: any) {
+			toast.error(error.error_description || error.message)
+		}
+	}
+
+	const { register: registerImage, handleSubmit: handleImageSubmit, reset } = useForm()
+	const onSubmitImage = async (data: ImageFormData) => {
+		const { image } = data
+		const file = image[0]
+		const fileExt = file.name.split(".").pop()
+		const fileName = `${Math.random()}.${fileExt}`
+		const filePath = `${fileName}`
+		try {
+			let { error: uploadError, data: imageData } = await supabase.storage.from("avatars").upload(filePath, file)
+
+			if (uploadError) {
+				throw uploadError
+			}
+			const avatar_url: any = imageData?.Key
+			const { data: urlData, error: urlError }: { data: any; error: any } = await supabase.storage
+				.from("avatars")
+				.getPublicUrl(avatar_url.split("/")[1])
+			if (urlError) throw Error
 			const updates = {
 				id: userSelector.id,
-				username,
-				about,
-				phone,
+				avatar_url: urlData.publicURL,
 				updated_at: new Date()
 			}
-			try {
-				let { error, data: newData }: { error: any; data: any } = await supabase.from("profiles").upsert(updates, {
-					returning: "representation" //
-				})
-				if (error) throw Error
-				dispatch(updateProfileData(newData[0]))
-				setEditMode(false)
-				toast.success("Your informations has been updated !")
-			} catch (error: any) {
-				toast.error(error.error_description || error.message)
-			}
-		} else {
-			const file = image[0]
-			const fileExt = file.name.split(".").pop()
-			const fileName = `${Math.random()}.${fileExt}`
-			const filePath = `${fileName}`
-			try {
-				let { error: uploadError, data: imageData } = await supabase.storage.from("avatars").upload(filePath, file)
-
-				if (uploadError) {
-					throw uploadError
-				}
-				console.log(imageData)
-				const avatar_url: any = imageData?.Key
-				const { data: urlData, error: urlError }: { data: any; error: any } = await supabase.storage
-					.from("avatars")
-					.getPublicUrl(avatar_url.split("/")[1])
-				if (urlError) throw Error
-				const updates = {
-					id: userSelector.id,
-					avatar_url: urlData.publicURL,
-					updated_at: new Date()
-				}
-				let { error: newError, data: newData }: { error: any; data: any } = await supabase.from("profiles").upsert(updates, {
-					returning: "representation" //
-				})
-				if (newError) throw Error
-				dispatch(updateProfileData(newData[0]))
-				toast.success("Your profile picture has been updated !")
-			} catch (error: any) {
-				console.log(error)
-				toast.error(error.error_description || error.message)
-			}
-			resetField("image")
+			let { error: newError, data: newData }: { error: any; data: any } = await supabase.from("profiles").upsert(updates, {
+				returning: "representation" //
+			})
+			if (newError) throw Error
+			dispatch(updateProfileData(newData[0]))
+			toast.success("Your profile picture has been updated !")
+			reset({ image: image.length })
+		} catch (error: any) {
+			toast.error(error.error_description || error.message)
 		}
 	}
 
@@ -126,10 +128,7 @@ const SettingsWrapper = ({ name }: Props) => {
 						<Flex flex="55%" $profile>
 							<Header>
 								<ImageContainer>
-									<img
-										src={userSelector.avatar_url !== null ? `${import.meta.env.VITE_SUPABASE_URL}${userSelector.avatar_url}` : Picture}
-										alt="profile picture"
-									/>
+									<img src={userSelector.avatar_url !== null ? userSelector.avatar_url : Picture} alt="profile picture" />
 								</ImageContainer>
 								<Column>
 									<ProfileName>
@@ -175,8 +174,8 @@ const SettingsWrapper = ({ name }: Props) => {
 				<Flex flex="55%" $profile>
 					<Header>
 						<ImageContainer>
-							<ImageForm onChange={handleSubmit(onSubmit)}>
-								<ImageInput type="file" {...register("image", {})} />
+							<ImageForm onChange={handleImageSubmit(onSubmitImage)}>
+								<ImageInput type="file" {...registerImage("image", {})} />
 								<ImageBackgroundInput avatarPicture={userSelector.avatar_url} defaultPicture={Picture} />
 							</ImageForm>
 						</ImageContainer>
