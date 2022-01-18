@@ -57,12 +57,12 @@ export const deleteMessage = async (messageID: number) => {
 	}
 }
 
-export const updateRoomMessages = async (messageData: Message[]) => {
+export const updateRoomMessages = async (messageData: Message[]): Promise<Message[]> => {
 	try {
 		const { data, error } = await supabase.from("message").upsert(messageData)
 		if (error) throw error
-		return data
-	} catch (error) {
+		return data!
+	} catch (error: any) {
 		return error
 	}
 }

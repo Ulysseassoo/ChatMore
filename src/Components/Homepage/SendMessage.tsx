@@ -42,7 +42,7 @@ const SendMessage = () => {
 			user: userSelector.id
 		}
 		try {
-			const message: Message[] = await createMessage(newMessage)
+			const message = await createMessage(newMessage)
 			reset()
 		} catch (error: any) {
 			toast.error(error.error_description || error.message)
