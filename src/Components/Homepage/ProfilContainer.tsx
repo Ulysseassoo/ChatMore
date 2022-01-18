@@ -77,9 +77,8 @@ const Container = styled.div`
 		position: absolute;
 		height: 100%;
 		width: 100%;
-		inset: 0;
+		left: 100%;
 		z-index: 10;
-		margin-top: 60px;
 	}
 `
 
@@ -88,7 +87,8 @@ const Checkbox = styled.input`
 	&:checked + div {
 		width: 400px;
 		@media screen and (max-width: 910px) {
-			left: 100%;
+			width: 100%;
+			left: 0;
 		}
 	}
 `

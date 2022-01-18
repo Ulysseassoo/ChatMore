@@ -113,7 +113,7 @@ const User = ({ username, about, avatar_url, room_id, setActiveModal, last_messa
 					</Flex>
 					<Flex>
 						<Hour>
-							{new Date(created_at!).getHours()}:{new Date(created_at!).getSeconds()}
+							{new Date(created_at!).getHours()}:{new Date(created_at!).getMinutes()}
 						</Hour>
 						{getNotViewedMessages(user_id) > 0 && <Notifications>{getNotViewedMessages(user_id)}</Notifications>}
 					</Flex>
