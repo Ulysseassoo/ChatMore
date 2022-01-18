@@ -73,6 +73,14 @@ const Container = styled.div`
 	scrollbar-width: thin;
 	width: 0px;
 	transition: 0.15s ease-in;
+	@media screen and (max-width: 910px) {
+		position: absolute;
+		height: 100%;
+		width: 100%;
+		inset: 0;
+		z-index: 10;
+		margin-top: 60px;
+	}
 `
 
 const Checkbox = styled.input`
@@ -80,7 +88,7 @@ const Checkbox = styled.input`
 	&:checked + div {
 		width: 400px;
 		@media screen and (max-width: 910px) {
-			width: 800px;
+			left: 100%;
 		}
 	}
 `
