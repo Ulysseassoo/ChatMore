@@ -32,6 +32,11 @@ const ImageContainer = styled.div`
 	justify-content: center;
 	width: 60px;
 	height: 60px;
+	& img {
+		object-fit: cover;
+		height: 100%;
+		width: 100%;
+	}
 `
 
 export default Header

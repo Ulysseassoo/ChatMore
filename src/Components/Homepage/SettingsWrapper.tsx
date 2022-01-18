@@ -346,6 +346,9 @@ const ImageContainer = styled.div`
 	& img {
 		border: 3px solid ${({ theme }) => theme.secondaryColor};
 		border-radius: 50%;
+		height: 100%;
+		width: 100%;
+		object-fit: cover;
 	}
 `
 

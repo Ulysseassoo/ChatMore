@@ -87,6 +87,7 @@ const ImageContainer = styled.div`
 		border-radius: 50%;
 		height: 100%;
 		width: 100%;
+		object-fit: cover;
 	}
 `
 

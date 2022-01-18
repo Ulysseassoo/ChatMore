@@ -69,6 +69,7 @@ const Users = () => {
 	useEffect(() => {
 		// We check when we have the user ID and stock the rooms
 		checkChatRooms()
+		console.log("rerendered")
 	}, [])
 
 	if (hasLoaded) {

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react"
 import { useNavigate } from "react-router"
 import { useAppDispatch, useAppSelector } from "../redux/hooks"
-import { addMessageToRoom, deleteMessageInRoom, EmptyRooms, selectRooms } from "../redux/room/roomSlice"
+import { addMessageToRoom, deleteMessageInRoom, EmptyRooms, selectIsLoading, selectRooms } from "../redux/room/roomSlice"
 import { logout, updateProfile, updateSession } from "../redux/user/userSlice"
 import { supabase } from "../supabaseClient"
 
@@ -13,6 +13,7 @@ const TablesListeners = ({ children }: Props) => {
 	const navigate = useNavigate()
 	const dispatch = useAppDispatch()
 	const chatRooms = useAppSelector(selectRooms)
+	const IsLoading = useAppSelector(selectIsLoading)
 
 	useEffect(() => {
 		// Listening to the database on any insert or update, to update state
@@ -20,7 +21,7 @@ const TablesListeners = ({ children }: Props) => {
 		const mySubscription = supabase
 			.from("message")
 			.on("INSERT", (payload) => {
-				console.log(data)
+				console.log(payload)
 				const roomIndex = chatRooms.find((room) => room.room === parseInt(payload.new.room))?.index
 				if (roomIndex === undefined) return
 				dispatch(addMessageToRoom({ message: [payload.new], room_index: roomIndex! }))
@@ -35,7 +36,7 @@ const TablesListeners = ({ children }: Props) => {
 		return () => {
 			mySubscription.unsubscribe()
 		}
-	}, [chatRooms])
+	}, [IsLoading])
 	return <>{children}</>
 }
 
