@@ -33,6 +33,7 @@ const Container = styled.div`
 	width: 100%;
 	display: flex;
 	height: 100%;
+	position: relative;
 `
 
 export default Homepage
