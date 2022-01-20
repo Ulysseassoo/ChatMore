@@ -7,8 +7,10 @@ import { useParams } from "react-router"
 import { selectUser } from "../../redux/user/userSlice"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import { createMessage } from "../../Services/APIs"
-import { toast } from "react-toastify"
 import { selectRooms, addMessageToRoom } from "../../redux/room/roomSlice"
+import { toast } from "react-toastify"
+import "emoji-mart/css/emoji-mart.css"
+import { Picker } from "emoji-mart"
 
 const SendMessage = () => {
 	const userSelector = useAppSelector(selectUser)
@@ -30,6 +32,8 @@ const SendMessage = () => {
 		register,
 		handleSubmit,
 		reset,
+		getValues,
+		setValue,
 		formState: { errors }
 	} = useForm()
 	const onSubmit = async (data: any) => {
@@ -49,21 +53,52 @@ const SendMessage = () => {
 		}
 	}
 
+	const addEmoji = (e: any) => {
+		let emoji = e.native
+		let text = getValues("content")
+		setValue("content", `${text}${emoji}`)
+	}
+
 	return (
-		<Container onSubmit={handleSubmit(onSubmit)}>
-			<Input type="text" placeholder="Write your message here..." {...register("content", {})} />
-			<Send />
-			<EmojiSmile />
-		</Container>
+		<Wrapper>
+			<Container onSubmit={handleSubmit(onSubmit)}>
+				<Input type="text" placeholder="Write your message here..." {...register("content", {})} />
+				<Send />
+				<Label htmlFor="emojis">
+					<EmojiSmile />
+				</Label>
+			</Container>
+			<Check id="emojis" type="checkbox" />
+			<EmojiContainer>
+				<Picker onSelect={addEmoji} sheetSize={16} title="" />
+			</EmojiContainer>
+		</Wrapper>
 	)
 }
+
+const Wrapper = styled.div`
+	position: relative;
+`
+
+const Label = styled.label`
+	height: 30px;
+	width: 30px;
+	position: absolute;
+	top: 10px;
+	right: 90px;
+	cursor: pointer;
+
+	& svg {
+		color: ${({ theme }) => theme.secondaryColor};
+	}
+`
 
 const Container = styled.form`
 	height: 50px;
 	width: calc(100% - 2rem);
 	margin: 0.5rem;
 	position: relative;
-	& svg {
+	& > svg {
 		position: absolute;
 		top: 10px;
 		right: 90px;
@@ -92,4 +127,18 @@ const Input = styled.input`
 	font-family: "Hind Guntur", sans-serif;
 `
 
+const EmojiContainer = styled.div`
+	position: absolute;
+	top: -420px;
+	right: 5px;
+	z-index: 5;
+	display: none;
+`
+
+const Check = styled.input`
+	display: none;
+	&:checked + ${EmojiContainer} {
+		display: block;
+	}
+`
 export default SendMessage
