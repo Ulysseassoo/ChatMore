@@ -193,6 +193,9 @@ const Sub = styled.span`
 	overflow: hidden;
 	text-overflow: ellipsis;
 	width: 300px;
+	@media screen and (max-width: 500px) {
+		width: 250px;
+	}
 `
 
 const Hour = styled.span`
