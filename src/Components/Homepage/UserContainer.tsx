@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import { addMessageToRoom, selectRooms } from "../../redux/room/roomSlice"
 import { supabase } from "../../supabaseClient"
 import ProfileHeader from "./ProfileHeader"
+import SearchBar from "./SearchBar"
 import Settings from "./Settings"
 import Users from "./Users"
 
@@ -18,6 +19,7 @@ const UserContainer = () => {
 	return (
 		<Container location={pathname}>
 			<ProfileHeader setActiveSettings={setActiveSettings} />
+			<SearchBar />
 			<Users />
 			<Settings activeSettings={activeSettings} setActiveSettings={setActiveSettings} />
 		</Container>
