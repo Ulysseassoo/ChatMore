@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import styled from "styled-components"
 import { EmojiSmile } from "@styled-icons/bootstrap/EmojiSmile"
 import { Send } from "@styled-icons/feather/Send"
@@ -11,6 +11,7 @@ import { selectRooms, addMessageToRoom } from "../../redux/room/roomSlice"
 import { toast } from "react-toastify"
 import "emoji-mart/css/emoji-mart.css"
 import { Picker } from "emoji-mart"
+import { supabase } from "../../supabaseClient"
 
 const SendMessage = () => {
 	const userSelector = useAppSelector(selectUser)

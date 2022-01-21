@@ -21,6 +21,15 @@ type State = {
 	isLoading?: boolean
 }
 
+type Image = {
+	id: number
+	created_at: string
+	message_id: number
+	message_room_id: number
+	message_user_id: string
+	url: string
+}
+
 type User = {
 	id: string
 	username: string
@@ -38,6 +47,7 @@ type Message = {
 	room: number
 	user: string
 	view?: boolean
+	images?: Image[]
 }
 
 const initialState: State = {

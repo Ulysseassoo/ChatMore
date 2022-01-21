@@ -48,7 +48,6 @@ const Authentication = ({ children }: Props) => {
 		const userSession: any = session?.user
 		dispatch(updateSession(userSession))
 		getUserProfile(userSession)
-
 		return () => {
 			listener?.unsubscribe()
 		}

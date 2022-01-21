@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import styled, { css } from "styled-components"
 import { useAppSelector } from "../../redux/hooks"
 import { selectUser } from "../../redux/user/userSlice"
@@ -7,6 +7,7 @@ import { DeleteBin } from "@styled-icons/remix-line/DeleteBin"
 import { deleteMessage } from "../../Services/APIs"
 import { AnimatePresence, motion } from "framer-motion"
 import { toast } from "react-toastify"
+import { supabase } from "../../supabaseClient"
 
 type Props = {
 	id?: number
@@ -15,6 +16,16 @@ type Props = {
 	room: number
 	user: string
 	view?: boolean
+	images: Image[]
+}
+
+type Image = {
+	id: number
+	created_at: string
+	message_id: number
+	message_room_id: number
+	message_user_id: string
+	url: string
 }
 
 type ContainerProps = {
@@ -28,9 +39,10 @@ type IconStyling = {
 	red?: boolean
 }
 
-const Message = ({ content, created_at, user, view, id }: Props) => {
+const Message = ({ content, created_at, user, view, id, images }: Props) => {
 	const userID = useAppSelector(selectUser).id
 	const [activeDropdown, setActiveDropdown] = useState(false)
+	const [imageSrc, setImageSrc] = React.useState("")
 
 	const deleteMessageFromID = async (id: number) => {
 		try {
@@ -43,13 +55,33 @@ const Message = ({ content, created_at, user, view, id }: Props) => {
 	}
 
 	const variants = {
-		visible: { height: "100%", opacity: 100 },
+		visible: { height: "fit-content", opacity: 100 },
 		hidden: { height: 0, opacity: 0 }
+	}
+
+	useEffect(() => {
+		if (images?.length > 0) {
+			getImageSource(images[0].url)
+		}
+	}, [])
+
+	const getImageSource = async (source: string) => {
+		try {
+			const { data, error } = await supabase.storage.from("users-images").download(source)
+			if (error) {
+				throw error
+			}
+			const url = URL.createObjectURL(data!)
+			setImageSrc(url)
+		} catch (error: any) {
+			console.log("Error downloading image: ", error.message)
+		}
 	}
 
 	return (
 		<Container userID={userID} messageUserID={user} view={view!} key={id}>
-			{content}{" "}
+			{images?.length > 0 && <img src={imageSrc} alt="image" />}
+			{content}
 			<Time>
 				{new Date(created_at).getHours()}:{new Date(created_at).getMinutes()}
 			</Time>
@@ -132,6 +164,7 @@ const Dropdown = styled(motion.div)`
 	top: 18px;
 	right: 10px;
 	z-index: 10;
+	padding: 0.2rem;
 	overflow: hidden;
 `
 

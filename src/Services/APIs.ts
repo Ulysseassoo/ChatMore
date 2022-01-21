@@ -30,7 +30,8 @@ export const getRoom = async (room_id: string) => {
 
 export const getRoomMessages = async (room_id: string) => {
 	try {
-		const { data, error } = await supabase.from("message").select("*").eq("room", room_id).order("created_at", { ascending: false })
+		const { data, error } = await supabase.from("message").select("*, images!left(*)").eq("room", room_id).order("created_at", { ascending: false })
+		console.log(data)
 		if (error) throw error
 		return data
 	} catch (error) {

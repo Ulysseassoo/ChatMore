@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css"
 import { supabase } from "./supabaseClient"
 import Authentication from "./Helpers/Authentication"
 import TablesListeners from "./Helpers/TablesListeners"
+import Rooms from "./Components/Homepage/Rooms"
 
 const App: React.FC = () => {
 	const location = useLocation()
@@ -22,19 +23,21 @@ const App: React.FC = () => {
 	return (
 		<ThemeProvider theme={lightTheme}>
 			<Authentication>
-				<TablesListeners>
-					<GlobalStyles />
-					<ToastContainer />
-					<AnimatePresence exitBeforeEnter initial={false}>
-						{/* In order that the animations knows that we changed pages */}
-						<Routes location={location} key={location.pathname}>
-							<Route path="/" element={<Homepage />} />
-							<Route path="/:id" element={<Homepage />} />
-							<Route path="/login" element={<Login />} />
-							<Route path="/register" element={<Register />} />
-						</Routes>
-					</AnimatePresence>
-				</TablesListeners>
+				<Rooms>
+					<TablesListeners>
+						<GlobalStyles />
+						<ToastContainer />
+						<AnimatePresence exitBeforeEnter initial={false}>
+							{/* In order that the animations knows that we changed pages */}
+							<Routes location={location} key={location.pathname}>
+								<Route path="/" element={<Homepage />} />
+								<Route path="/:id" element={<Homepage />} />
+								<Route path="/login" element={<Login />} />
+								<Route path="/register" element={<Register />} />
+							</Routes>
+						</AnimatePresence>
+					</TablesListeners>
+				</Rooms>
 			</Authentication>
 		</ThemeProvider>
 	)

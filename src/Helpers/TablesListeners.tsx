@@ -17,7 +17,6 @@ const TablesListeners = ({ children }: Props) => {
 
 	useEffect(() => {
 		// Listening to the database on any insert or update, to update state
-		const data = "haha"
 		const mySubscription = supabase
 			.from("message")
 			.on("INSERT", (payload) => {
@@ -32,7 +31,6 @@ const TablesListeners = ({ children }: Props) => {
 				dispatch(deleteMessageInRoom({ message: payload.old, room_index: roomIndex! }))
 			})
 			.subscribe()
-		console.log("haha")
 		return () => {
 			mySubscription.unsubscribe()
 		}

@@ -24,8 +24,10 @@ type Props = {
 	room_id: number
 	last_message?: string
 	chat?: boolean
+	view: boolean
 	setActiveModal?: React.Dispatch<React.SetStateAction<boolean>>
 	created_at?: Date
+	message_user_id: string
 }
 
 type Message = {
@@ -49,7 +51,11 @@ type RoomState = {
 	index?: number
 }
 
-const User = ({ username, about, avatar_url, room_id, setActiveModal, last_message, chat, created_at }: Props) => {
+type SpanProps = {
+	view: boolean
+}
+
+const User = ({ username, about, avatar_url, room_id, setActiveModal, last_message, chat, created_at, view, message_user_id }: Props) => {
 	const navigate = useNavigate()
 	const params = useParams()
 	const dispatch = useAppDispatch()
@@ -109,7 +115,9 @@ const User = ({ username, about, avatar_url, room_id, setActiveModal, last_messa
 				<UserInformations>
 					<Flex>
 						<Username>{username}</Username>
-						<Sub>{last_message}</Sub>
+						<Sub>
+							{last_message} - {user_id === message_user_id && <Span view={view}>{view ? "Seen" : "Sent"}</Span>}
+						</Sub>
 					</Flex>
 					<Flex>
 						<Hour>
@@ -196,6 +204,10 @@ const Sub = styled.span`
 	@media screen and (max-width: 500px) {
 		width: 250px;
 	}
+`
+
+const Span = styled.span<SpanProps>`
+	color: white;
 `
 
 const Hour = styled.span`
