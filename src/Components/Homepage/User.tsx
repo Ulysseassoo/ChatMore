@@ -24,10 +24,10 @@ type Props = {
 	room_id: number
 	last_message?: string
 	chat?: boolean
-	view: boolean
+	view?: boolean
 	setActiveModal?: React.Dispatch<React.SetStateAction<boolean>>
 	created_at?: Date
-	message_user_id: string
+	message_user_id?: string
 }
 
 type Message = {
@@ -116,7 +116,7 @@ const User = ({ username, about, avatar_url, room_id, setActiveModal, last_messa
 					<Flex>
 						<Username>{username}</Username>
 						<Sub>
-							{last_message} - {user_id === message_user_id && <Span view={view}>{view ? "Seen" : "Sent"}</Span>}
+							{last_message} - {user_id === message_user_id && <Span view={view!}>{view ? "Seen" : "Sent"}</Span>}
 						</Sub>
 					</Flex>
 					<Flex>

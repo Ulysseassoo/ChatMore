@@ -35,6 +35,7 @@ type RoomInnerJoinData = {
 
 const Rooms = ({ children }: Props) => {
 	const sessionSelector = useAppSelector(selectSession)
+	const chatRooms = useAppSelector(selectRooms)
 	const dispatch = useAppDispatch()
 
 	// Arrange chat rooms in a more convenient way in order to have the room id, the messages and the users in that room
@@ -68,7 +69,6 @@ const Rooms = ({ children }: Props) => {
 	useEffect(() => {
 		// We check when we have the user ID and stock the rooms
 		checkChatRooms()
-		console.log("rerendered")
 	}, [])
 	return <>{children}</>
 }
