@@ -16,10 +16,10 @@ type Props = {
 	room: number
 	user: string
 	view?: boolean
-	images: Image[]
+	images: ImageToUse[]
 }
 
-type Image = {
+type ImageToUse = {
 	id: number
 	created_at: string
 	message_id: number
