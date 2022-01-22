@@ -80,7 +80,6 @@ const Authentication = ({ children }: Props) => {
 			switch (event) {
 				case "SIGNED_IN":
 					// Update the user data if user connects is active
-					getUserProfile(session?.user)
 					checkChatRooms(session?.user)
 				case "SIGNED_OUT":
 					dispatch(logout())
@@ -90,6 +89,7 @@ const Authentication = ({ children }: Props) => {
 				case "TOKEN_REFRESHED":
 					const userSession: any = session?.user
 					dispatch(updateSession(userSession))
+					getUserProfile(session?.user)
 				default:
 					break
 			}
@@ -100,6 +100,9 @@ const Authentication = ({ children }: Props) => {
 			navigate("/login")
 			return
 		}
+		getUserProfile(session?.user)
+		checkChatRooms(session?.user)
+
 		return () => {
 			listener?.unsubscribe()
 		}

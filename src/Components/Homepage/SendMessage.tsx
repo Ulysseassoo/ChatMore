@@ -27,6 +27,16 @@ const SendMessage = () => {
 		room: number
 		user: string
 		view?: boolean
+		images?: ImageToUse[]
+	}
+
+	type ImageToUse = {
+		id: number
+		created_at: string
+		message_id: number
+		message_room_id: number
+		message_user_id: string
+		url: string
 	}
 
 	const {

@@ -6,6 +6,16 @@ type Message = {
 	content: string
 	room: number
 	user: string
+	images?: ImageToUse[]
+}
+
+type ImageToUse = {
+	id: number
+	created_at: string
+	message_id: number
+	message_room_id: number
+	message_user_id: string
+	url: string
 }
 
 export const getUserRooms = async (user_id: string) => {
