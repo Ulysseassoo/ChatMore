@@ -119,7 +119,7 @@ const Message = ({ content, created_at, user, view, id, images }: Props) => {
 
 const Time = styled.span`
 	color: ${({ theme }) => theme.secondaryColor};
-	font-size: 0.6rem;
+	font-size: 0.7rem;
 	margin-left: 1.4rem;
 	display: inline-block;
 `

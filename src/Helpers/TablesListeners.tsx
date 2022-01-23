@@ -1,7 +1,15 @@
 import React, { useEffect } from "react"
 import { useNavigate } from "react-router"
 import { useAppDispatch, useAppSelector } from "../redux/hooks"
-import { addMessageToRoom, deleteMessageInRoom, EmptyRooms, selectIsLoading, selectRooms, updateViewMessage } from "../redux/room/roomSlice"
+import {
+	addMessageToRoom,
+	deleteMessageInRoom,
+	EmptyRooms,
+	selectIsLoading,
+	selectRooms,
+	updateImageMessage,
+	updateViewMessage
+} from "../redux/room/roomSlice"
 import { logout, updateProfile, updateSession } from "../redux/user/userSlice"
 import { supabase } from "../supabaseClient"
 
@@ -26,8 +34,16 @@ const TablesListeners = ({ children }: Props) => {
 				dispatch(deleteMessageInRoom({ message: payload.old, room_index: parseInt(payload.old.room) }))
 			})
 			.subscribe()
+
+		const imagesSubscription = supabase
+			.from("images")
+			.on("INSERT", (payload) => {
+				dispatch(updateImageMessage({ image: payload.new }))
+			})
+			.subscribe()
 		return () => {
 			mySubscription.unsubscribe()
+			imagesSubscription.unsubscribe()
 		}
 	}, [])
 	return <>{children}</>

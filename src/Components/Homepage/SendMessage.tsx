@@ -92,8 +92,6 @@ const SendMessage = () => {
 			}
 			if (message[0].id) {
 				const image = await createImageMessage(newImage)
-				dispatch(updateImageMessage({ image }))
-				console.log(image)
 			}
 			resetImage()
 		} catch (error: any) {

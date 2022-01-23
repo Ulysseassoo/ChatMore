@@ -7,7 +7,7 @@ type AddMessage = {
 }
 
 type AddImage = {
-	image: ImageToUse[]
+	image: ImageToUse
 }
 
 type DeleteMessage = {
@@ -106,10 +106,10 @@ export const roomSlice = createSlice({
 		updateImageMessage: (state, action: PayloadAction<AddImage>) => {
 			const { image } = action.payload
 			const data = [...state.rooms]
-			const room = data.findIndex((room) => room.room === image[0].message_room_id)
-			const messageIndex = data[room].messages.findIndex((element) => element.id === image[0].message_id)
+			const room = data.findIndex((room) => room.room === image.message_room_id)
+			const messageIndex = data[room].messages.findIndex((element) => element.id === image.message_id)
 			data[room].messages[messageIndex].images = []
-			data[room].messages[messageIndex].images?.push(image[0])
+			data[room].messages[messageIndex].images?.push(image)
 			return void {
 				...state,
 				rooms: data

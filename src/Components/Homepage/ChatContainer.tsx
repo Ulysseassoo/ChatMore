@@ -47,14 +47,7 @@ const ChatContainer = () => {
 	if (params?.id && !isLoading) {
 		const { id } = params
 		return (
-			<Container
-				id={id}
-				location={pathname}
-				animate="hidden"
-				transition={{ duration: 0.2 }}
-				variants={containerAnimation}
-				key={pathname}
-				exit="hidden">
+			<Container id={id} location={pathname} key={pathname}>
 				<ChatHeader avatar_url={findRoom(parseInt(id)).users[0].avatar_url} username={findRoom(parseInt(id)).users[0].username} />
 				<Chat />
 				<SendMessage />
@@ -72,7 +65,7 @@ const ChatContainer = () => {
 	)
 }
 
-const Container = styled(motion.div)<ContainerProps>`
+const Container = styled.div<ContainerProps>`
 	flex: 1;
 	background-color: ${({ theme }) => theme.headerMenuColor};
 	transition: 0.5s ease-in;
