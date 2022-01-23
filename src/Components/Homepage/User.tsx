@@ -28,6 +28,7 @@ type Props = {
 	setActiveModal?: React.Dispatch<React.SetStateAction<boolean>>
 	created_at?: Date
 	message_user_id?: string
+	images?: ImageToUse[]
 }
 
 type Message = {
@@ -65,7 +66,7 @@ type SpanProps = {
 	view: boolean
 }
 
-const User = ({ username, about, avatar_url, room_id, setActiveModal, last_message, chat, created_at, view, message_user_id }: Props) => {
+const User = ({ username, about, avatar_url, room_id, setActiveModal, last_message, chat, created_at, view, message_user_id, images }: Props) => {
 	const navigate = useNavigate()
 	const params = useParams()
 	const dispatch = useAppDispatch()
@@ -132,6 +133,7 @@ const User = ({ username, about, avatar_url, room_id, setActiveModal, last_messa
 						<Username>{username}</Username>
 						<Sub>
 							{last_message}
+							{images?.length! > 0 && <>Image</>}
 							{user_id === message_user_id && <Span view={view!}>{view ? " - Seen" : " - Sent"}</Span>}
 						</Sub>
 					</Flex>

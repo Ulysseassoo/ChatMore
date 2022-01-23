@@ -24,6 +24,7 @@ const Users = () => {
 							view={room.messages[0].view!}
 							message_user_id={room.messages[0].user}
 							last_message={room.messages[0].content}
+							images={room.messages[0].images}
 							chat
 						/>
 					)
