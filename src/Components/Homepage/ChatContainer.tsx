@@ -39,11 +39,6 @@ const ChatContainer = () => {
 		return selectedRoom
 	}
 
-	const containerAnimation = {
-		visible: { x: "100%" },
-		hidden: { x: 0 }
-	}
-
 	if (params?.id && !isLoading) {
 		const { id } = params
 		return (

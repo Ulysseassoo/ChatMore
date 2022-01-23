@@ -2,13 +2,14 @@ import React from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import styled from "styled-components"
-import { useAppSelector } from "../../redux/hooks"
+import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import { selectUser } from "../../redux/user/userSlice"
 import { supabase } from "../../supabaseClient"
 import { ArrowBack } from "@styled-icons/boxicons-regular/ArrowBack"
 import { motion } from "framer-motion"
-import { selectRooms } from "../../redux/room/roomSlice"
+import { createRoom, selectRooms } from "../../redux/room/roomSlice"
 import User from "./User"
+import { useNavigate } from "react-router"
 
 type Props = {
 	setActiveModal: React.Dispatch<React.SetStateAction<boolean>>
@@ -18,9 +19,37 @@ type FormData = {
 	username: string
 }
 
+type RoomState = {
+	room: number
+	users: User[]
+	messages: Message[]
+	index?: number
+}
+
+type Message = {
+	id?: number
+	created_at: Date
+	content: string
+	room: number
+	user: string
+	view?: boolean
+	images?: ImageToUse[]
+}
+
+type ImageToUse = {
+	id?: number
+	created_at: Date
+	message_id: number
+	message_room_id: number
+	message_user_id: string
+	url: string
+}
+
 const Modal = ({ setActiveModal }: Props) => {
 	const userSelector = useAppSelector(selectUser)
 	const roomsSelector = useAppSelector(selectRooms)
+	const dispatch = useAppDispatch()
+	const navigate = useNavigate()
 	const checkIfUserHasRoom = (newUserId: string) => {
 		const check = roomsSelector.filter((room) => room.users[0].id === newUserId)
 		if (check.length === 0) return true
@@ -34,7 +63,7 @@ const Modal = ({ setActiveModal }: Props) => {
 	const onSubmit = async (data: FormData) => {
 		try {
 			// Get ID of User to add
-			const { data: userData, error }: { data: any; error: any } = await supabase.from("profiles").select("id").eq("username", data.username)
+			const { data: userData, error }: { data: any; error: any } = await supabase.from("profiles").select("*").eq("username", data.username)
 			if (error) throw Error
 			const { id: userId } = userData[0]
 			// We need to check if that user doesn't already have a relation with the existing user
@@ -56,6 +85,14 @@ const Modal = ({ setActiveModal }: Props) => {
 				.insert({ room: roomId, user: userSelector.id })
 			if (userRoomError) throw Error
 			toast.success(`You can now chat with ${data.username}`)
+			const newRoom: RoomState = {
+				room: roomId,
+				users: [],
+				messages: []
+			}
+			newRoom.users.push(userData[0])
+			dispatch(createRoom(newRoom))
+			navigate(`/${roomId}`)
 			setActiveModal(false)
 		} catch (error: any) {
 			toast.error(error.error_description || error.message)

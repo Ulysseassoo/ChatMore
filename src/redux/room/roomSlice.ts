@@ -66,6 +66,9 @@ export const roomSlice = createSlice({
 		fetchUserRooms: (state, action: PayloadAction<State>) => {
 			return { ...state, ...action.payload, isLoading: false }
 		},
+		createRoom: (state, action: PayloadAction<RoomState>) => {
+			return { ...state, rooms: [...state.rooms, action.payload], isLoading: false }
+		},
 		updateRoomMessage: (state, action: PayloadAction<RoomState>) => {
 			const { index } = action.payload
 			const data = [...state.rooms]
@@ -143,7 +146,8 @@ export const {
 	deleteMessageInRoom,
 	updateViewMessage,
 	updateImageMessage,
-	EmptyRooms
+	EmptyRooms,
+	createRoom
 } = roomSlice.actions
 
 export const selectRooms = (state: RootState) => state.chatrooms.rooms
