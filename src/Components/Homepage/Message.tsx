@@ -20,8 +20,8 @@ type Props = {
 }
 
 type ImageToUse = {
-	id: number
-	created_at: string
+	id?: number
+	created_at: Date
 	message_id: number
 	message_room_id: number
 	message_user_id: string
@@ -32,6 +32,7 @@ type ContainerProps = {
 	userID: string
 	messageUserID: string
 	view: boolean
+	images?: ImageToUse[]
 }
 
 type IconStyling = {
@@ -59,11 +60,16 @@ const Message = ({ content, created_at, user, view, id, images }: Props) => {
 		hidden: { height: 0, opacity: 0 }
 	}
 
+	const animationMessage = {
+		visible: { y: 0, opacity: 100 },
+		hidden: { y: 50, opacity: 0 }
+	}
+
 	useEffect(() => {
 		if (images?.length > 0) {
 			getImageSource(images[0].url)
 		}
-	}, [])
+	}, [images])
 
 	const getImageSource = async (source: string) => {
 		try {
@@ -79,27 +85,46 @@ const Message = ({ content, created_at, user, view, id, images }: Props) => {
 	}
 
 	return (
-		<Container userID={userID} messageUserID={user} view={view!} key={id}>
-			{images?.length > 0 && <img src={imageSrc} alt="image" />}
-			{content}
-			<Time>
-				{new Date(created_at).getHours()}:{new Date(created_at).getMinutes()}
-			</Time>
-			{userID === user && <ArrowIosDownward onClick={() => setActiveDropdown((prev) => !prev)} />}
-			<AnimatePresence>
-				{activeDropdown && (
-					<Dropdown animate="visible" initial="hidden" transition={{ ease: "easeOut", duration: 0.2 }} variants={variants} exit="hidden">
-						<Item red onClick={() => deleteMessageFromID(id!)}>
-							<DeleteBin /> Delete
-						</Item>
-					</Dropdown>
-				)}
-			</AnimatePresence>
-		</Container>
+		<AnimatePresence>
+			<Container
+				userID={userID}
+				messageUserID={user}
+				view={view!}
+				images={images}
+				key={id}
+				animate="visible"
+				initial="hidden"
+				transition={{ ease: "easeOut", duration: 0.3 }}
+				variants={animationMessage}
+				exit="hidden">
+				{images?.length > 0 && <img src={imageSrc} alt="image" />}
+				{content}
+				<Time>
+					{new Date(created_at).getHours()}:{new Date(created_at).getMinutes()}
+				</Time>
+				{userID === user && <ArrowIosDownward onClick={() => setActiveDropdown((prev) => !prev)} />}
+				<AnimatePresence>
+					{activeDropdown && (
+						<Dropdown animate="visible" initial="hidden" transition={{ ease: "easeOut", duration: 0.2 }} variants={variants} exit="hidden">
+							<Item red onClick={() => deleteMessageFromID(id!)}>
+								<DeleteBin /> Delete
+							</Item>
+						</Dropdown>
+					)}
+				</AnimatePresence>
+			</Container>
+		</AnimatePresence>
 	)
 }
 
-const Container = styled.div<ContainerProps>`
+const Time = styled.span`
+	color: ${({ theme }) => theme.secondaryColor};
+	font-size: 0.6rem;
+	margin-left: 1.4rem;
+	display: inline-block;
+`
+
+const Container = styled(motion.div)<ContainerProps>`
 	width: fit-content;
 	background-color: ${({ userID, messageUserID, theme }) => (userID !== messageUserID ? theme.headerMenuColor : theme.accentColor)};
 	color: ${({ theme }) => theme.white};
@@ -109,6 +134,17 @@ const Container = styled.div<ContainerProps>`
 	border-radius: 10px;
 	position: relative;
 	z-index: 2;
+	${({ images }) =>
+		images?.length! > 0 &&
+		css`
+			display: flex;
+			flex-direction: column;
+			align-items: right;
+			gap: 0.5rem;
+			& ${Time} {
+				text-align: right;
+			}
+		`}
 	&:hover:before {
 		opacity: 100;
 		bottom: -20px;
@@ -141,13 +177,6 @@ const Container = styled.div<ContainerProps>`
 		cursor: pointer;
 		background-color: ${({ theme }) => theme.accentColor};
 	}
-`
-
-const Time = styled.span`
-	color: ${({ theme }) => theme.secondaryColor};
-	font-size: 0.6rem;
-	margin-left: 1.4rem;
-	display: inline-block;
 `
 
 const Dropdown = styled(motion.div)`

@@ -34,7 +34,7 @@ const Container = styled.div<ContainerProps>`
 	flex-direction: column;
 	position: relative;
 	@media screen and (max-width: 910px) {
-		display: ${({ location }) => (location !== "/" ? "none" : "flex")};
+		/* display: ${({ location }) => (location !== "/" ? "none" : "flex")}; */
 		width: 100%;
 	}
 `

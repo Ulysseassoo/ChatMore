@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { AnimatePresence, motion } from "framer-motion"
 import { useLocation, useParams } from "react-router"
 import styled, { css } from "styled-components"
 import Image from "../../assets/ChatImage.png"
@@ -39,10 +39,22 @@ const ChatContainer = () => {
 		return selectedRoom
 	}
 
+	const containerAnimation = {
+		visible: { x: "100%" },
+		hidden: { x: 0 }
+	}
+
 	if (params?.id && !isLoading) {
 		const { id } = params
 		return (
-			<Container id={id} location={pathname}>
+			<Container
+				id={id}
+				location={pathname}
+				animate="hidden"
+				transition={{ duration: 0.2 }}
+				variants={containerAnimation}
+				key={pathname}
+				exit="hidden">
 				<ChatHeader avatar_url={findRoom(parseInt(id)).users[0].avatar_url} username={findRoom(parseInt(id)).users[0].username} />
 				<Chat />
 				<SendMessage />
@@ -60,10 +72,10 @@ const ChatContainer = () => {
 	)
 }
 
-const Container = styled.div<ContainerProps>`
+const Container = styled(motion.div)<ContainerProps>`
 	flex: 1;
 	background-color: ${({ theme }) => theme.headerMenuColor};
-	transition: 0.15s ease-in;
+	transition: 0.5s ease-in;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -77,7 +89,10 @@ const Container = styled.div<ContainerProps>`
 			align-items: initial;
 		`}
 	@media screen and (max-width: 910px) {
-		display: ${({ location }) => (location === "/" ? "none" : "flex")};
+		position: absolute;
+		height: 100%;
+		width: 100%;
+		left: ${({ location }) => (location === "/" ? "100%" : 0)};
 		flex-direction: column;
 	}
 `

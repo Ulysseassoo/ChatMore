@@ -6,12 +6,13 @@ import { useForm } from "react-hook-form"
 import { useParams } from "react-router"
 import { selectUser } from "../../redux/user/userSlice"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
-import { createMessage } from "../../Services/APIs"
-import { selectRooms, addMessageToRoom } from "../../redux/room/roomSlice"
+import { createImageMessage, createMessage } from "../../Services/APIs"
+import { selectRooms, addMessageToRoom, updateImageMessage } from "../../redux/room/roomSlice"
 import { toast } from "react-toastify"
 import "emoji-mart/css/emoji-mart.css"
 import { Picker } from "emoji-mart"
 import { supabase } from "../../supabaseClient"
+import { Image } from "@styled-icons/bootstrap/Image"
 
 const SendMessage = () => {
 	const userSelector = useAppSelector(selectUser)
@@ -31,8 +32,8 @@ const SendMessage = () => {
 	}
 
 	type ImageToUse = {
-		id: number
-		created_at: string
+		id?: number
+		created_at: Date
 		message_id: number
 		message_room_id: number
 		message_user_id: string
@@ -47,6 +48,7 @@ const SendMessage = () => {
 		setValue,
 		formState: { errors }
 	} = useForm()
+	const { register: registerImage, handleSubmit: handleSubmitImage, reset: resetImage } = useForm()
 	const onSubmit = async (data: any) => {
 		const { content } = data
 		const IntId = parseInt(id!)
@@ -64,6 +66,41 @@ const SendMessage = () => {
 		}
 	}
 
+	const onSubmitImage = async (data: any) => {
+		const { image } = data
+		const file = image[0]
+		const fileExt = file.name.split(".").pop()
+		const fileName = `${Math.random()}.${fileExt}`
+		const filePath = `${fileName}`
+		const IntId = parseInt(id!)
+		const newMessage: Message = {
+			created_at: new Date(),
+			content: "",
+			room: IntId,
+			user: userSelector.id
+		}
+		try {
+			let { error: uploadError, data: imageData } = await supabase.storage.from("users-images").upload(filePath, file)
+			if (uploadError) throw uploadError
+			const message: Message[] = await createMessage(newMessage)
+			const newImage: ImageToUse = {
+				created_at: new Date(),
+				message_id: message[0].id!,
+				message_room_id: IntId,
+				message_user_id: userSelector.id,
+				url: imageData?.Key.split("/")[1]!
+			}
+			if (message[0].id) {
+				const image = await createImageMessage(newImage)
+				dispatch(updateImageMessage({ image }))
+				console.log(image)
+			}
+			resetImage()
+		} catch (error: any) {
+			toast.error(error.error_description || error.message)
+		}
+	}
+
 	const addEmoji = (e: any) => {
 		let emoji = e.native
 		let text = getValues("content")
@@ -72,6 +109,10 @@ const SendMessage = () => {
 
 	return (
 		<Wrapper>
+			<Form onChange={handleSubmitImage(onSubmitImage)}>
+				<Input type="file" {...registerImage("image", {})} />
+				<Image />
+			</Form>
 			<Container onSubmit={handleSubmit(onSubmit)}>
 				<Input type="text" placeholder="Write your message here..." {...register("content", {})} />
 				<Send />
@@ -89,6 +130,32 @@ const SendMessage = () => {
 
 const Wrapper = styled.div`
 	position: relative;
+	display: flex;
+	align-items: center;
+	padding: 0 1rem;
+	gap: 1rem;
+`
+
+const Form = styled.form`
+	height: 100%;
+	width: 50px;
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	& > svg {
+		height: 30px;
+		width: 30px;
+		color: ${({ theme }) => theme.secondaryColor};
+	}
+	& input {
+		opacity: 0;
+		position: absolute;
+		inset: 0;
+		cursor: pointer;
+		width: 100%;
+		height: 100%;
+	}
 `
 
 const Label = styled.label`

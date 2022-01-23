@@ -41,8 +41,8 @@ type Message = {
 }
 
 type ImageToUse = {
-	id: number
-	created_at: string
+	id?: number
+	created_at: Date
 	message_id: number
 	message_room_id: number
 	message_user_id: string
@@ -108,7 +108,6 @@ const User = ({ username, about, avatar_url, room_id, setActiveModal, last_messa
 			if (count.length === 0) return
 			try {
 				const messages: Message[] = await updateRoomMessages(noImages)
-				console.log(messages)
 				room!.messages = messages
 				room.index = 1
 				dispatch(updateRoomMessage(room))

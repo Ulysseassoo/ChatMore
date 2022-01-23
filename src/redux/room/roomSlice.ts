@@ -6,6 +6,10 @@ type AddMessage = {
 	message: Message[]
 }
 
+type AddImage = {
+	image: ImageToUse[]
+}
+
 type DeleteMessage = {
 	room_index: number
 	message: Message
@@ -22,8 +26,8 @@ type State = {
 }
 
 type ImageToUse = {
-	id: number
-	created_at: string
+	id?: number
+	created_at: Date
 	message_id: number
 	message_room_id: number
 	message_user_id: string
@@ -99,6 +103,18 @@ export const roomSlice = createSlice({
 				rooms: data
 			}
 		},
+		updateImageMessage: (state, action: PayloadAction<AddImage>) => {
+			const { image } = action.payload
+			const data = [...state.rooms]
+			const room = data.findIndex((room) => room.room === image[0].message_room_id)
+			const messageIndex = data[room].messages.findIndex((element) => element.id === image[0].message_id)
+			data[room].messages[messageIndex].images = []
+			data[room].messages[messageIndex].images?.push(image[0])
+			return void {
+				...state,
+				rooms: data
+			}
+		},
 		deleteMessageInRoom: (state, action: PayloadAction<DeleteMessage>) => {
 			const { room_index, message } = action.payload
 			const data = [...state.rooms]
@@ -119,7 +135,16 @@ export const roomSlice = createSlice({
 	}
 })
 
-export const { fetchUserRooms, Loading, updateRoomMessage, addMessageToRoom, deleteMessageInRoom, updateViewMessage, EmptyRooms } = roomSlice.actions
+export const {
+	fetchUserRooms,
+	Loading,
+	updateRoomMessage,
+	addMessageToRoom,
+	deleteMessageInRoom,
+	updateViewMessage,
+	updateImageMessage,
+	EmptyRooms
+} = roomSlice.actions
 
 export const selectRooms = (state: RootState) => state.chatrooms.rooms
 export const selectIsLoading = (state: RootState) => state.chatrooms.isLoading

@@ -20,7 +20,6 @@ const TablesListeners = ({ children }: Props) => {
 				dispatch(addMessageToRoom({ message: [payload.new], room_index: parseInt(payload.new.room) }))
 			})
 			.on("UPDATE", (payload) => {
-				console.log(payload)
 				dispatch(updateViewMessage({ message: [payload.new], room_index: parseInt(payload.new.room) }))
 			})
 			.on("DELETE", (payload) => {
