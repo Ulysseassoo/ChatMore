@@ -21,7 +21,11 @@ type FormData = {
 const Modal = ({ setActiveModal }: Props) => {
 	const userSelector = useAppSelector(selectUser)
 	const roomsSelector = useAppSelector(selectRooms)
-
+	const checkIfUserHasRoom = (newUserId: string) => {
+		const check = roomsSelector.filter((room) => room.users[0].id === newUserId)
+		if (check.length === 0) return true
+		return false
+	}
 	const {
 		register,
 		handleSubmit,
@@ -34,6 +38,10 @@ const Modal = ({ setActiveModal }: Props) => {
 			if (error) throw Error
 			const { id: userId } = userData[0]
 			// We need to check if that user doesn't already have a relation with the existing user
+			if (!checkIfUserHasRoom(userId)) {
+				toast.error("You already have a conversation with that user !")
+				return
+			}
 			// Create a room
 			const { data: roomData, error: roomError }: { data: any; error: any } = await supabase.from("room").insert({ created_at: new Date() })
 			if (roomError) throw Error

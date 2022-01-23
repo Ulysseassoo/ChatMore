@@ -17,8 +17,6 @@ import TablesListeners from "./Helpers/TablesListeners"
 const App: React.FC = () => {
 	const location = useLocation()
 
-	// const [session, setSession] = useState(null)
-
 	return (
 		<ThemeProvider theme={lightTheme}>
 			<Authentication>

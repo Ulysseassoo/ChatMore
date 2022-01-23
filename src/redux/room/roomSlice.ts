@@ -6,6 +6,10 @@ type AddMessage = {
 	message: Message[]
 }
 
+type AddImage = {
+	image: ImageToUse
+}
+
 type DeleteMessage = {
 	room_index: number
 	message: Message
@@ -19,6 +23,15 @@ type RoomState = {
 type State = {
 	rooms: RoomState[]
 	isLoading?: boolean
+}
+
+type ImageToUse = {
+	id?: number
+	created_at: Date
+	message_id: number
+	message_room_id: number
+	message_user_id: string
+	url: string
 }
 
 type User = {
@@ -38,6 +51,7 @@ type Message = {
 	room: number
 	user: string
 	view?: boolean
+	images?: ImageToUse[]
 }
 
 const initialState: State = {
@@ -56,7 +70,9 @@ export const roomSlice = createSlice({
 			const { index } = action.payload
 			const data = [...state.rooms]
 			const viewedMessages = data[index!].messages.map((element) => {
-				element.view = true
+				if (element.view === false) {
+					element.view = true
+				}
 				return element
 			})
 			data[index!] = { ...state.rooms[index!], messages: viewedMessages }
@@ -69,8 +85,32 @@ export const roomSlice = createSlice({
 		addMessageToRoom: (state, action: PayloadAction<AddMessage>) => {
 			const { room_index, message } = action.payload
 			const data = [...state.rooms]
-			data[room_index!] = { ...state.rooms[room_index!], messages: [...message, ...state.rooms[room_index!].messages] }
+			const room = data.findIndex((room) => room.room === room_index)
+			data[room] = { ...state.rooms[room!], messages: [...message, ...state.rooms[room!].messages] }
 			return {
+				...state,
+				rooms: data
+			}
+		},
+		updateViewMessage: (state, action: PayloadAction<AddMessage>) => {
+			const { room_index, message } = action.payload
+			const data = [...state.rooms]
+			const room = data.findIndex((room) => room.room === room_index)
+			const messageIndex = data[room].messages.findIndex((element) => element.id === message[0].id)
+			data[room].messages[messageIndex].view = true
+			return void {
+				...state,
+				rooms: data
+			}
+		},
+		updateImageMessage: (state, action: PayloadAction<AddImage>) => {
+			const { image } = action.payload
+			const data = [...state.rooms]
+			const room = data.findIndex((room) => room.room === image.message_room_id)
+			const messageIndex = data[room].messages.findIndex((element) => element.id === image.message_id)
+			data[room].messages[messageIndex].images = []
+			data[room].messages[messageIndex].images?.push(image)
+			return void {
 				...state,
 				rooms: data
 			}
@@ -78,8 +118,9 @@ export const roomSlice = createSlice({
 		deleteMessageInRoom: (state, action: PayloadAction<DeleteMessage>) => {
 			const { room_index, message } = action.payload
 			const data = [...state.rooms]
-			const filteredMessages = data[room_index!].messages.filter((element) => element.id !== message.id)
-			data[room_index!] = { ...state.rooms[room_index!], messages: filteredMessages }
+			const room = data.findIndex((room) => room.room === room_index)
+			const filteredMessages = data[room!].messages.filter((element) => element.id !== message.id)
+			data[room!] = { ...state.rooms[room!], messages: filteredMessages }
 			return {
 				...state,
 				rooms: data
@@ -94,7 +135,16 @@ export const roomSlice = createSlice({
 	}
 })
 
-export const { fetchUserRooms, Loading, updateRoomMessage, addMessageToRoom, deleteMessageInRoom, EmptyRooms } = roomSlice.actions
+export const {
+	fetchUserRooms,
+	Loading,
+	updateRoomMessage,
+	addMessageToRoom,
+	deleteMessageInRoom,
+	updateViewMessage,
+	updateImageMessage,
+	EmptyRooms
+} = roomSlice.actions
 
 export const selectRooms = (state: RootState) => state.chatrooms.rooms
 export const selectIsLoading = (state: RootState) => state.chatrooms.isLoading

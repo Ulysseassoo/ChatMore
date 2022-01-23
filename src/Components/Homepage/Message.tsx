@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import styled, { css } from "styled-components"
 import { useAppSelector } from "../../redux/hooks"
 import { selectUser } from "../../redux/user/userSlice"
@@ -7,6 +7,7 @@ import { DeleteBin } from "@styled-icons/remix-line/DeleteBin"
 import { deleteMessage } from "../../Services/APIs"
 import { AnimatePresence, motion } from "framer-motion"
 import { toast } from "react-toastify"
+import { supabase } from "../../supabaseClient"
 
 type Props = {
 	id?: number
@@ -15,12 +16,23 @@ type Props = {
 	room: number
 	user: string
 	view?: boolean
+	images: ImageToUse[]
+}
+
+type ImageToUse = {
+	id?: number
+	created_at: Date
+	message_id: number
+	message_room_id: number
+	message_user_id: string
+	url: string
 }
 
 type ContainerProps = {
 	userID: string
 	messageUserID: string
 	view: boolean
+	images?: ImageToUse[]
 }
 
 type IconStyling = {
@@ -28,12 +40,14 @@ type IconStyling = {
 	red?: boolean
 }
 
-const Message = ({ content, created_at, user, view, id }: Props) => {
+const Message = ({ content, created_at, user, view, id, images }: Props) => {
 	const userID = useAppSelector(selectUser).id
 	const [activeDropdown, setActiveDropdown] = useState(false)
+	const [imageSrc, setImageSrc] = React.useState("")
 
 	const deleteMessageFromID = async (id: number) => {
 		try {
+			if (images.length > 0) throw new Error("You can't delete an image sent")
 			const data = await deleteMessage(id)
 			toast.success("Message deleted !")
 			setActiveDropdown(false)
@@ -43,31 +57,75 @@ const Message = ({ content, created_at, user, view, id }: Props) => {
 	}
 
 	const variants = {
-		visible: { height: "100%", opacity: 100 },
+		visible: { height: "fit-content", opacity: 100 },
 		hidden: { height: 0, opacity: 0 }
 	}
 
+	const animationMessage = {
+		visible: { y: 0, opacity: 100 },
+		hidden: { y: 50, opacity: 0 }
+	}
+
+	useEffect(() => {
+		if (images?.length > 0) {
+			getImageSource(images[0].url)
+		}
+	}, [images])
+
+	const getImageSource = async (source: string) => {
+		try {
+			const { data, error } = await supabase.storage.from("users-images").download(source)
+			if (error) {
+				throw error
+			}
+			const url = URL.createObjectURL(data!)
+			setImageSrc(url)
+		} catch (error: any) {
+			console.log("Error downloading image: ", error.message)
+		}
+	}
+
 	return (
-		<Container userID={userID} messageUserID={user} view={view!} key={id}>
-			{content}{" "}
-			<Time>
-				{new Date(created_at).getHours()}:{new Date(created_at).getMinutes()}
-			</Time>
-			{userID === user && <ArrowIosDownward onClick={() => setActiveDropdown((prev) => !prev)} />}
-			<AnimatePresence>
-				{activeDropdown && (
-					<Dropdown animate="visible" initial="hidden" transition={{ ease: "easeOut", duration: 0.2 }} variants={variants} exit="hidden">
-						<Item red onClick={() => deleteMessageFromID(id!)}>
-							<DeleteBin /> Delete
-						</Item>
-					</Dropdown>
-				)}
-			</AnimatePresence>
-		</Container>
+		<AnimatePresence>
+			<Container
+				userID={userID}
+				messageUserID={user}
+				view={view!}
+				images={images}
+				key={id}
+				animate="visible"
+				initial="hidden"
+				transition={{ ease: "easeOut", duration: 0.3 }}
+				variants={animationMessage}
+				exit="hidden">
+				{images?.length > 0 && <img src={imageSrc} alt="image" />}
+				{content}
+				<Time>
+					{new Date(created_at).getHours()}:{new Date(created_at).getMinutes()}
+				</Time>
+				{userID === user && <ArrowIosDownward onClick={() => setActiveDropdown((prev) => !prev)} />}
+				<AnimatePresence>
+					{activeDropdown && (
+						<Dropdown animate="visible" initial="hidden" transition={{ ease: "easeOut", duration: 0.2 }} variants={variants} exit="hidden">
+							<Item red onClick={() => deleteMessageFromID(id!)}>
+								<DeleteBin /> Delete
+							</Item>
+						</Dropdown>
+					)}
+				</AnimatePresence>
+			</Container>
+		</AnimatePresence>
 	)
 }
 
-const Container = styled.div<ContainerProps>`
+const Time = styled.span`
+	color: ${({ theme }) => theme.secondaryColor};
+	font-size: 0.7rem;
+	margin-left: 1.4rem;
+	display: inline-block;
+`
+
+const Container = styled(motion.div)<ContainerProps>`
 	width: fit-content;
 	background-color: ${({ userID, messageUserID, theme }) => (userID !== messageUserID ? theme.headerMenuColor : theme.accentColor)};
 	color: ${({ theme }) => theme.white};
@@ -77,6 +135,17 @@ const Container = styled.div<ContainerProps>`
 	border-radius: 10px;
 	position: relative;
 	z-index: 2;
+	${({ images }) =>
+		images?.length! > 0 &&
+		css`
+			display: flex;
+			flex-direction: column;
+			align-items: right;
+			gap: 0.5rem;
+			& ${Time} {
+				text-align: right;
+			}
+		`}
 	&:hover:before {
 		opacity: 100;
 		bottom: -20px;
@@ -111,13 +180,6 @@ const Container = styled.div<ContainerProps>`
 	}
 `
 
-const Time = styled.span`
-	color: ${({ theme }) => theme.secondaryColor};
-	font-size: 0.6rem;
-	margin-left: 1.4rem;
-	display: inline-block;
-`
-
 const Dropdown = styled(motion.div)`
 	position: absolute;
 	display: flex;
@@ -132,6 +194,7 @@ const Dropdown = styled(motion.div)`
 	top: 18px;
 	right: 10px;
 	z-index: 10;
+	padding: 0.2rem;
 	overflow: hidden;
 `
 

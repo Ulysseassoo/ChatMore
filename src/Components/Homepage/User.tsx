@@ -24,8 +24,11 @@ type Props = {
 	room_id: number
 	last_message?: string
 	chat?: boolean
+	view?: boolean
 	setActiveModal?: React.Dispatch<React.SetStateAction<boolean>>
 	created_at?: Date
+	message_user_id?: string
+	images?: ImageToUse[]
 }
 
 type Message = {
@@ -35,6 +38,16 @@ type Message = {
 	room: number
 	user: string
 	view?: boolean
+	images?: ImageToUse[]
+}
+
+type ImageToUse = {
+	id?: number
+	created_at: Date
+	message_id: number
+	message_room_id: number
+	message_user_id: string
+	url: string
 }
 
 type ContainerProps = {
@@ -49,7 +62,11 @@ type RoomState = {
 	index?: number
 }
 
-const User = ({ username, about, avatar_url, room_id, setActiveModal, last_message, chat, created_at }: Props) => {
+type SpanProps = {
+	view: boolean
+}
+
+const User = ({ username, about, avatar_url, room_id, setActiveModal, last_message, chat, created_at, view, message_user_id, images }: Props) => {
 	const navigate = useNavigate()
 	const params = useParams()
 	const dispatch = useAppDispatch()
@@ -79,14 +96,19 @@ const User = ({ username, about, avatar_url, room_id, setActiveModal, last_messa
 			})
 			return newMessages
 		}
-		const updateUserMessages = async (data: any, user_id: string) => {
+		const updateUserMessages = async (user_id: string) => {
 			const room: RoomState = JSON.parse(JSON.stringify(chatRooms.find((room, index) => room.room === room_id)))
 			const count = room!.messages.filter((message) => {
 				if (message.user !== user_id) return message.view === false
 			})
+			const noImages = count.map((message) => {
+				delete message.images
+				message.view = true
+				return message
+			})
 			if (count.length === 0) return
 			try {
-				const messages: Message[] = await updateRoomMessages(data)
+				const messages: Message[] = await updateRoomMessages(noImages)
 				room!.messages = messages
 				room.index = 1
 				dispatch(updateRoomMessage(room))
@@ -99,7 +121,7 @@ const User = ({ username, about, avatar_url, room_id, setActiveModal, last_messa
 			<Container
 				onClick={() => {
 					goToChat()
-					updateUserMessages(messagesViewed(), user_id)
+					updateUserMessages(user_id)
 				}}
 				room_id={room_id}
 				actualRoom={parseInt(params.id!)}>
@@ -109,7 +131,11 @@ const User = ({ username, about, avatar_url, room_id, setActiveModal, last_messa
 				<UserInformations>
 					<Flex>
 						<Username>{username}</Username>
-						<Sub>{last_message}</Sub>
+						<Sub>
+							{last_message}
+							{images?.length! > 0 && <>Image</>}
+							{user_id === message_user_id && <Span view={view!}>{view ? " - Seen" : " - Sent"}</Span>}
+						</Sub>
 					</Flex>
 					<Flex>
 						<Hour>
@@ -193,6 +219,13 @@ const Sub = styled.span`
 	overflow: hidden;
 	text-overflow: ellipsis;
 	width: 300px;
+	@media screen and (max-width: 500px) {
+		width: 250px;
+	}
+`
+
+const Span = styled.span<SpanProps>`
+	color: white;
 `
 
 const Hour = styled.span`
