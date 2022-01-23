@@ -59,6 +59,7 @@ const SendMessage = () => {
 			user: userSelector.id
 		}
 		try {
+			if (content === "") throw new Error("You need to write something :)")
 			const message = await createMessage(newMessage)
 			reset()
 		} catch (error: any) {
@@ -80,6 +81,7 @@ const SendMessage = () => {
 			user: userSelector.id
 		}
 		try {
+			if (fileExt !== "jpg" || fileExt !== "jpeg" || fileExt !== "png") throw new Error("You need to upload an Image!")
 			let { error: uploadError, data: imageData } = await supabase.storage.from("users-images").upload(filePath, file)
 			if (uploadError) throw uploadError
 			const message: Message[] = await createMessage(newMessage)

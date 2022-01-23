@@ -47,6 +47,7 @@ const Message = ({ content, created_at, user, view, id, images }: Props) => {
 
 	const deleteMessageFromID = async (id: number) => {
 		try {
+			if (images.length > 0) throw new Error("You can't delete an image sent")
 			const data = await deleteMessage(id)
 			toast.success("Message deleted !")
 			setActiveDropdown(false)
