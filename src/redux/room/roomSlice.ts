@@ -87,8 +87,10 @@ export const roomSlice = createSlice({
 		},
 		addMessageToRoom: (state, action: PayloadAction<AddMessage>) => {
 			const { room_index, message } = action.payload
+			console.log(room_index)
 			const data = [...state.rooms]
 			const room = data.findIndex((room) => room.room === room_index)
+			console.log(room)
 			data[room] = { ...state.rooms[room!], messages: [...message, ...state.rooms[room!].messages] }
 			return {
 				...state,

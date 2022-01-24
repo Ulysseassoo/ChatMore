@@ -21,6 +21,9 @@ const TablesListeners = ({ children }: Props) => {
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
+		const session = supabase.auth.session()
+		if (!session) return
+		if (supabase) console.log("rerender")
 		// Listening to the database on any insert or update, to update state
 		const mySubscription = supabase
 			.from("message")
@@ -41,9 +44,22 @@ const TablesListeners = ({ children }: Props) => {
 				dispatch(updateImageMessage({ image: payload.new }))
 			})
 			.subscribe()
+
+		const roomSubscription = supabase
+			.from("room")
+			.on("INSERT", async (payload) => {
+				try {
+					const { data, error }: { data: any; error: any } = await supabase.from("userHasRoom").select("*, user!inner(*)").eq("room", payload.new.id)
+					if (error) throw error
+					// Check if the user has id is in the data, if not return
+					// data.map((room))
+				} catch (error) {}
+			})
+			.subscribe()
 		return () => {
 			mySubscription.unsubscribe()
 			imagesSubscription.unsubscribe()
+			roomSubscription.unsubscribe()
 		}
 	}, [])
 	return <>{children}</>

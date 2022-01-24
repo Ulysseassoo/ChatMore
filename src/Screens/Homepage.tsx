@@ -2,6 +2,7 @@ import React, { useEffect } from "react"
 import { useAppSelector } from "../redux/hooks"
 import { selectLoggedIn } from "../redux/user/userSlice"
 import { Main } from "../Theme/global"
+import TablesListeners from "../Helpers/TablesListeners"
 
 import styled from "styled-components"
 import Header from "../Components/Homepage/Header"
@@ -18,14 +19,16 @@ const Homepage: React.FC = () => {
 
 	// Check in Realtime if we receive a new message
 	return (
-		<Main chat>
-			<Header />
-			<Container>
-				<UserContainer />
-				<ChatContainer />
-				<ProfilContainer />
-			</Container>
-		</Main>
+		<TablesListeners>
+			<Main chat>
+				<Header />
+				<Container>
+					<UserContainer />
+					<ChatContainer />
+					<ProfilContainer />
+				</Container>
+			</Main>
+		</TablesListeners>
 	)
 }
 
