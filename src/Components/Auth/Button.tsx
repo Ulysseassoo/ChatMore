@@ -1,25 +1,23 @@
-import React from "react"
-import styled from "styled-components"
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
-import Loader from "react-loader-spinner"
+import React from "react";
+import styled from "styled-components";
 
 type Props = {
-	content: string
-	type?: any
-	isSubmitting: boolean
-	$settings?: boolean
-}
+	content: string;
+	type?: any;
+	isSubmitting: boolean;
+	$settings?: boolean;
+};
 
 const Button = ({ content, type, isSubmitting }: Props) => {
 	if (isSubmitting) {
 		return (
 			<Container type={type}>
-				<Loader type="TailSpin" color="#FFFFFF" height={40} width={40} />
+				{/* <Loader type="TailSpin" color="#FFFFFF" height={40} width={40} /> */}
 			</Container>
-		)
+		);
 	}
-	return <Container type={type}>{content}</Container>
-}
+	return <Container type={type}>{content}</Container>;
+};
 
 const Container = styled.button`
 	background-color: ${({ theme }) => theme.accentColor};
@@ -40,6 +38,6 @@ const Container = styled.button`
 	@media (max-width: 520px) {
 		font-size: 0.9rem;
 	}
-`
+`;
 
-export default Button
+export default Button;

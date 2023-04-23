@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { useNavigate } from "react-router"
+import { useNavigate, useParams } from "react-router"
 import { useAppDispatch, useAppSelector } from "../redux/hooks"
 import {
 	addMessageToRoom,
@@ -19,15 +19,18 @@ type Props = {
 
 const TablesListeners = ({ children }: Props) => {
 	const dispatch = useAppDispatch()
+	const { id } = useParams()
 
 	useEffect(() => {
 		const session = supabase.auth.session()
 		if (!session) return
 		if (supabase) console.log("rerender")
 		// Listening to the database on any insert or update, to update state
+		// if (!id) return
 		const mySubscription = supabase
-			.from("message")
+			.from(`message`)
 			.on("INSERT", (payload) => {
+				console.log(payload)
 				dispatch(addMessageToRoom({ message: [payload.new], room_index: parseInt(payload.new.room) }))
 			})
 			.on("UPDATE", (payload) => {
@@ -61,7 +64,7 @@ const TablesListeners = ({ children }: Props) => {
 			imagesSubscription.unsubscribe()
 			roomSubscription.unsubscribe()
 		}
-	}, [])
+	}, [id])
 	return <>{children}</>
 }
 
