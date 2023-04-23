@@ -1,19 +1,11 @@
-import {
-	Box,
-	Button,
-	Center,
-	Flex,
-	Input,
-	Text,
-	Toast,
-	useToast,
-} from "@chakra-ui/react";
+import { Box, Button, Center, Flex, Input, Text, Toast, useToast } from "@chakra-ui/react";
 import React from "react";
 import FormTitle from "./FormTitle";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { supabase } from "../../supabaseClient";
+import useAuthStore from "../../Store/authStore";
 
 const validationSchema = yup
 	.object({
@@ -31,16 +23,14 @@ const validationSchema = yup
 				"Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
 			)
 			.required("Password is required"),
-		email: yup
-			.string()
-			.email("Invalid email address")
-			.required("Email is required"),
+		email: yup.string().email("Invalid email address").required("Email is required"),
 	})
 	.required();
 
 type FormData = yup.InferType<typeof validationSchema>;
 
 const RegisterForm = () => {
+	const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
 	const toast = useToast();
 	const {
 		register,
@@ -63,27 +53,28 @@ const RegisterForm = () => {
 					username: formData.username,
 					email: formData.email,
 				};
-				const { error: errorProfile } = await supabase
-					.from("profiles")
-					.upsert(updates);
+				const { error: errorProfile } = await supabase.from("profiles").upsert(updates);
 				if (errorProfile) throw errorProfile;
+				if (data.session !== null) {
+					setLoggedIn(data.session);
+					toast({
+						title: "Account created.",
+						description: "You will now we logged in.",
+						status: "success",
+						duration: 3000,
+						isClosable: true,
+						position: "top-right",
+					});
+				}
 			}
-			// LoggedIn
-			toast({
-				title: "Account created.",
-				description: "You will now we logged in.",
-				status: "success",
-				duration: 3000,
-				isClosable: true,
-			});
 		} catch (error) {
 			toast({
 				title: "Account error.",
-				description:
-					"There was a problem with the registration. Please try again.",
+				description: "There was a problem with the registration. Please try again.",
 				status: "error",
 				duration: 3000,
 				isClosable: true,
+				position: "top-right",
 			});
 		}
 	};
@@ -91,14 +82,7 @@ const RegisterForm = () => {
 	return (
 		<Center py="5" gap="4" flexDir="column">
 			<FormTitle title="come chat with anybody !" />
-			<Flex
-				flexDir="column"
-				gap="4"
-				as="form"
-				onSubmit={handleSubmit(onSubmit)}
-				w="full"
-				color="black"
-			>
+			<Flex flexDir="column" gap="4" as="form" onSubmit={handleSubmit(onSubmit)} w="full" color="black">
 				<Box>
 					<Input
 						variant="filled"

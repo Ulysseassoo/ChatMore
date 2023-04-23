@@ -15,23 +15,22 @@
 		"@fontsource/lato": "^4.5.10",
 		"@fontsource/roboto": "^4.5.8",
 		"@hookform/resolvers": "^3.1.0",
-		"@reduxjs/toolkit": "^1.9.5",
 		"@supabase/supabase-js": "^2.21.0",
-		"@types/react-redux": "^7.1.25",
 		"framer-motion": "^10.12.4",
+		"immer": "^10.0.1",
 		"react": "^18.2.0",
 		"react-content-loader": "^6.2.1",
 		"react-dom": "^18.2.0",
 		"react-hook-form": "^7.43.9",
 		"react-loader-spinner": "^5.3.4",
-		"react-redux": "^8.0.5",
 		"react-router": "^6.10.0",
 		"react-router-dom": "^6.10.0",
 		"react-toastify": "^9.1.2",
 		"styled-components": "^5.3.10",
 		"styled-icons": "^10.47.0",
 		"underscore": "^1.13.6",
-		"yup": "^1.1.1"
+		"yup": "^1.1.1",
+		"zustand": "^4.3.7"
 	},
 	"devDependencies": {
 		"@types/emoji-mart": "^3.0.9",
@@ -41,6 +40,7 @@
 		"@types/underscore": "^1.11.4",
 		"@vitejs/plugin-react": "^4.0.0",
 		"emoji-mart": "^5.5.2",
+		"simple-zustand-devtools": "^1.1.0",
 		"typescript": "^5.0.4",
 		"vite": "^4.3.1"
 	}
