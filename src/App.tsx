@@ -8,21 +8,28 @@ import { createBrowserRouter, useLocation } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import GlobalTheme from "./Theme/theme";
+import Authentication from "./Helpers/Authentication";
 
 const App: React.FC = () => {
 	const router = createBrowserRouter([
-		{ path: "/", element: <Homepage key="homepage" /> },
 		{
-			path: "/:id",
-			element: <Homepage key="homepage-id" />,
-		},
-		{
-			path: "/login",
-			element: <Login key="login" />,
-		},
-		{
-			path: "/register",
-			element: <Register key="register" />,
+			path: "/",
+			element: <Authentication />,
+			children: [
+				{ path: "/", element: <Homepage key="homepage" /> },
+				{
+					path: "/:id",
+					element: <Homepage key="homepage-id" />,
+				},
+				{
+					path: "/login",
+					element: <Login key="login" />,
+				},
+				{
+					path: "/register",
+					element: <Register key="register" />,
+				},
+			],
 		},
 	]);
 
