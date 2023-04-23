@@ -22,6 +22,7 @@
 		"react-content-loader": "^6.2.1",
 		"react-dom": "^18.2.0",
 		"react-hook-form": "^7.43.9",
+		"react-icons": "^4.8.0",
 		"react-loader-spinner": "^5.3.4",
 		"react-router": "^6.10.0",
 		"react-router-dom": "^6.10.0",

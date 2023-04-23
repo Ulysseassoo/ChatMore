@@ -1,42 +1,28 @@
-import React from "react"
-import styled from "styled-components"
-import Logo from "../../assets/Logo.png"
-import AppTitle from "../Auth/AppTitle"
+import React from "react";
+import styled from "styled-components";
+import Logo from "../../assets/Logo.png";
+import AppTitle from "../Auth/AppTitle";
+import { Box, Flex, Image } from "@chakra-ui/react";
 
 const Header = () => {
 	return (
-		<Container>
-			<AppTitle header />
-			<ImageContainer>
-				<img src={Logo} alt="ChatMore Logo" />
-			</ImageContainer>
-		</Container>
-	)
-}
+		<Flex
+			alignItems="center"
+			gap="2"
+			flexDir="row"
+			w="full"
+			height="50px"
+			boxShadow="rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;"
+			background="rgba(43, 40, 38, 1)"
+			p="5"
+			gridArea={"header"}
+		>
+			<AppTitle pb="0" size="1.2rem" />
+			<Box w="30px" h="30px">
+				<Image src={Logo} alt="ChatMore Logo" />
+			</Box>
+		</Flex>
+	);
+};
 
-const Container = styled.header`
-	width: 100%;
-	height: 60px;
-	padding: 1rem;
-	background-color: ${({ theme }) => theme.accentColor};
-	color: white;
-	display: flex;
-	gap: 1rem;
-	align-items: center;
-	box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
-`
-
-const ImageContainer = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 60px;
-	height: 60px;
-	& img {
-		object-fit: cover;
-		height: 100%;
-		width: 100%;
-	}
-`
-
-export default Header
+export default Header;

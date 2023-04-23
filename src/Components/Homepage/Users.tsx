@@ -1,18 +1,16 @@
-import styled from "styled-components"
-import { useAppSelector } from "../../redux/hooks"
-import { selectIsLoading, selectRooms } from "../../redux/room/roomSlice"
-import User from "./User"
+import styled from "styled-components";
+import User from "./User";
 
 const Users = () => {
-	const hasLoaded = useAppSelector(selectIsLoading)
-	const chatRooms = useAppSelector(selectRooms)
+	// const hasLoaded = useAppSelector(selectIsLoading)
+	// const chatRooms = useAppSelector(selectRooms)
 
-	if (hasLoaded) {
-		return <Container></Container>
-	}
+	// if (hasLoaded) {
+	// 	return <Container></Container>
+	// }
 	return (
 		<Container>
-			{chatRooms.map((room) => {
+			{/* {chatRooms.map((room) => {
 				if (room.messages.length !== 0) {
 					return (
 						<User
@@ -29,16 +27,16 @@ const Users = () => {
 						/>
 					)
 				}
-			})}
+			})} */}
 		</Container>
-	)
-}
+	);
+};
 
 const Container = styled.div`
 	height: 100%;
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-`
+`;
 
-export default Users
+export default Users;

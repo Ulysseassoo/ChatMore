@@ -1,4 +1,4 @@
-import { Outlet, useLocation, useNavigate } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import { supabase } from "../supabaseClient";
 import useAuthStore from "../Store/authStore";
 import { useEffect } from "react";
@@ -20,8 +20,12 @@ const Authentication = () => {
 		checkSession();
 
 		const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
+			if (session === null) {
+				navigate("/login");
+			}
 			if (session !== null) {
 				setLoggedIn(session);
+				navigate("/");
 			}
 
 			switch (event) {

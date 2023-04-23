@@ -1,15 +1,20 @@
 import { Heading, Text } from "@chakra-ui/react";
 import React from "react";
 
-const AppTitle = () => {
+interface Props {
+	size?: string;
+	pb?: string;
+}
+
+const AppTitle = ({ size, pb }: Props) => {
 	return (
 		<Heading
-			fontSize={"2.5rem"}
+			fontSize={size ?? "2.5rem"}
 			color="white"
 			letterSpacing={"2px"}
 			textTransform={"uppercase"}
 			fontWeight="bold"
-			pb="2"
+			pb={pb ?? "2"}
 			fontFamily="heading"
 		>
 			Chat
