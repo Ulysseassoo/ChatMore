@@ -7,6 +7,14 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@chakra-ui/react": "^2.5.5",
+		"@emotion/react": "^11.10.6",
+		"@emotion/styled": "^11.10.6",
+		"@fontsource/convergence": "^4.5.9",
+		"@fontsource/heebo": "^4.5.15",
+		"@fontsource/lato": "^4.5.10",
+		"@fontsource/roboto": "^4.5.8",
+		"@hookform/resolvers": "^3.1.0",
 		"@reduxjs/toolkit": "^1.9.5",
 		"@supabase/supabase-js": "^2.21.0",
 		"@types/react-redux": "^7.1.25",
@@ -22,7 +30,8 @@
 		"react-toastify": "^9.1.2",
 		"styled-components": "^5.3.10",
 		"styled-icons": "^10.47.0",
-		"underscore": "^1.13.6"
+		"underscore": "^1.13.6",
+		"yup": "^1.1.1"
 	},
 	"devDependencies": {
 		"@types/emoji-mart": "^3.0.9",

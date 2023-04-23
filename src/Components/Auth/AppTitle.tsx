@@ -1,38 +1,23 @@
-import React from "react"
-import styled, { css } from "styled-components"
+import { Heading, Text } from "@chakra-ui/react";
+import React from "react";
 
-type TitleStyle = {
-	header?: boolean
-}
-
-const AppTitle = ({ header }: TitleStyle) => {
+const AppTitle = () => {
 	return (
-		<Title header>
-			Chat<SubTitle>More</SubTitle>
-		</Title>
-	)
-}
+		<Heading
+			fontSize={"2.5rem"}
+			color="white"
+			letterSpacing={"2px"}
+			textTransform={"uppercase"}
+			fontWeight="bold"
+			pb="2"
+			fontFamily="heading"
+		>
+			Chat
+			<Text as="span" fontWeight={"thin"}>
+				More
+			</Text>
+		</Heading>
+	);
+};
 
-const Title = styled.h1<TitleStyle>`
-	font-size: 4.2rem;
-	color: ${({ theme }) => theme.white};
-	letter-spacing: 2px;
-	text-transform: uppercase;
-	font-weight: bold;
-	font-family: "Heebo", sans-serif;
-	@media (max-width: 520px) {
-		font-size: 3.5rem;
-	}
-	${({ header }) =>
-		header &&
-		css`
-			font-size: 2.5rem;
-		`}
-`
-
-const SubTitle = styled.span`
-	font-weight: 300;
-	font-family: "Heebo", sans-serif;
-`
-
-export default AppTitle
+export default AppTitle;
