@@ -11,10 +11,8 @@ const Header = () => {
 			gap="2"
 			flexDir="row"
 			w="full"
-			height="50px"
-			boxShadow="rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;"
 			background="rgba(43, 40, 38, 1)"
-			p="5"
+			px="4"
 			gridArea={"header"}
 		>
 			<AppTitle pb="0" size="1.2rem" />

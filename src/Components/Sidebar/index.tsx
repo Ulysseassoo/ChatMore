@@ -12,11 +12,9 @@ const Sidebar = () => {
 			alignItems="center"
 			flexDir="column"
 			justifyContent={"space-between"}
-			w="50px"
 			boxShadow="rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;"
 			background="rgba(43, 40, 38, 1)"
 			gridArea={"sidebar"}
-			mt="10px"
 			pb="4"
 		>
 			<Flex gap="4" pt="2" flexDir="column" w="full" px="0.5">

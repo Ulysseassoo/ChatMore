@@ -1,21 +1,18 @@
-import React, { useEffect } from "react";
-import { Main } from "../Theme/global";
+import React from "react";
 
-import styled from "styled-components";
 import Header from "../Components/Homepage/Header";
-import { Box, Grid } from "@chakra-ui/react";
+import { Grid } from "@chakra-ui/react";
 import Sidebar from "../Components/Sidebar";
-// import UserContainer from "../Components/Homepage/UserContainer";
-// import ChatContainer from "../Components/Homepage/ChatContainer";
-// import ProfilContainer from "../Components/Homepage/ProfilContainer";
+import MainContent from "../Components/Homepage/MainContent";
 
 const Homepage: React.FC = () => {
 	return (
 		<Grid
 			as="main"
 			height="100vh"
-			gridTemplateColumns={"40px 1fr 1fr"}
-			gridTemplateRows="40px 1fr 1fr"
+			background="rgba(43, 40, 38, 1)"
+			gridTemplateColumns={"50px 1fr 1fr"}
+			gridTemplateRows="50px 1fr 1fr"
 			gridTemplateAreas={`
 		"header header header"
 		"sidebar chat chat"
@@ -23,11 +20,7 @@ const Homepage: React.FC = () => {
 		>
 			<Header />
 			<Sidebar />
-			{/* <Container> */}
-			{/* <UserContainer />
-				<ChatContainer />
-				<ProfilContainer /> */}
-			{/* </Container> */}
+			<MainContent />
 		</Grid>
 	);
 };
