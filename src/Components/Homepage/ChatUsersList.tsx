@@ -6,6 +6,7 @@ import useAuthStore from "../../Store/authStore";
 import useRoomStore from "../../Store/roomStore";
 import { BiMessageSquareAdd } from "react-icons/bi";
 import SearchBar from "./SearchBar";
+import ChatUsersListItem from "./ChatUsersListItem";
 
 const ChatUsersList = () => {
 	const getChatrooms = useRoomStore((state) => state.getChatrooms);
@@ -19,14 +20,6 @@ const ChatUsersList = () => {
 		}
 	}, [isLoading, session]);
 
-	// if (isLoading) {
-	// 	return (
-	// 		<Center height="80%" width="full">
-	// 			<Spinner color={"accentColor"} size={"lg"} />
-	// 		</Center>
-	// 	);
-	// }
-
 	return (
 		<Flex flexDir="column" p="4" w="30%" borderRight="1px solid" borderColor="lineBreakColor" gap="4">
 			<Flex alignItems="center" justifyContent="space-between">
@@ -34,24 +27,21 @@ const ChatUsersList = () => {
 				<Icon as={BiMessageSquareAdd} cursor="pointer" boxSize={5} color="white" />
 			</Flex>
 			<SearchBar />
-			{/* {chatRooms.map((room) => {
-				if (room.messages.length !== 0) {
-					return (
-						<User
-							username={room.users[0].username}
-							avatar_url={room.users[0].avatar_url}
-							created_at={room.messages[0].created_at}
-							room_id={room.room}
-							key={room.room}
-							view={room.messages[0].view!}
-							message_user_id={room.messages[0].user}
-							last_message={room.messages[0].content}
-							images={room.messages[0].images}
-							chat
-						/>
-					)
-				}
-			})} */}
+			{isLoading ? (
+				<Center height="80%" width="full">
+					<Spinner color={"accentColor"} size={"lg"} />
+				</Center>
+			) : (
+				<Box flex="1" overflowY="scroll">
+					{rooms.length > 1 ? (
+						rooms.map((room) => <ChatUsersListItem key={room.room} item={room} />)
+					) : (
+						<Text>
+							You have no conversations. Start by clicking on the add button, and add someone to send him a message.
+						</Text>
+					)}
+				</Box>
+			)}
 		</Flex>
 	);
 };

@@ -18,7 +18,7 @@ const App: React.FC = () => {
 			children: [
 				{ path: "/", element: <Homepage key="homepage" /> },
 				{
-					path: "/:id",
+					path: "/chat/:id",
 					element: <Homepage key="homepage-id" />,
 				},
 				{
