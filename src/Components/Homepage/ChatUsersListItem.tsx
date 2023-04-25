@@ -6,6 +6,7 @@ import useUserIsTypying from "../Hooks/useUserIsTypying";
 import { Avatar, Badge, Box, Flex, HStack, Icon, Text } from "@chakra-ui/react";
 import { dateFormatted } from "../../Helpers/DateFormatting";
 import { IoCheckmarkDoneSharp, IoImagesSharp } from "react-icons/io5";
+import useIsUserBlocked from "../Hooks/useIsUserBlocked";
 
 interface Props {
 	item: RoomState;
@@ -17,7 +18,7 @@ const ChatUsersListItem = ({ item }: Props) => {
 	const navigation = useNavigate();
 	const session = useAuthStore((state) => state.session);
 	const actualMessage = useMemo(() => item.messages[0].messages[0], [item.messages]);
-	// const isUserBlocked = useIsUserBlocked(item.room)
+	const isUserBlocked = useIsUserBlocked(item.room);
 
 	const goToUserRoom = (roomId: number) => {
 		navigation(`/chat/${roomId}`);
@@ -38,14 +39,12 @@ const ChatUsersListItem = ({ item }: Props) => {
 		return count.length;
 	};
 
-	if (!id) return <></>;
-
 	return (
 		<Box
 			width={"full"}
 			borderRadius="lg"
 			position="relative"
-			background={item.room === parseInt(id) ? "lineBreakColor" : "transparent"}
+			background={id && item.room === parseInt(id) ? "lineBreakColor" : "transparent"}
 			_hover={{
 				bg: "lineBreakColor",
 			}}
@@ -101,7 +100,17 @@ const ChatUsersListItem = ({ item }: Props) => {
 								)}
 							</HStack>
 							{getNotViewedMessages(session?.user.id) > 0 && (
-								<Badge bg={"accentColor"} color="white" fontSize={"2xs"} borderRadius={"full"}>
+								<Badge
+									display="flex"
+									alignItems={"center"}
+									justifyContent={"center"}
+									bg={"accentColor"}
+									color="white"
+									fontSize={"2xs"}
+									borderRadius={"full"}
+									h="20px"
+									w="20px"
+								>
 									{getNotViewedMessages(session?.user.id)}
 								</Badge>
 							)}

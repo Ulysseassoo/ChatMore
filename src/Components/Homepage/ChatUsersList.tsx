@@ -28,6 +28,7 @@ const ChatUsersList = () => {
 	const [searchMessages, setSearchMessages] = useState("");
 	const getChatrooms = useRoomStore((state) => state.getChatrooms);
 	const rooms = useRoomStore((state) => state.rooms);
+	console.log("🚀 ~ file: ChatUsersList.tsx:31 ~ ChatUsersList ~ rooms:", rooms);
 	const isLoading = useRoomStore((state) => state.isLoading);
 	const session = useAuthStore((state) => state.session);
 	const isContactResearchActive = useSettingsStore((state) => state.isContactResearchActive);
@@ -68,7 +69,7 @@ const ChatUsersList = () => {
 					</Center>
 				) : (
 					<Flex flexDir="column" flex="1" overflowY="scroll" gap="2">
-						{rooms.length > 1 ? (
+						{rooms.length >= 1 ? (
 							rooms
 								.filter((item) => item.messages.length > 0)
 								.map((room) => <ChatUsersListItem key={room.room} item={room} />)

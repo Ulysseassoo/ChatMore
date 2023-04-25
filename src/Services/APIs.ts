@@ -10,6 +10,17 @@ type ImageToUse = {
 	url: string;
 };
 
+export interface UserHasBlockedDelete {
+	room_id: number | undefined;
+	blocking_user_id: string | undefined;
+}
+
+interface CreateUserHasBlockedRoom {
+	blocking_user_id: string;
+	created_at: string;
+	room_id: number;
+}
+
 export const getUserRooms = async (user_id: string) => {
 	try {
 		const { data, error }: { data: any; error: any } = await supabase
@@ -81,16 +92,6 @@ export const deleteMessage = async (messageID: number) => {
 	}
 };
 
-export const updateRoomMessages = async (messageData: Message[]) => {
-	try {
-		const { data, error } = await supabase.from("message").upsert(messageData).select();
-		if (error) throw error;
-		return data;
-	} catch (error: any) {
-		console.log(error);
-	}
-};
-
 export const createImageMessage = async (imageData: {
 	created_at: string | null;
 	url: string | null;
@@ -104,5 +105,56 @@ export const createImageMessage = async (imageData: {
 		return data;
 	} catch (error: any) {
 		return error;
+	}
+};
+
+export const deleteImageById = async (imageId: number) => {
+	try {
+		const { error } = await supabase.from("images").delete().match({ id: imageId });
+		if (error) throw Error;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const deleteMessageById = async (messageID: number) => {
+	try {
+		const { error } = await supabase.from("message").delete().match({ id: messageID });
+		if (error) throw Error;
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const updateRoomMessages = async (messageData: Message[]) => {
+	try {
+		const { data, error } = await supabase.from("message").upsert(messageData).select("*, images!left(*)");
+		if (error) throw error;
+		return data;
+	} catch (error: any) {
+		console.log(error);
+	}
+};
+
+export const createUserBlock = async (userBlockRoom: CreateUserHasBlockedRoom) => {
+	try {
+		const { data, error } = await supabase.from("userHasBlockedRoom").insert(userBlockRoom).select().single();
+		if (error) throw error;
+		return data;
+	} catch (error: any) {
+		console.log(error);
+	}
+};
+
+export const deleteUserBlock = async (usersDelete: UserHasBlockedDelete) => {
+	try {
+		const { data, error } = await supabase.from("userHasBlockedRoom").delete().match({
+			blocking_user_id: usersDelete.blocking_user_id,
+			room_id: usersDelete.room_id,
+		});
+		if (error) throw error;
+		return data;
+	} catch (error: any) {
+		console.log(error);
 	}
 };

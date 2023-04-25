@@ -3,6 +3,7 @@ import BackgroundImage from "../../assets/ChatImage.png";
 import React from "react";
 import { useParams } from "react-router";
 import RoomMessagesHeader from "./RoomMessagesHeader";
+import RoomMessagesContent from "./RoomMessagesContent";
 
 const RoomMessages = () => {
 	const params = useParams<{ id?: string }>();
@@ -11,6 +12,7 @@ const RoomMessages = () => {
 		return (
 			<Flex flexDir="column" w="70%" gap="4" position="relative" overflow="hidden" h="full">
 				<RoomMessagesHeader />
+				<RoomMessagesContent />
 			</Flex>
 		);
 	}
