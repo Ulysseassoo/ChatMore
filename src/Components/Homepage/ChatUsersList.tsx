@@ -67,7 +67,7 @@ const ChatUsersList = () => {
 						<Spinner color={"accentColor"} size={"lg"} />
 					</Center>
 				) : (
-					<Box flex="1" overflowY="scroll">
+					<Flex flexDir="column" flex="1" overflowY="scroll" gap="2">
 						{rooms.length > 1 ? (
 							rooms
 								.filter((item) => item.messages.length > 0)
@@ -77,7 +77,7 @@ const ChatUsersList = () => {
 								You have no conversations. Start by clicking on the add button, and add someone to send him a message.
 							</Text>
 						)}
-					</Box>
+					</Flex>
 				)}
 
 				<AnimatePresence>{isContactResearchActive && <SearchUsersList key={"search"} />}</AnimatePresence>

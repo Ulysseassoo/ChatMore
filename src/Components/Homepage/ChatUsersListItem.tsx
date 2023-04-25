@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { RoomState } from "../../Store/roomStore";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import useAuthStore from "../../Store/authStore";
 import useUserIsTypying from "../Hooks/useUserIsTypying";
 import { Avatar, Badge, Box, Flex, HStack, Icon, Text } from "@chakra-ui/react";
@@ -12,6 +12,7 @@ interface Props {
 }
 
 const ChatUsersListItem = ({ item }: Props) => {
+	const { id } = useParams();
 	const user = item.users[0];
 	const navigation = useNavigate();
 	const session = useAuthStore((state) => state.session);
@@ -37,14 +38,22 @@ const ChatUsersListItem = ({ item }: Props) => {
 		return count.length;
 	};
 
+	if (!id) return <></>;
+
 	return (
-		<Box width={"full"} position="relative">
+		<Box
+			width={"full"}
+			borderRadius="lg"
+			position="relative"
+			background={item.room === parseInt(id) ? "lineBreakColor" : "transparent"}
+			_hover={{
+				bg: "lineBreakColor",
+			}}
+			cursor="pointer"
+		>
 			<Box
 				onClick={() => {
 					goToUserRoom(item.room);
-				}}
-				_pressed={{
-					bg: "lineBreakColor",
 				}}
 				p="4"
 			>
@@ -58,7 +67,7 @@ const ChatUsersListItem = ({ item }: Props) => {
 						name={user.username && user?.username[0].toUpperCase() + user?.username[1].toUpperCase()}
 					/>
 
-					<Flex justifyContent={"space-between"} width={"full"} pr="16">
+					<Flex flexDir="column" justifyContent={"space-between"} width={"full"}>
 						<Flex justifyContent={"space-between"} alignItems="center" flexDir="row">
 							<Text color="white" fontWeight={"bold"}>
 								{user.username}

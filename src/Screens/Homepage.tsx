@@ -22,7 +22,6 @@ const Homepage: React.FC = () => {
 	const addRoom = useRoomStore((state) => state.addRoom);
 	const removeMessageFromRoom = useRoomStore((state) => state.removeMessageFromRoom);
 	const channels = supabase.getChannels();
-	console.log("🚀 ~ file: Homepage.tsx:25 ~ channels:", channels);
 
 	const subscribeToHome = () => {
 		const channelHome = supabase.channel(`home${session?.user.id}`, {
