@@ -47,8 +47,4 @@ const useAuthStore = create(
 	})),
 );
 
-if (process.env.NODE_ENV === "development") {
-	mountStoreDevtool("useAuthStore", useAuthStore);
-}
-
 export default useAuthStore;

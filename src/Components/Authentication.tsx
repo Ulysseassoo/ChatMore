@@ -1,9 +1,13 @@
-import { Outlet, useNavigate } from "react-router";
+import { NavigateFunction, Outlet, useNavigate } from "react-router";
 import { supabase } from "../supabaseClient";
 import useAuthStore from "../Store/authStore";
 import { useEffect } from "react";
 
-const Authentication = () => {
+interface Props {
+	children: React.ReactNode;
+}
+
+const Authentication = ({ children }: Props) => {
 	const navigate = useNavigate();
 	const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
 	const setLoggedOut = useAuthStore((state) => state.setLoggedOut);
@@ -13,40 +17,26 @@ const Authentication = () => {
 
 		if (sessionSupabase.data.session !== null) {
 			setLoggedIn(sessionSupabase.data.session);
+			navigate("/");
 		}
 	};
 
 	useEffect(() => {
-		checkSession();
-
-		const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
+		const { data: listener } = supabase.auth.onAuthStateChange((_, session) => {
 			if (session === null) {
+				setLoggedOut();
 				navigate("/login");
 			}
-			if (session !== null) {
-				setLoggedIn(session);
-				navigate("/");
-			}
-
-			switch (event) {
-				case "SIGNED_IN":
-					// Update the user data if user connects is active
-					if (session !== null) {
-						setLoggedIn(session);
-						navigate("/");
-					}
-					break;
-				case "SIGNED_OUT":
-					setLoggedOut();
-					navigate("/login");
-					break;
-				default:
-					break;
-			}
 		});
+
+		checkSession();
+
+		return () => {
+			listener.subscription.unsubscribe();
+		};
 	}, []);
 
-	return <Outlet />;
+	return <> {children} </>;
 };
 
 export default Authentication;

@@ -1,6 +1,7 @@
 import { Box, Flex } from "@chakra-ui/react";
 import React from "react";
 import ChatUsersList from "./ChatUsersList";
+import { useParams } from "react-router";
 
 const MainContent = () => {
 	return (

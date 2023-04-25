@@ -8,26 +8,26 @@ import { createBrowserRouter, useLocation } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import GlobalTheme from "./Theme/theme";
-import Authentication from "./Helpers/Authentication";
+import AuthenticationWrapper from "./Components/AuthenticationWrapper";
 
 const App: React.FC = () => {
 	const router = createBrowserRouter([
 		{
 			path: "/",
-			element: <Authentication />,
+			element: <AuthenticationWrapper />,
 			children: [
-				{ path: "/", element: <Homepage key="homepage" /> },
+				{ path: "/", element: <Homepage /> },
 				{
 					path: "/chat/:id",
-					element: <Homepage key="homepage-id" />,
+					element: <Homepage />,
 				},
 				{
 					path: "/login",
-					element: <Login key="login" />,
+					element: <Login />,
 				},
 				{
 					path: "/register",
-					element: <Register key="register" />,
+					element: <Register />,
 				},
 			],
 		},
@@ -50,9 +50,7 @@ const App: React.FC = () => {
 
 	return (
 		<ChakraProvider theme={GlobalTheme}>
-			<AnimatePresence mode="wait" initial={false}>
-				<RouterProvider router={router} />
-			</AnimatePresence>
+			<RouterProvider router={router} />
 		</ChakraProvider>
 	);
 };
