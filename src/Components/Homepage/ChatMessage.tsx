@@ -132,17 +132,7 @@ const ChatMessage = ({ item }: Props) => {
 					flexWrap="wrap"
 				>
 					{imageSrc !== "" && imageSrc !== null && (
-						<Image
-							src={imageSrc}
-							height="250"
-							width="250"
-							borderRadius="md"
-							alt="image"
-							position="absolute"
-							top="0"
-							left="0"
-							right="0"
-						/>
+						<Image src={imageSrc} height="250" width="250" borderRadius="md" alt="image" />
 					)}
 					<Text color="white">{item.content}</Text>
 					{item.created_at && (

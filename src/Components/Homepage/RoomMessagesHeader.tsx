@@ -28,7 +28,7 @@ const RoomMessagesHeader = () => {
 	if (!userToChat) return <></>;
 
 	return (
-		<Box bg={"headerMenuColor"} px="4" py="3" w="full">
+		<Box bg={"headerMenuColor"} px="4" py="3" w="full" gridArea="top">
 			<Flex justifyContent={"space-between"} alignItems="center" flexDir="row" position="relative" overflow="hidden">
 				<HStack spacing={2} alignItems="center">
 					{/* <Box onClick={navigation.goBack}>

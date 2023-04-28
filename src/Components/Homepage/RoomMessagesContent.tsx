@@ -127,14 +127,16 @@ const RoomMessagesContent = () => {
 	}, [channels]);
 
 	return (
-		<Box bg={"primaryColor"} height="full" position="relative" paddingBottom={2}>
-			<Flex px="4" height="full" width="full" justifyContent={"space-between"} overflow="scroll">
+		<Box bg={"primaryColor"} height="full" position="relative" paddingBottom={2} gridArea="content">
+			<Flex px="4" flexDir="column-reverse" pb="1" height="full" width="full" overflow="scroll">
 				{actualRoom?.messages.map((dateMessage) => (
 					<Flex flexDir="column" w="full" my="1" px="4" key={dateMessage.id}>
 						<ChatDate date={dateMessage.date} />
-						{dateMessage.messages.map((message) => (
-							<ChatMessage key={message.id} item={message} />
-						))}
+						<Flex flexDir="column-reverse">
+							{dateMessage.messages.map((message) => (
+								<ChatMessage key={message.id} item={message} />
+							))}
+						</Flex>
 					</Flex>
 				))}
 				{isUserBlocked.hasConnectedUserBlockedRoom && (

@@ -1,19 +1,35 @@
-import { Box, Flex, Image, Text } from "@chakra-ui/react";
+import { Box, Flex, Grid, Image, Text } from "@chakra-ui/react";
 import BackgroundImage from "../../assets/ChatImage.png";
 import React from "react";
 import { useParams } from "react-router";
 import RoomMessagesHeader from "./RoomMessagesHeader";
 import RoomMessagesContent from "./RoomMessagesContent";
+import RoomMessagesBottom from "./RoomMessagesBottom";
 
 const RoomMessages = () => {
 	const params = useParams<{ id?: string }>();
 
 	if (params.id !== undefined) {
 		return (
-			<Flex flexDir="column" w="70%" gap="4" position="relative" overflow="hidden" h="full">
+			<Grid
+				gridTemplateColumns="1fr 1fr 1fr"
+				gridTemplateRows={"66px 1fr 1fr 64px"}
+				gridTemplateAreas={`
+			"top top top"
+    "content content content"
+    "content content content"
+    "bottom bottom bottom"
+	`}
+				flexDir="column"
+				w="70%"
+				position="relative"
+				overflow="hidden"
+				h="full"
+			>
 				<RoomMessagesHeader />
 				<RoomMessagesContent />
-			</Flex>
+				<RoomMessagesBottom />
+			</Grid>
 		);
 	}
 
