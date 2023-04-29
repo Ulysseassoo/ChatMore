@@ -19,10 +19,30 @@ import {
 } from "@chakra-ui/react";
 import { deleteImageById, deleteMessageById } from "../../Services/APIs";
 import { BsTrashFill } from "react-icons/bs";
+import { ChakraBox } from "../../Framer";
+import { AnimatePresence } from "framer-motion";
 
 interface Props {
 	item: Message;
 }
+
+const animationMessage = {
+	visible: {
+		y: 0,
+		opacity: 100,
+		transition: {
+			when: "beforeChildren",
+			staggerChildren: 0.3,
+		},
+	},
+	hidden: {
+		y: 50,
+		opacity: 0,
+		transition: {
+			when: "afterChildren",
+		},
+	},
+};
 
 export const dateFormatted = (created_at: string) => {
 	const splittedDate = new Date(created_at)
@@ -184,45 +204,55 @@ const ChatMessage = ({ item }: Props) => {
 	}, [item.images]);
 
 	return (
-		<>
-			<Menu>
-				<MenuButton
-					p="2"
-					bg={isFromConnectedUser ? "accentColor" : "headerMenuColor"}
-					borderRadius="md"
-					mb="2.5"
-					shadow="6"
-					w="fit-content"
-					maxW="60"
-					as={Box}
-					onMouseDown={handleMouseDown}
-					onMouseUp={handleMouseUp}
-					onTouchStart={handleMouseDown}
-					onTouchEnd={handleMouseUp}
-					_hover={{
-						bg: isFromConnectedUser ? "accentColorHover" : "headerMenuColor",
-					}}
-					alignSelf={isFromConnectedUser ? "flex-end" : "flex-start"}
-				>
-					{showMessageContent()}
-				</MenuButton>
-				{isFromConnectedUser && isOpen ? (
-					<MenuList background="primaryColor" borderColor="lineBreakColor">
-						<MenuItem
-							_hover={{
-								bg: "headerMenuColor",
-							}}
-							p="2"
-							background="primaryColor"
-							onClick={() => deleteMessage(item.id)}
-						>
-							<Icon as={BsTrashFill} size="6" color="importantColor" />
-							Delete
-						</MenuItem>
-					</MenuList>
-				) : null}
-			</Menu>
-		</>
+		<AnimatePresence>
+			<ChakraBox
+				animate="visible"
+				initial="hidden"
+				key={item.id}
+				// @ts-ignore
+				transition={{ ease: "easeOut", duration: 0.3 }}
+				variants={animationMessage}
+				exit="hidden"
+				alignSelf={isFromConnectedUser ? "flex-end" : "flex-start"}
+			>
+				<Menu>
+					<MenuButton
+						p="2"
+						bg={isFromConnectedUser ? "accentColor" : "headerMenuColor"}
+						borderRadius="md"
+						mb="2.5"
+						shadow="6"
+						w="fit-content"
+						maxW="60"
+						as={Box}
+						onMouseDown={handleMouseDown}
+						onMouseUp={handleMouseUp}
+						onTouchStart={handleMouseDown}
+						onTouchEnd={handleMouseUp}
+						_hover={{
+							bg: isFromConnectedUser ? "accentColorHover" : "headerMenuColor",
+						}}
+					>
+						{showMessageContent()}
+					</MenuButton>
+					{isFromConnectedUser && isOpen ? (
+						<MenuList background="primaryColor" borderColor="lineBreakColor">
+							<MenuItem
+								_hover={{
+									bg: "headerMenuColor",
+								}}
+								p="2"
+								background="primaryColor"
+								onClick={() => deleteMessage(item.id)}
+							>
+								<Icon as={BsTrashFill} size="6" color="importantColor" />
+								Delete
+							</MenuItem>
+						</MenuList>
+					) : null}
+				</Menu>
+			</ChakraBox>
+		</AnimatePresence>
 	);
 };
 

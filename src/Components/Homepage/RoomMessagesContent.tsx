@@ -9,6 +9,24 @@ import ChatMessage from "./ChatMessage";
 import ChatDate from "./ChatDate";
 import { UserHasBlockedDelete, deleteUserBlock, updateRoomMessages } from "../../Services/APIs";
 import { Message } from "../../Interface/Types";
+import { ChakraBox } from "../../Framer";
+import { AnimatePresence } from "framer-motion";
+
+const list = {
+	visible: {
+		opacity: 1,
+		transition: {
+			when: "beforeChildren",
+			staggerChildren: 0.3,
+		},
+	},
+	hidden: {
+		opacity: 0,
+		transition: {
+			when: "afterChildren",
+		},
+	},
+};
 
 const RoomMessagesContent = () => {
 	const { id } = useParams<{ id: string }>();
@@ -132,11 +150,13 @@ const RoomMessagesContent = () => {
 				{actualRoom?.messages.map((dateMessage) => (
 					<Flex flexDir="column" w="full" my="1" px="4" key={dateMessage.id}>
 						<ChatDate date={dateMessage.date} />
-						<Flex flexDir="column-reverse">
-							{dateMessage.messages.map((message) => (
-								<ChatMessage key={message.id} item={message} />
-							))}
-						</Flex>
+						<ChakraBox display="flex" initial="hidden" animate="visible" variants={list} flexDir="column-reverse">
+							<AnimatePresence>
+								{dateMessage.messages.map((message) => (
+									<ChatMessage key={message.id} item={message} />
+								))}
+							</AnimatePresence>
+						</ChakraBox>
 					</Flex>
 				))}
 				{isUserBlocked.hasConnectedUserBlockedRoom && (
