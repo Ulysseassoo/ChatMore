@@ -6,6 +6,7 @@ import * as yup from "yup";
 import FormTitle from "./FormTitle";
 import { supabase } from "../../supabaseClient";
 import useAuthStore from "../../Store/authStore";
+import { useNavigate } from "react-router";
 
 const validationSchema = yup
 	.object({
@@ -18,6 +19,7 @@ type FormData = yup.InferType<typeof validationSchema>;
 
 const LoginForm = () => {
 	const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
+	const navigation = useNavigate();
 	const toast = useToast();
 	const {
 		register,
@@ -44,6 +46,7 @@ const LoginForm = () => {
 					duration: 3000,
 					isClosable: true,
 				});
+				navigation("/");
 			}
 		} catch (error: any) {
 			toast({

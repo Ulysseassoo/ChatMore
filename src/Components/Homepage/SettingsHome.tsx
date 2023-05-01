@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Icon, Input, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, Icon, Input, Text, useToast } from "@chakra-ui/react";
 import React from "react";
 import { BsArrowLeft } from "react-icons/bs";
 import { FiUser, FiUserX } from "react-icons/fi";
@@ -7,6 +7,9 @@ import SettingsWrapper from "./SettingsWrapper";
 import SettingsWrapperPage from "./SettingsWrapperPage";
 import { css } from "@emotion/react";
 import ProfileSettings from "./ProfileSettings";
+import { AiOutlineLogout } from "react-icons/ai";
+import useAuthStore from "../../Store/authStore";
+import { supabase } from "../../supabaseClient";
 
 const data = [
 	{
@@ -21,6 +24,26 @@ const data = [
 
 const SettingsHome = () => {
 	const setSettingsActive = useSettingsStore((state) => state.setSettingsActive);
+	const setLoggedOut = useAuthStore((state) => state.setLoggedOut);
+	const toast = useToast();
+
+	const logout = async () => {
+		try {
+			const { error } = await supabase.auth.signOut();
+			if (error) throw error;
+			setLoggedOut();
+			toast({
+				title: "Disconnected",
+				description: "You have successfully logged out.",
+				status: "success",
+				position: "top-right",
+				duration: 3000,
+				isClosable: true,
+			});
+		} catch (error) {
+			console.log("🚀 ~ file: SettingsHome.tsx:34 ~ logout ~ error:", error);
+		}
+	};
 
 	return (
 		<Flex
@@ -75,6 +98,22 @@ const SettingsHome = () => {
 					</Box>
 				);
 			})}
+
+			<Box
+				display="flex"
+				alignItems="center"
+				borderBottom={"1px solid"}
+				borderColor="lineBreakColor"
+				_hover={{
+					background: "lineBreakColor",
+				}}
+				onClick={logout}
+			>
+				<Box color="importantColor" w="full" cursor={"pointer"} p="4" display="inline-flex" gap="4">
+					<Icon as={AiOutlineLogout} boxSize={6} />
+					<Text>Logout</Text>
+				</Box>
+			</Box>
 		</Flex>
 	);
 };
