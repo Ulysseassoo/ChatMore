@@ -1,4 +1,4 @@
-import { NavigateFunction, Outlet, useNavigate } from "react-router";
+import { NavigateFunction, Outlet, useLocation, useNavigate } from "react-router";
 import { supabase } from "../supabaseClient";
 import useAuthStore from "../Store/authStore";
 import { useEffect } from "react";
@@ -11,13 +11,16 @@ const Authentication = ({ children }: Props) => {
 	const navigate = useNavigate();
 	const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
 	const setLoggedOut = useAuthStore((state) => state.setLoggedOut);
+	const router = useLocation();
 
 	const checkSession = async () => {
 		const sessionSupabase = await supabase.auth.getSession();
 
 		if (sessionSupabase.data.session !== null) {
 			setLoggedIn(sessionSupabase.data.session);
-			navigate("/");
+			if (router.pathname.includes("/login") || router.pathname.includes("/register")) {
+				navigate("/");
+			}
 		}
 	};
 

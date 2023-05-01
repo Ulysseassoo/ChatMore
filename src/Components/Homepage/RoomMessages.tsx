@@ -27,7 +27,8 @@ const RoomMessages = () => {
 				h="full"
 			>
 				<RoomMessagesHeader />
-				<RoomMessagesContent />
+				{/* Error here */}
+				{/* <RoomMessagesContent /> */}
 				<RoomMessagesBottom />
 			</Grid>
 		);

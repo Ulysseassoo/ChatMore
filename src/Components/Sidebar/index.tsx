@@ -1,11 +1,13 @@
-import { Avatar, Box, Center, Flex, Icon } from "@chakra-ui/react";
-import React from "react";
+import { Avatar, Center, Flex, Icon } from "@chakra-ui/react";
 import { BsChatDots } from "react-icons/bs";
 import { BiCog } from "react-icons/bi";
 import useAuthStore from "../../Store/authStore";
+import useSettingsStore from "../../Store/settingsStore";
 
 const Sidebar = () => {
 	const profile = useAuthStore((state) => state.profile);
+	const setSettingsActive = useSettingsStore((state) => state.setSettingsActive);
+	const isSettingsActive = useSettingsStore((state) => state.isSettingsActive);
 
 	return (
 		<Flex
@@ -22,12 +24,14 @@ const Sidebar = () => {
 					w="full"
 					position="relative"
 					h="8"
-					background="#35312E"
+					background={!isSettingsActive ? "#35312E" : "transparent"}
 					p="1"
 					borderRadius={"lg"}
 					overflow="hidden"
+					cursor="pointer"
+					onClick={() => setSettingsActive(false)}
 					_before={{
-						content: `""`,
+						content: !isSettingsActive ? `""` : "initial",
 						background: "accentColor",
 						height: "full",
 						width: "3px",
@@ -41,8 +45,28 @@ const Sidebar = () => {
 				</Center>
 			</Flex>
 
-			<Flex gap="4" flexDir="column" alignItems="center">
-				<Icon color="white" cursor="pointer" as={BiCog} boxSize={5} />
+			<Flex gap="4" flexDir="column" alignItems="center" w="full">
+				<Center
+					w="full"
+					position="relative"
+					h="8"
+					background={isSettingsActive ? "#35312E" : "transparent"}
+					p="1"
+					borderRadius={"lg"}
+					overflow="hidden"
+					_before={{
+						content: isSettingsActive ? `""` : "initial",
+						background: "accentColor",
+						height: "full",
+						width: "3px",
+						position: "absolute",
+						borderRadius: "lg",
+						left: 0.5,
+						top: 0,
+					}}
+				>
+					<Icon onClick={() => setSettingsActive(true)} color="white" cursor="pointer" as={BiCog} boxSize={5} />
+				</Center>
 				<Avatar
 					size='xs'
 					cursor={"pointer"}

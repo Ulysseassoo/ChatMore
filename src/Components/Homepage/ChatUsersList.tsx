@@ -28,7 +28,6 @@ const ChatUsersList = () => {
 	const [searchMessages, setSearchMessages] = useState("");
 	const getChatrooms = useRoomStore((state) => state.getChatrooms);
 	const rooms = useRoomStore((state) => state.rooms);
-	console.log("🚀 ~ file: ChatUsersList.tsx:31 ~ ChatUsersList ~ rooms:", rooms);
 	const isLoading = useRoomStore((state) => state.isLoading);
 	const session = useAuthStore((state) => state.session);
 	const isContactResearchActive = useSettingsStore((state) => state.isContactResearchActive);

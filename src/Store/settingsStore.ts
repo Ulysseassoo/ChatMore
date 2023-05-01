@@ -5,16 +5,19 @@ import { Profile } from "../Interface/Types";
 
 type State = {
 	isContactResearchActive: boolean;
+	isSettingsActive: boolean;
 	contactProfiles: Profile[];
 };
 
 type Actions = {
 	toggleContactResearch: () => void;
+	setSettingsActive: (value: boolean) => void;
 	setProfiles: (profiles: Profile[]) => void;
 };
 
 const initialState: State = {
 	isContactResearchActive: false,
+	isSettingsActive: false,
 	contactProfiles: [],
 };
 
@@ -24,6 +27,10 @@ const useSettingsStore = create(
 		toggleContactResearch: () =>
 			set((state) => {
 				state.isContactResearchActive = !state.isContactResearchActive;
+			}),
+		setSettingsActive: (value: boolean) =>
+			set((state) => {
+				state.isSettingsActive = value;
 			}),
 		setProfiles: (profiles: Profile[]) =>
 			set((state) => {
