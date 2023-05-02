@@ -37,12 +37,13 @@ const RoomMessagesContent = () => {
 	const updateViewRoomMessages = useRoomStore((state) => state.updateViewRoomMessages);
 	const channels = supabase.getChannels();
 	const toast = useToast();
-
-	if (!id) return <></>;
-
 	const actualRoom = rooms.find((roomState) => roomState.room === parseInt(id));
-
-	if (!actualRoom || !profile) return <></>;
+	const isUserBlocked = useIsUserBlocked(actualRoom?.room);
+	const getChannelRoom = useMemo(() => {
+		const channelRoom = channels.find((chan) => chan.topic.split(":")[1] === `room${actualRoom?.room.toString()}`);
+		if (channelRoom) return channelRoom;
+		return null;
+	}, [channels]);
 
 	const unblockUser = async () => {
 		const deleteUsers: UserHasBlockedDelete = {
@@ -134,15 +135,12 @@ const RoomMessagesContent = () => {
 	};
 
 	useEffect(() => {
-		updateMessagesInRoom();
-	}, [actualRoom.messages]);
+		if (actualRoom !== undefined && actualRoom.messages !== undefined) {
+			updateMessagesInRoom();
+		}
+	}, [actualRoom?.messages]);
 
-	const isUserBlocked = useIsUserBlocked(actualRoom.room);
-	const getChannelRoom = useMemo(() => {
-		const channelRoom = channels.find((chan) => chan.topic.split(":")[1] === `room${actualRoom?.room.toString()}`);
-		if (channelRoom) return channelRoom;
-		return null;
-	}, [channels]);
+	if (!actualRoom) return <></>;
 
 	return (
 		<Box bg={"primaryColor"} height="full" position="relative" paddingBottom={2} gridArea="content">

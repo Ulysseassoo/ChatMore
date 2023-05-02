@@ -1,8 +1,12 @@
 import { useState } from "react";
-import { Box, Icon, Input, InputGroup, InputProps, InputRightElement } from "@chakra-ui/react";
+import { Box, Icon, Input, InputGroup, InputProps, InputRightElement, Spinner } from "@chakra-ui/react";
 import { VscSearch } from "react-icons/vsc";
 
-const SearchBar = ({ ...rest }: InputProps) => {
+interface Props {
+	isLoading?: boolean;
+}
+
+const SearchBar = ({ isLoading, ...rest }: InputProps & Props) => {
 	return (
 		<Box>
 			<InputGroup alignItems={"center"}>
@@ -24,7 +28,10 @@ const SearchBar = ({ ...rest }: InputProps) => {
 					placeholder="Search for a message"
 					{...rest}
 				/>
-				<InputRightElement height="full" children={<Icon as={VscSearch} color="gray.300" />} />
+				<InputRightElement
+					height="full"
+					children={isLoading ? <Spinner size='sm' color="accentColor" /> : <Icon as={VscSearch} color="gray.300" />}
+				/>
 			</InputGroup>
 		</Box>
 	);

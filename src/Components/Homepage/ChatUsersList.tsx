@@ -53,13 +53,18 @@ const ChatUsersList = () => {
 			>
 				<Flex alignItems="center" justifyContent="space-between">
 					<Text fontSize="2xl">Chat</Text>
-					<Icon
-						onClick={() => toggleContactResearch()}
-						as={BiMessageSquareAdd}
+					<Center
+						p="2"
+						borderRadius="xl"
 						cursor="pointer"
-						boxSize={5}
-						color="white"
-					/>
+						transition="0.3s ease"
+						onClick={() => toggleContactResearch()}
+						_hover={{
+							background: "whiteAlpha.100",
+						}}
+					>
+						<Icon as={BiMessageSquareAdd} cursor="pointer" boxSize={5} color="white" />
+					</Center>
 				</Flex>
 				<SearchBar />
 				{isLoading ? (

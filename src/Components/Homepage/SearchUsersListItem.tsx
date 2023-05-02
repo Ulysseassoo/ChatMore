@@ -7,10 +7,16 @@ import useRoomStore, { RoomState } from "../../Store/roomStore";
 import useAuthStore from "../../Store/authStore";
 import useRooms from "../Hooks/useRooms";
 import useSettingsStore from "../../Store/settingsStore";
+import { ChakraBox } from "../../Framer";
 
 interface Props {
 	profile: Profile;
 }
+
+const item = {
+	hidden: { opacity: 0, y: -100 },
+	show: { opacity: 1, y: 0 },
+};
 
 const SearchUsersListItem = ({ profile }: Props) => {
 	const navigate = useNavigate();
@@ -24,7 +30,7 @@ const SearchUsersListItem = ({ profile }: Props) => {
 	};
 
 	return (
-		<Box
+		<ChakraBox
 			p="2"
 			width="full"
 			mb={2}
@@ -36,6 +42,9 @@ const SearchUsersListItem = ({ profile }: Props) => {
 				bg: "lineBreakColor",
 			}}
 			borderRadius="xl"
+			variants={item}
+			// transition={{ ease: [0.17, 0.67, 0.83, 0.67] }}
+			// transition="4s ease"
 		>
 			<Box px="4" py="2">
 				<HStack spacing="4" alignItems={"center"}>
@@ -48,7 +57,7 @@ const SearchUsersListItem = ({ profile }: Props) => {
 						name={profile.username}
 					/>
 
-					<Flex justifyContent={"space-between"}>
+					<Flex flexDir="column" justifyContent={"space-between"}>
 						<Text color="white" fontWeight={"bold"}>
 							{profile.username}
 						</Text>
@@ -58,7 +67,7 @@ const SearchUsersListItem = ({ profile }: Props) => {
 					</Flex>
 				</HStack>
 			</Box>
-		</Box>
+		</ChakraBox>
 	);
 };
 
