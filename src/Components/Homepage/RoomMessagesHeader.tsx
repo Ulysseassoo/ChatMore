@@ -1,17 +1,18 @@
-import { Flex, HStack, Icon, Avatar, Box, Text, Center } from "@chakra-ui/react";
+import { Flex, HStack, Avatar, Box, Text } from "@chakra-ui/react";
 import { useMemo } from "react";
 import { useParams, useNavigate } from "react-router";
 import useOnlineStore from "../../Store/onlineStore";
 import useRoomStore from "../../Store/roomStore";
 import useUserIsTypying from "../Hooks/useUserIsTypying";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import useIsUserBlocked from "../Hooks/useIsUserBlocked";
+import useSettingsStore from "../../Store/settingsStore";
 
 const RoomMessagesHeader = () => {
 	const navigation = useNavigate();
 	const { id } = useParams<{ id: string }>();
 	const rooms = useRoomStore((state) => state.rooms);
 	const onlineUsers = useOnlineStore((state) => state.onlineUsers);
+	const setIsProfileActive = useSettingsStore((state) => state.setIsProfileActive);
 
 	if (!id) return <></>;
 
@@ -28,12 +29,21 @@ const RoomMessagesHeader = () => {
 	if (!userToChat) return <></>;
 
 	return (
-		<Box bg={"headerMenuColor"} px="4" py="3" w="full" gridArea="top">
+		<Box
+			bg={"headerMenuColor"}
+			px="4"
+			py="3"
+			w="full"
+			gridArea="top"
+			cursor={"pointer"}
+			_hover={{
+				bg: "lineBreakColor",
+			}}
+			transition="0.3s ease"
+			onClick={() => setIsProfileActive(true)}
+		>
 			<Flex justifyContent={"space-between"} alignItems="center" flexDir="row" position="relative" overflow="hidden">
 				<HStack spacing={2} alignItems="center">
-					{/* <Box onClick={navigation.goBack}>
-						<Icon as={AntDesign} name="arrowleft" color="white" size={6} />
-					</Box> */}
 					<HStack alignItems={"center"} spacing="4" flex="1">
 						<Avatar
 							src={userToChat?.avatar_url !== "" ? userToChat.avatar_url : undefined}
@@ -41,20 +51,7 @@ const RoomMessagesHeader = () => {
 							size={"sm"}
 							name={userToChat?.username}
 						/>
-						<Box
-							// _hover={{
-							// 	bg: "lineBreakColor",
-							// }}
-							px="1.5"
-							borderRadius={"md"}
-							// onClick={() =>
-							// 	// navigation.navigate("ProfileUser", {
-							// 	// 	profile: userToChat,
-							// 	// 	room_id: route.params.room_id
-							// 	// })
-							// }
-							flex="1"
-						>
+						<Box px="1.5" borderRadius={"md"} flex="1">
 							<Text color="white" fontSize="md" fontWeight="bold">
 								{userToChat.username}
 							</Text>
@@ -74,26 +71,9 @@ const RoomMessagesHeader = () => {
 						</Box>
 					</HStack>
 				</HStack>
-
-				<HStack spacing="4" alignItems="center">
-					<Center
-						p="2"
-						borderRadius="lg"
-						_hover={{
-							background: "whiteAlpha.100",
-						}}
-						cursor="pointer"
-					>
-						<Icon as={BsThreeDotsVertical} color={"white"} />
-					</Center>
-				</HStack>
 			</Flex>
 		</Box>
 	);
 };
 
 export default RoomMessagesHeader;
-
-function useRoute<T>() {
-	throw new Error("Function not implemented.");
-}

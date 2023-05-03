@@ -44,7 +44,7 @@ const ChatUsersList = () => {
 			<Flex
 				flexDir="column"
 				p="4"
-				w="30%"
+				w="450px"
 				borderRight="1px solid"
 				borderColor="lineBreakColor"
 				gap="4"

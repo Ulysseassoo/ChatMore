@@ -27,14 +27,6 @@ const container = {
 	},
 };
 
-const item = {
-	hidden: { opacity: 0, y: -100 },
-	show: {
-		opacity: 1,
-		y: 0,
-	},
-};
-
 const SearchUsersList = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [searchText, setSearchText] = useState("");
@@ -100,7 +92,7 @@ const SearchUsersList = () => {
 			</Flex>
 			<SearchBar isLoading={isLoading} value={searchText} onChange={(e) => handleInputText(e.target.value)} />
 			<Divider />
-			{contactProfiles.length > 0 && (
+			{!isLoading && (
 				<ChakraBox variants={container} initial="hidden" animate="show" height="auto" overflowY="scroll">
 					{contactProfiles.map((profile) => (
 						<SearchUsersListItem key={profile.id} profile={profile} />

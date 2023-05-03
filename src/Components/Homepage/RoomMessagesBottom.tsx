@@ -36,7 +36,7 @@ const RoomMessagesBottom = () => {
 	const addMessageToRoom = useRoomStore((state) => state.addMessageToRoom);
 	const isUserBlocked = useIsUserBlocked(actualRoom?.room);
 	const getChannelRoom = useMemo(() => {
-		const channelRoom = channels.find((chan) => chan.topic.split(":")[1] === `room${id}`);
+		const channelRoom = channels.find((chan) => chan.topic.split(":")[1] === `room${id.toString()}`);
 		if (channelRoom) return channelRoom;
 		return null;
 	}, [channels]);

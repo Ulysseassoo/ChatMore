@@ -11,6 +11,10 @@ const useIsUserBlocked = (roomId: number | undefined) => {
 	const hasConnectedUserBlockedRoom = !!actualRoom?.blockedUsers.find(
 		(room) => room.room_id === roomId && room.blocking_user_id === profile?.id,
 	);
+	console.log(
+		"🚀 ~ file: useIsUserBlocked.tsx:14 ~ useIsUserBlocked ~ hasConnectedUserBlockedRoom:",
+		hasConnectedUserBlockedRoom,
+	);
 
 	return {
 		isRoomBlocked,

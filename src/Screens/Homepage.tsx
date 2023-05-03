@@ -53,21 +53,25 @@ const Homepage: React.FC = () => {
 					});
 					channel
 						.on("broadcast", { event: "message" }, (payload) => {
+							console.log("🚀 ~ file: Homepage.tsx:56 ~ .on ~ payload:", payload);
 							addMessageToRoom(payload.payload.message);
 						})
 						.on("broadcast", { event: "deleteMessage" }, (payload) => {
 							removeMessageFromRoom(payload.payload.message);
 						})
 						.on("broadcast", { event: "deleteBlock" }, (payload) => {
+							console.log("🚀 ~ file: Homepage.tsx:63 ~ .on ~ payload:", payload);
 							deleteBlockedUser(payload.payload.room_id, payload.payload.profile_id);
 						})
 						.on("broadcast", { event: "addBlock" }, (payload) => {
+							console.log("🚀 ~ file: Homepage.tsx:66 ~ .on ~ payload:", payload);
 							addBlockedUser(payload.payload.userBlock);
 						})
 						.on("presence", { event: "sync" }, () => setRoomUsers({ ...channel.presenceState() }, room.room.toString()))
-						.on("broadcast", { event: "readMessages" }, (payload) =>
-							updateViewRoomMessages(payload.payload.messages, session?.user.id),
-						)
+						.on("broadcast", { event: "readMessages" }, (payload) => {
+							console.log("🚀 ~ file: Homepage.tsx:72 ~ rooms.map ~ payload:", payload);
+							return updateViewRoomMessages(payload.payload.messages, session?.user.id);
+						})
 						.subscribe(async (status) => {
 							if (status === "SUBSCRIBED") {
 								// console.log(status, "to room", room.room)

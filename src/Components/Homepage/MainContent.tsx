@@ -5,9 +5,11 @@ import { useParams } from "react-router";
 import RoomMessages from "./RoomMessages";
 import SettingsHome from "./SettingsHome";
 import useSettingsStore from "../../Store/settingsStore";
+import ProfileInformations from "./ProfileInformations";
 
 const MainContent = () => {
 	const isSettingsActive = useSettingsStore((state) => state.isSettingsActive);
+
 	return (
 		<Flex
 			gridArea="chat"
@@ -16,10 +18,12 @@ const MainContent = () => {
 			background="primaryColor"
 			position="relative"
 			overflow="hidden"
+			transition="0.3s ease"
 		>
 			{isSettingsActive && <SettingsHome />}
 			<ChatUsersList />
 			<RoomMessages />
+			<ProfileInformations />
 		</Flex>
 	);
 };

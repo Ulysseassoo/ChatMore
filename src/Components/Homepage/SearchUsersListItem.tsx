@@ -43,8 +43,6 @@ const SearchUsersListItem = ({ profile }: Props) => {
 			}}
 			borderRadius="xl"
 			variants={item}
-			// transition={{ ease: [0.17, 0.67, 0.83, 0.67] }}
-			// transition="4s ease"
 		>
 			<Box px="4" py="2">
 				<HStack spacing="4" alignItems={"center"}>

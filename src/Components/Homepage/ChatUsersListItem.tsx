@@ -49,6 +49,7 @@ const ChatUsersListItem = ({ item }: Props) => {
 				bg: "lineBreakColor",
 			}}
 			cursor="pointer"
+			transition="0.3s ease"
 		>
 			<Box
 				onClick={() => {

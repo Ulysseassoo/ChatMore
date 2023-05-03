@@ -5,6 +5,7 @@ import { useParams } from "react-router";
 import RoomMessagesHeader from "./RoomMessagesHeader";
 import RoomMessagesContent from "./RoomMessagesContent";
 import RoomMessagesBottom from "./RoomMessagesBottom";
+import useSettingsStore from "../../Store/settingsStore";
 
 const RoomMessages = () => {
 	const params = useParams<{ id?: string }>();
@@ -15,19 +16,19 @@ const RoomMessages = () => {
 				gridTemplateColumns="1fr 1fr 1fr"
 				gridTemplateRows={"66px 1fr 1fr 64px"}
 				gridTemplateAreas={`
-			"top top top"
-    "content content content"
-    "content content content"
-    "bottom bottom bottom"
-	`}
+	"top top top"
+"content content content"
+"content content content"
+"bottom bottom bottom"
+`}
 				flexDir="column"
-				w="70%"
+				flex="1"
 				position="relative"
 				overflow="hidden"
 				h="full"
+				transition="0.3s ease"
 			>
 				<RoomMessagesHeader />
-				{/* Error here */}
 				<RoomMessagesContent />
 				<RoomMessagesBottom />
 			</Grid>

@@ -55,7 +55,7 @@ const SettingsHome = () => {
 			height="full"
 			width="full"
 			zIndex={2}
-			w="30%"
+			w="450px"
 			borderRight="1px solid"
 			borderColor="lineBreakColor"
 			overflow="hidden"
@@ -66,7 +66,6 @@ const SettingsHome = () => {
 			}}
 		>
 			<Box p="4" background="#403B38" display="inline-flex" className="settings-content" gap="4" alignItems="center">
-				<Icon cursor={"pointer"} as={BsArrowLeft} boxSize={6} onClick={() => setSettingsActive(false)} />
 				<Text fontSize="2xl">Settings</Text>
 			</Box>
 			{data.map((title) => {
