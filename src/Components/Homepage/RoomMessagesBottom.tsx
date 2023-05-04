@@ -35,11 +35,7 @@ const RoomMessagesBottom = () => {
 	const channels = supabase.getChannels();
 	const addMessageToRoom = useRoomStore((state) => state.addMessageToRoom);
 	const isUserBlocked = useIsUserBlocked(actualRoom?.room);
-	const getChannelRoom = useMemo(() => {
-		const channelRoom = channels.find((chan) => chan.topic.split(":")[1] === `room${id.toString()}`);
-		if (channelRoom) return channelRoom;
-		return null;
-	}, [channels]);
+	const getChannelRoom = channels.find((chan) => chan.topic.split(":")[1] === `room${id.toString()}`);
 	const inputRef = useRef<HTMLInputElement | null>(null);
 
 	const { handleSubmit, control, setValue } = useForm<FormData>({
@@ -60,7 +56,7 @@ const RoomMessagesBottom = () => {
 			if (content === "") throw new Error("You need to write something :)");
 			const message = await createMessage(newMessage);
 			addMessageToRoom(message);
-			if (getChannelRoom !== null && !!message?.isBlocked === false) {
+			if (getChannelRoom !== undefined && !!message?.isBlocked === false) {
 				getChannelRoom.send({
 					type: "broadcast",
 
@@ -70,7 +66,7 @@ const RoomMessagesBottom = () => {
 				});
 			}
 			setValue("message", "");
-			if (getChannelRoom !== null) {
+			if (getChannelRoom !== undefined) {
 				getChannelRoom.untrack();
 			}
 		} catch (error: any) {
@@ -127,7 +123,7 @@ const RoomMessagesBottom = () => {
 						images: [image],
 					};
 					addMessageToRoom(newMessage);
-					if (getChannelRoom !== null) {
+					if (getChannelRoom !== undefined) {
 						getChannelRoom.send({
 							type: "broadcast",
 
@@ -192,22 +188,16 @@ const RoomMessagesBottom = () => {
 								borderRadius="full"
 								placeholder="Message"
 								fontSize={"md"}
-								onChange={(e) => {
-									onChange(e.target.value);
-									if (getChannelRoom !== null) {
-										// Untrack presence when typying
-										getChannelRoom.untrack();
-									}
-								}}
+								onChange={onChange}
 								onKeyPress={() => {
-									if (getChannelRoom !== null && actualRoom !== undefined && !isUserBlocked.isRoomBlocked) {
+									if (getChannelRoom !== undefined && actualRoom !== undefined && !isUserBlocked.isRoomBlocked) {
 										getChannelRoom.track({ isTyping: Date.now(), room: actualRoom.room });
 									}
 								}}
 								value={value}
 								onBlur={() => {
 									onBlur();
-									if (getChannelRoom !== null) {
+									if (getChannelRoom !== undefined) {
 										// Untrack presence when typying
 										getChannelRoom.untrack();
 									}

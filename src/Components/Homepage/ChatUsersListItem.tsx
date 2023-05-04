@@ -29,14 +29,17 @@ const ChatUsersListItem = ({ item }: Props) => {
 	const isFromConnectedUser = actualMessage.user === session?.user.id;
 
 	const getNotViewedMessages = (user_id: string | undefined) => {
-		const count = item.messages
-			.map((dateMessage) =>
-				dateMessage.messages.filter((message) => {
-					if (message.user !== user_id) return message.view === false;
-				}),
-			)
-			.filter((mess) => mess.length > 0);
-		return count.length;
+		const count = item.messages.reduce((acc, dateMessage) => {
+			const unreadCount = dateMessage.messages.reduce((unreadAcc, message) => {
+				if (message.user !== user_id && message.view === false) {
+					return unreadAcc + 1;
+				} else {
+					return unreadAcc;
+				}
+			}, 0);
+			return acc + unreadCount;
+		}, 0);
+		return count;
 	};
 
 	return (

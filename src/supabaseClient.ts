@@ -7,7 +7,7 @@ const supabaseKey: any = import.meta.env.VITE_SUPABASE_PUBLIC_KEY;
 const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
 	realtime: {
 		params: {
-			eventsPerSecond: 10,
+			eventsPerSecond: 20,
 		},
 	},
 });
