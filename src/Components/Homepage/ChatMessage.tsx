@@ -14,6 +14,7 @@ import {
 	MenuItem,
 	MenuList,
 	Text,
+	VStack,
 	useDisclosure,
 	useToast,
 } from "@chakra-ui/react";
@@ -64,11 +65,7 @@ const ChatMessage = ({ item }: Props) => {
 	const removeMessageFromRoom = useRoomStore((state) => state.removeMessageFromRoom);
 	const { isOpen, onOpen } = useDisclosure();
 	const channels = supabase.getChannels();
-	const getChannelRoom = useMemo(() => {
-		const channelRoom = channels.find((chan) => chan.topic.split(":")[1] === `room${item.room.toString()}`);
-		if (channelRoom) return channelRoom;
-		return null;
-	}, [channels]);
+	const getChannelRoom = channels.find((chan) => chan.topic.split(":")[1] === `room${item.room.toString()}`);
 	const toast = useToast();
 
 	const isFromConnectedUser = useMemo(() => {
@@ -107,7 +104,7 @@ const ChatMessage = ({ item }: Props) => {
 			}
 			await deleteMessageById(id);
 			removeMessageFromRoom(item);
-			if (getChannelRoom !== null) {
+			if (getChannelRoom !== undefined) {
 				getChannelRoom.send({
 					type: "broadcast",
 
@@ -165,21 +162,16 @@ const ChatMessage = ({ item }: Props) => {
 		}
 
 		return (
-			<HStack
-				position="relative"
-				spacing="4"
-				alignItems="flex-end"
-				justifyContent={"space-between"}
-				flexDir="row"
-				flexWrap="wrap"
-			>
-				<Text color="white">{item.content}</Text>
+			<VStack position="relative" spacing="1" alignItems="flex-end" justifyContent={"space-between"}>
+				<Text color="white" w="full">
+					{item.content}
+				</Text>
 				{item.created_at && (
 					<Text color={"white"} fontSize="2xs">
 						{dateFormatted(item.created_at)}
 					</Text>
 				)}
-			</HStack>
+			</VStack>
 		);
 	};
 
@@ -214,43 +206,41 @@ const ChatMessage = ({ item }: Props) => {
 				variants={animationMessage}
 				exit="hidden"
 				alignSelf={isFromConnectedUser ? "flex-end" : "flex-start"}
+				maxW="80%"
 			>
-				<Menu>
-					<MenuButton
-						p="2"
-						bg={isFromConnectedUser ? "accentColor" : "headerMenuColor"}
-						borderRadius="md"
-						mb="2.5"
-						shadow="6"
-						w="fit-content"
-						maxW="60"
-						as={Box}
-						onMouseDown={handleMouseDown}
-						onMouseUp={handleMouseUp}
-						onTouchStart={handleMouseDown}
-						onTouchEnd={handleMouseUp}
-						_hover={{
-							bg: isFromConnectedUser ? "accentColorHover" : "headerMenuColor",
-						}}
-					>
-						{showMessageContent()}
-					</MenuButton>
-					{isFromConnectedUser && isOpen ? (
-						<MenuList background="primaryColor" borderColor="lineBreakColor">
-							<MenuItem
-								_hover={{
-									bg: "headerMenuColor",
-								}}
-								p="2"
-								background="primaryColor"
-								onClick={() => deleteMessage(item.id)}
-							>
-								<Icon as={BsTrashFill} size="6" color="importantColor" />
-								Delete
-							</MenuItem>
-						</MenuList>
-					) : null}
-				</Menu>
+				<Box
+					p="2"
+					bg={isFromConnectedUser ? "accentColor" : "headerMenuColor"}
+					borderRadius="md"
+					mb="2.5"
+					shadow="6"
+					w="full"
+					as={Box}
+					onMouseDown={handleMouseDown}
+					onMouseUp={handleMouseUp}
+					onTouchStart={handleMouseDown}
+					onTouchEnd={handleMouseUp}
+					_hover={{
+						bg: isFromConnectedUser ? "accentColorHover" : "headerMenuColor",
+					}}
+				>
+					{showMessageContent()}
+				</Box>
+				{/* {isFromConnectedUser && isOpen ? (
+					<MenuList background="primaryColor" borderColor="lineBreakColor">
+						<MenuItem
+							_hover={{
+								bg: "headerMenuColor",
+							}}
+							p="2"
+							background="primaryColor"
+							onClick={() => deleteMessage(item.id)}
+						>
+							<Icon as={BsTrashFill} size="6" color="importantColor" />
+							Delete
+						</MenuItem>
+					</MenuList>
+				) : null} */}
 			</ChakraBox>
 		</AnimatePresence>
 	);

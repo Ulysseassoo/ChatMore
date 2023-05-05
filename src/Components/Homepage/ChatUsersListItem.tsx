@@ -7,6 +7,7 @@ import { Avatar, Badge, Box, Flex, HStack, Icon, Text } from "@chakra-ui/react";
 import { dateFormatted } from "../../Helpers/DateFormatting";
 import { IoCheckmarkDoneSharp, IoImagesSharp } from "react-icons/io5";
 import useIsUserBlocked from "../Hooks/useIsUserBlocked";
+import { ChakraText } from "../../Framer";
 
 interface Props {
 	item: RoomState;
@@ -87,14 +88,24 @@ const ChatUsersListItem = ({ item }: Props) => {
 								{isFromConnectedUser && (
 									<Icon as={IoCheckmarkDoneSharp} color={actualMessage.view ? "accentColor" : "gray.500"} />
 								)}
-								<Text
-									color={isUserTypying ? "accentColor" : "gray.400"}
-									isTruncated
-									display="flex"
-									flexDir="row"
-									alignItems="center"
-								>
-									{isUserTypying ? "Is writing..." : actualMessage.content}
+								<Text color={"gray.400"} isTruncated display="flex" flexDir="row" alignItems="center" maxW="80">
+									{isUserTypying ? (
+										<ChakraText
+											animate={{ opacity: [1, 0.5, 0.3, 0.8] }}
+											// @ts-ignore
+											transition={{
+												duration: 0.8,
+												ease: "easeInOut",
+												repeat: Infinity,
+												repeatDelay: 0.6,
+											}}
+											color="accentColor"
+										>
+											Is writing...
+										</ChakraText>
+									) : (
+										actualMessage.content
+									)}
 								</Text>
 								{actualMessage.images !== undefined && actualMessage.images.length > 0 && (
 									<HStack alignItems="center" spacing="1">

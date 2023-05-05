@@ -39,59 +39,59 @@ const RoomMessagesContent = () => {
 	const toast = useToast();
 	const actualRoom = rooms.find((roomState) => roomState.room === parseInt(id));
 	const isUserBlocked = useIsUserBlocked(actualRoom?.room);
-	const getChannelRoom = useMemo(() => {
-		const channelRoom = channels.find((chan) => chan.topic.split(":")[1] === `room${actualRoom?.room.toString()}`);
-		if (channelRoom) return channelRoom;
-		return null;
-	}, [channels]);
+	const getChannelRoom = channels.find((chan) => chan.topic.split(":")[1] === `room${actualRoom?.room.toString()}`);
 
 	const unblockUser = async () => {
-		const deleteUsers: UserHasBlockedDelete = {
-			blocking_user_id: session?.user.id,
-			room_id: parseInt(id),
-		};
+		if (id !== undefined) {
+			const deleteUsers: UserHasBlockedDelete = {
+				blocking_user_id: session?.user.id,
+				room_id: parseInt(id),
+			};
 
-		try {
-			await deleteUserBlock(deleteUsers);
-			// Delete store
-			deleteBlockedUser(parseInt(id), profile.id);
-			if (getChannelRoom !== null) {
-				getChannelRoom.send({
-					type: "broadcast",
+			try {
+				await deleteUserBlock(deleteUsers);
+				// Delete store
+				deleteBlockedUser(parseInt(id), profile?.id);
+				if (getChannelRoom !== undefined) {
+					getChannelRoom.send({
+						type: "broadcast",
 
-					event: "deleteBlock",
+						event: "deleteBlock",
 
-					payload: { room_id: parseInt(id), profile_id: profile?.id },
+						payload: { room_id: parseInt(id), profile_id: profile?.id },
+					});
+				}
+				toast({
+					title: "Success",
+					description: `${profile?.username} has been unblocked !`,
+					status: "success",
+					duration: 1500,
+					isClosable: true,
+					position: "top-right",
 				});
+			} catch (error: any) {
+				console.log(error);
 			}
-			toast({
-				title: "Success",
-				description: `${profile?.username} has been unblocked !`,
-				status: "success",
-				duration: 1500,
-				isClosable: true,
-				position: "top-right",
-			});
-		} catch (error: any) {
-			console.log(error);
 		}
 	};
 
 	const getNotViewedMessages = () => {
 		const messagesFormatted: Message[] = [];
-		actualRoom.messages
-			.map((dateMessage) =>
-				dateMessage.messages.filter((message) => {
-					if (message.user !== session?.user.id) return message.view === false;
-				}),
-			)
-			.filter((mess) => mess.length > 0)
-			.map((mapArray) =>
-				mapArray.map(({ images, ...rest }) => {
-					const newMessage = { ...rest };
-					messagesFormatted.push(newMessage);
-				}),
-			);
+		if (actualRoom !== undefined) {
+			actualRoom.messages
+				.map((dateMessage) =>
+					dateMessage.messages.filter((message) => {
+						if (message.user !== session?.user.id) return message.view === false;
+					}),
+				)
+				.filter((mess) => mess.length > 0)
+				.map((mapArray) =>
+					mapArray.map(({ images, ...rest }) => {
+						const newMessage = { ...rest };
+						messagesFormatted.push(newMessage);
+					}),
+				);
+		}
 
 		return messagesFormatted;
 	};
@@ -122,7 +122,7 @@ const RoomMessagesContent = () => {
 			const messages = await updateUserMessages();
 			if (messages === undefined) return;
 			updateViewRoomMessages(messages, session?.user.id);
-			if (getChannelRoom !== null) {
+			if (getChannelRoom !== undefined) {
 				getChannelRoom.send({
 					type: "broadcast",
 					event: "readMessages",
