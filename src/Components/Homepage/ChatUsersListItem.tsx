@@ -71,7 +71,7 @@ const ChatUsersListItem = ({ item }: Props) => {
 						name={user.username && user?.username[0].toUpperCase() + user?.username[1].toUpperCase()}
 					/>
 
-					<Flex flexDir="column" justifyContent={"space-between"} width={"full"}>
+					<Flex flexDir="column" justifyContent={"space-between"} width={"full"} overflow="hidden">
 						<Flex justifyContent={"space-between"} alignItems="center" flexDir="row">
 							<Text color="white" fontWeight={"bold"}>
 								{user.username}
@@ -83,12 +83,12 @@ const ChatUsersListItem = ({ item }: Props) => {
 								</Text>
 							)}
 						</Flex>
-						<Flex justifyContent={"space-between"} flexDir="row">
-							<HStack alignItems="center" spacing="1">
+						<Flex justifyContent={"space-between"} flexDir="row" w="full">
+							<HStack alignItems="center" spacing="1" maxW="full">
 								{isFromConnectedUser && (
 									<Icon as={IoCheckmarkDoneSharp} color={actualMessage.view ? "accentColor" : "gray.500"} />
 								)}
-								<Text color={"gray.400"} isTruncated display="flex" flexDir="row" alignItems="center" maxW="80">
+								<Text color={"gray.400"} isTruncated display="flex" flexDir="row" alignItems="center">
 									{isUserTypying ? (
 										<ChakraText
 											animate={{ opacity: [1, 0.5, 0.3, 0.8] }}
