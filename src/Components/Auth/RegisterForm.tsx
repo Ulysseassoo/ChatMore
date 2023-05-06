@@ -20,7 +20,7 @@ const validationSchema = yup
 			.min(4, "Password must be at least 4 characters")
 			.max(20, "Password must be at most 20 characters")
 			.matches(
-				/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+				/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{4,}$/,
 				"Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
 			)
 			.required("Password is required"),
