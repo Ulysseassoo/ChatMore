@@ -1,0 +1,26 @@
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+
+
+### react ###
+.DS_*
+*.log
+logs
+**/*.backup.*
+**/*.back.*
+
+node_modules
+bower_components
+
+*.sublime*
+
+psd
+thumb
+sketch
+
+.wakatime-project
+.vscode
+rome.json

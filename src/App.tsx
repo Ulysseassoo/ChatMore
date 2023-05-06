@@ -1,41 +1,43 @@
-import { AnimatePresence } from "framer-motion"
-import React, { useEffect, useState } from "react"
-import { Route, Routes } from "react-router"
-import { ToastContainer } from "react-toastify"
-import { ThemeProvider } from "styled-components"
-import Homepage from "./Screens/Homepage"
-import Login from "./Screens/Login"
-import Register from "./Screens/Register"
-import { GlobalStyles } from "./Theme/global"
-import { lightTheme } from "./Theme/theme"
-import { useLocation } from "react-router-dom"
-import "react-toastify/dist/ReactToastify.css"
-import { supabase } from "./supabaseClient"
-import Authentication from "./Helpers/Authentication"
-import TablesListeners from "./Helpers/TablesListeners"
+import { AnimatePresence } from "framer-motion";
+import React, {} from "react";
+import { Route, RouterProvider, Routes } from "react-router";
+import Homepage from "./Screens/Homepage";
+import Login from "./Screens/Login";
+import Register from "./Screens/Register";
+import { createBrowserRouter, useLocation } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+import { ChakraProvider } from "@chakra-ui/react";
+import GlobalTheme from "./Theme/theme";
+import AuthenticationWrapper from "./Components/AuthenticationWrapper";
 
 const App: React.FC = () => {
-	const location = useLocation()
+	const router = createBrowserRouter([
+		{
+			path: "/",
+			element: <AuthenticationWrapper />,
+			children: [
+				{ path: "/", element: <Homepage /> },
+				{
+					path: "/chat/:id",
+					element: <Homepage />,
+				},
+				{
+					path: "/login",
+					element: <Login />,
+				},
+				{
+					path: "/register",
+					element: <Register />,
+				},
+			],
+		},
+	]);
 
 	return (
-		<ThemeProvider theme={lightTheme}>
-			<Authentication>
-				<TablesListeners>
-					<GlobalStyles />
-					<ToastContainer />
-					<AnimatePresence exitBeforeEnter initial={false}>
-						{/* In order that the animations knows that we changed pages */}
-						<Routes location={location} key={location.pathname}>
-							<Route path="/" element={<Homepage />} />
-							<Route path="/:id" element={<Homepage />} />
-							<Route path="/login" element={<Login />} />
-							<Route path="/register" element={<Register />} />
-						</Routes>
-					</AnimatePresence>
-				</TablesListeners>
-			</Authentication>
-		</ThemeProvider>
-	)
-}
+		<ChakraProvider theme={GlobalTheme}>
+			<RouterProvider router={router} />
+		</ChakraProvider>
+	);
+};
 
-export default App
+export default App;
