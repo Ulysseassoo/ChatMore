@@ -1,12 +1,12 @@
 import { Box, Button, Center, Flex, Input, Text, Toast, useToast } from "@chakra-ui/react";
 import React from "react";
-import FormTitle from "./FormTitle";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { supabase } from "../../supabaseClient";
 import useAuthStore from "../../Store/authStore";
 import { useNavigate } from "react-router";
+import FormTitle from "./FormTitle";
 
 const validationSchema = yup
 	.object({
@@ -46,7 +46,6 @@ const RegisterForm = () => {
 
 	const onSubmit = async (formData: FormData) => {
 		try {
-			console.log(formData);
 			const { error, data } = await supabase.auth.signUp(formData);
 			if (error) throw error;
 			if (data.user !== null) {

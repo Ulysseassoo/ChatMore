@@ -7,12 +7,9 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"@chakra-ui/image": "^2.0.16",
-		"@chakra-ui/popover": "^2.1.11",
-		"@chakra-ui/react": "^2.5.5",
-		"@chakra-ui/theme": "^3.1.1",
-		"@emotion/react": "^11.10.6",
-		"@emotion/styled": "^11.10.6",
+		"@chakra-ui/react": "^2.6.1",
+		"@emotion/react": "^11.11.0",
+		"@emotion/styled": "^11.11.0",
 		"@fontsource/convergence": "^4.5.9",
 		"@fontsource/heebo": "^4.5.15",
 		"@fontsource/lato": "^4.5.10",
@@ -20,7 +17,7 @@
 		"@hookform/resolvers": "^3.1.0",
 		"@supabase/supabase-js": "^2.21.0",
 		"@vercel/analytics": "^1.0.1",
-		"framer-motion": "^10.12.4",
+		"framer-motion": "^10.12.8",
 		"immer": "^10.0.1",
 		"moment": "^2.29.4",
 		"react": "^18.2.0",
@@ -32,7 +29,6 @@
 		"react-router": "^6.10.0",
 		"react-router-dom": "^6.10.0",
 		"react-toastify": "^9.1.2",
-		"styled-icons": "^10.47.0",
 		"underscore": "^1.13.6",
 		"yup": "^1.1.1",
 		"zustand": "^4.3.7"

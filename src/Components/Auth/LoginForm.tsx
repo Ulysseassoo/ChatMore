@@ -3,10 +3,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import React from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import FormTitle from "./FormTitle";
 import { supabase } from "../../supabaseClient";
 import useAuthStore from "../../Store/authStore";
 import { useNavigate } from "react-router";
+import FormTitle from "./FormTitle";
 
 const validationSchema = yup
 	.object({
