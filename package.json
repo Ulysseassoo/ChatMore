@@ -7,7 +7,10 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@chakra-ui/image": "^2.0.16",
+		"@chakra-ui/popover": "^2.1.11",
 		"@chakra-ui/react": "^2.5.5",
+		"@chakra-ui/theme": "^3.1.1",
 		"@emotion/react": "^11.10.6",
 		"@emotion/styled": "^11.10.6",
 		"@fontsource/convergence": "^4.5.9",
@@ -29,7 +32,6 @@
 		"react-router": "^6.10.0",
 		"react-router-dom": "^6.10.0",
 		"react-toastify": "^9.1.2",
-		"styled-components": "^5.3.10",
 		"styled-icons": "^10.47.0",
 		"underscore": "^1.13.6",
 		"yup": "^1.1.1",
@@ -43,7 +45,6 @@
 		"@types/underscore": "^1.11.4",
 		"@vitejs/plugin-react": "^4.0.0",
 		"emoji-mart": "^5.5.2",
-		"simple-zustand-devtools": "^1.1.0",
 		"typescript": "^5.0.4",
 		"vite": "^4.3.1"
 	}

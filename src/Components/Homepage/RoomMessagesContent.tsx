@@ -37,7 +37,8 @@ const RoomMessagesContent = () => {
 	const updateViewRoomMessages = useRoomStore((state) => state.updateViewRoomMessages);
 	const channels = supabase.getChannels();
 	const toast = useToast();
-	const actualRoom = rooms.find((roomState) => roomState.room === parseInt(id));
+	const roomId = id !== undefined ? parseInt(id) : 0;
+	const actualRoom = rooms.find((roomState) => roomState.room === roomId);
 	const isUserBlocked = useIsUserBlocked(actualRoom?.room);
 	const getChannelRoom = channels.find((chan) => chan.topic.split(":")[1] === `room${actualRoom?.room.toString()}`);
 

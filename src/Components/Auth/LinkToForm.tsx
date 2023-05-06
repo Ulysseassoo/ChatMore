@@ -2,7 +2,6 @@ import { Text } from "@chakra-ui/react";
 import React from "react";
 import { Link } from "react-router-dom";
 import { Link as ChakraLink } from "@chakra-ui/react";
-import styled from "styled-components";
 
 type Props = {
 	content: string;

@@ -3,7 +3,6 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "../supabaseClient";
-import { mountStoreDevtool } from "simple-zustand-devtools";
 
 type State = {
 	isLoggedIn: boolean;

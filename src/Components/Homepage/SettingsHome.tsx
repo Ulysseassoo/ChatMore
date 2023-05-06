@@ -1,11 +1,6 @@
-import { Box, Flex, Heading, Icon, Input, Text, useMediaQuery, useToast } from "@chakra-ui/react";
-import React from "react";
-import { BsArrowLeft } from "react-icons/bs";
-import { FiUser, FiUserX } from "react-icons/fi";
-import useSettingsStore from "../../Store/settingsStore";
-import SettingsWrapper from "./SettingsWrapper";
+import { Box, Flex, Icon, Text, useMediaQuery, useToast } from "@chakra-ui/react";
+import { FiUser } from "react-icons/fi";
 import SettingsWrapperPage from "./SettingsWrapperPage";
-import { css } from "@emotion/react";
 import ProfileSettings from "./ProfileSettings";
 import { AiOutlineLogout } from "react-icons/ai";
 import useAuthStore from "../../Store/authStore";
@@ -24,7 +19,6 @@ const data = [
 ];
 
 const SettingsHome = () => {
-	const setSettingsActive = useSettingsStore((state) => state.setSettingsActive);
 	const setLoggedOut = useAuthStore((state) => state.setLoggedOut);
 	const toast = useToast();
 	const navigate = useNavigate();

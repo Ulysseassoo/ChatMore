@@ -22,6 +22,7 @@ const CustomEditable = () => {
 				background="transparent"
 				icon={<Icon as={BsCheckLg} color="accentColor" />}
 				{...getSubmitButtonProps()}
+				aria-label="submit"
 			/>
 			<IconButton
 				_hover={{
@@ -36,6 +37,7 @@ const CustomEditable = () => {
 				background="transparent"
 				icon={<Icon as={AiOutlineClose} color="importantColor" />}
 				{...getCancelButtonProps()}
+				aria-label="cancel"
 			/>
 		</ButtonGroup>
 	) : (
@@ -53,6 +55,7 @@ const CustomEditable = () => {
 					background: "transparent",
 				}}
 				icon={<Icon as={FaEdit} color="white" />}
+				aria-label="edit"
 				{...getEditButtonProps()}
 			/>
 		</Flex>

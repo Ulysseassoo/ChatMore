@@ -130,7 +130,7 @@ export const updateRoomMessages = async (messageData: Message[]) => {
 	try {
 		const { data, error } = await supabase.from("message").upsert(messageData).select("*, images!left(*)");
 		if (error) throw error;
-		return data;
+		return data as Message[];
 	} catch (error: any) {
 		console.log(error);
 	}

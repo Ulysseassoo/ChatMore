@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import Logo from "../../assets/Logo.png";
 import AppTitle from "../Auth/AppTitle";
 import { Box, Flex, Image } from "@chakra-ui/react";
