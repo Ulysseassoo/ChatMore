@@ -17,10 +17,10 @@ const data = [
 		Icon: FiUser,
 		name: "Profile",
 	},
-	{
-		Icon: FiUserX,
-		name: "Bloqued Users",
-	},
+	// {
+	// 	Icon: FiUserX,
+	// 	name: "Bloqued Users",
+	// },
 ];
 
 const SettingsHome = () => {

@@ -188,7 +188,12 @@ const RoomMessagesBottom = () => {
 								borderRadius="full"
 								placeholder="Message"
 								fontSize={"md"}
-								onChange={onChange}
+								onChange={(e) => {
+									onChange(e.target.value);
+									if (getChannelRoom !== undefined && actualRoom !== undefined && !isUserBlocked.isRoomBlocked) {
+										getChannelRoom.track({ isTyping: Date.now(), room: actualRoom.room });
+									}
+								}}
 								onKeyPress={() => {
 									if (getChannelRoom !== undefined && actualRoom !== undefined && !isUserBlocked.isRoomBlocked) {
 										getChannelRoom.track({ isTyping: Date.now(), room: actualRoom.room });

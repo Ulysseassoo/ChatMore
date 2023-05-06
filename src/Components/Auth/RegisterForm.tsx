@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { supabase } from "../../supabaseClient";
 import useAuthStore from "../../Store/authStore";
+import { useNavigate } from "react-router";
 
 const validationSchema = yup
 	.object({
@@ -30,6 +31,7 @@ const validationSchema = yup
 type FormData = yup.InferType<typeof validationSchema>;
 
 const RegisterForm = () => {
+	const navigate = useNavigate();
 	const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
 	const toast = useToast();
 	const {
@@ -57,6 +59,7 @@ const RegisterForm = () => {
 				if (errorProfile) throw errorProfile;
 				if (data.session !== null) {
 					setLoggedIn(data.session);
+					navigate("/");
 					toast({
 						title: "Account created.",
 						description: "You will now we logged in.",
