@@ -1,26 +1,7 @@
-import {
-	Flex,
-	Box,
-	Image,
-	Avatar,
-	Text,
-	Textarea,
-	Icon,
-	Center,
-	useToast,
-	Spinner,
-	Grid,
-	EditablePreview,
-	Input,
-	Editable,
-	EditableInput,
-} from "@chakra-ui/react";
-import React, { useRef, useState } from "react";
+import { Flex, Box, Image, Avatar, Text, Center, useToast, Spinner, Grid } from "@chakra-ui/react";
+import { useRef, useState } from "react";
 import useAuthStore from "../../Store/authStore";
-import { useForm } from "react-hook-form";
-import { MdEdit } from "react-icons/md";
 import { supabase } from "../../supabaseClient";
-import CustomEditable from "../CustomEditable";
 import CustomEditableInput from "../CustomEditableInput";
 
 interface FormData {
