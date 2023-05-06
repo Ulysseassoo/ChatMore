@@ -16,6 +16,7 @@
 		"@fontsource/roboto": "^4.5.8",
 		"@hookform/resolvers": "^3.1.0",
 		"@supabase/supabase-js": "^2.21.0",
+		"@vercel/analytics": "^1.0.1",
 		"framer-motion": "^10.12.4",
 		"immer": "^10.0.1",
 		"moment": "^2.29.4",
