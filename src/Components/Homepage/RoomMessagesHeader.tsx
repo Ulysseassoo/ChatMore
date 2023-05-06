@@ -1,4 +1,4 @@
-import { Flex, HStack, Avatar, Box, Text } from "@chakra-ui/react";
+import { Flex, HStack, Avatar, Box, Text, useMediaQuery, Icon } from "@chakra-ui/react";
 import { useMemo } from "react";
 import { useParams, useNavigate } from "react-router";
 import useOnlineStore from "../../Store/onlineStore";
@@ -6,6 +6,7 @@ import useRoomStore from "../../Store/roomStore";
 import useUserIsTypying from "../Hooks/useUserIsTypying";
 import useIsUserBlocked from "../Hooks/useIsUserBlocked";
 import useSettingsStore from "../../Store/settingsStore";
+import { BsArrowLeft } from "react-icons/bs";
 
 const RoomMessagesHeader = () => {
 	const navigation = useNavigate();
@@ -13,6 +14,9 @@ const RoomMessagesHeader = () => {
 	const rooms = useRoomStore((state) => state.rooms);
 	const onlineUsers = useOnlineStore((state) => state.onlineUsers);
 	const setIsProfileActive = useSettingsStore((state) => state.setIsProfileActive);
+	const [isIpad] = useMediaQuery("(max-width: 1025px)");
+	const navigate = useNavigate();
+	const isChat = id !== undefined;
 
 	if (!id) return <></>;
 
@@ -44,6 +48,18 @@ const RoomMessagesHeader = () => {
 		>
 			<Flex justifyContent={"space-between"} alignItems="center" flexDir="row" position="relative" overflow="hidden">
 				<HStack spacing={2} alignItems="center">
+					{isChat && isIpad && (
+						<Icon
+							cursor={"pointer"}
+							as={BsArrowLeft}
+							boxSize={6}
+							onClick={(e) => {
+								e.stopPropagation();
+								navigate("/");
+								setIsProfileActive(false);
+							}}
+						/>
+					)}
 					<HStack alignItems={"center"} spacing="4" flex="1">
 						<Avatar
 							src={userToChat?.avatar_url !== "" ? userToChat.avatar_url : undefined}

@@ -11,6 +11,7 @@ import {
 	chakra,
 	shouldForwardProp,
 	useBoolean,
+	useMediaQuery,
 } from "@chakra-ui/react";
 import { memo, useEffect, useState } from "react";
 import useAuthStore from "../../Store/authStore";
@@ -23,15 +24,18 @@ import useSettingsStore from "../../Store/settingsStore";
 import { supabase } from "../../supabaseClient";
 import { Profile } from "../../Interface/Types";
 import SearchUsersList from "./SearchUsersList";
+import { useParams } from "react-router";
 
 const ChatUsersList = () => {
 	const [searchMessages, setSearchMessages] = useState("");
+	const params = useParams<{ id?: string }>();
 	const getChatrooms = useRoomStore((state) => state.getChatrooms);
 	const rooms = useRoomStore((state) => state.rooms);
 	const isLoading = useRoomStore((state) => state.isLoading);
 	const session = useAuthStore((state) => state.session);
 	const isContactResearchActive = useSettingsStore((state) => state.isContactResearchActive);
 	const toggleContactResearch = useSettingsStore((state) => state.toggleContactResearch);
+	const [isIpad] = useMediaQuery("(max-width: 1025px)");
 
 	useEffect(() => {
 		if (session?.user !== undefined && isLoading) {
@@ -39,17 +43,20 @@ const ChatUsersList = () => {
 		}
 	}, [isLoading, session]);
 
+	const isChat = params.id !== undefined;
+
 	return (
 		<>
 			<Flex
 				flexDir="column"
 				p="4"
-				w="450px"
+				w={isIpad ? "100%" : "450px"}
 				borderRight="1px solid"
 				borderColor="lineBreakColor"
 				gap="4"
 				position="relative"
 				overflow="hidden"
+				display={isIpad && isChat ? "none" : "flex"}
 			>
 				<Flex alignItems="center" justifyContent="space-between">
 					<Text fontSize="2xl">Chat</Text>

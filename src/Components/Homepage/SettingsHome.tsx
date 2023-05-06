@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Icon, Input, Text, useToast } from "@chakra-ui/react";
+import { Box, Flex, Heading, Icon, Input, Text, useMediaQuery, useToast } from "@chakra-ui/react";
 import React from "react";
 import { BsArrowLeft } from "react-icons/bs";
 import { FiUser, FiUserX } from "react-icons/fi";
@@ -10,6 +10,7 @@ import ProfileSettings from "./ProfileSettings";
 import { AiOutlineLogout } from "react-icons/ai";
 import useAuthStore from "../../Store/authStore";
 import { supabase } from "../../supabaseClient";
+import { useNavigate } from "react-router";
 
 const data = [
 	{
@@ -26,12 +27,15 @@ const SettingsHome = () => {
 	const setSettingsActive = useSettingsStore((state) => state.setSettingsActive);
 	const setLoggedOut = useAuthStore((state) => state.setLoggedOut);
 	const toast = useToast();
+	const navigate = useNavigate();
+	const [isIpad] = useMediaQuery("(max-width: 1025px)");
 
 	const logout = async () => {
 		try {
 			const { error } = await supabase.auth.signOut();
 			if (error) throw error;
 			setLoggedOut();
+			navigate("/login");
 			toast({
 				title: "Disconnected",
 				description: "You have successfully logged out.",
@@ -53,9 +57,8 @@ const SettingsHome = () => {
 			left="0"
 			background="primaryColor"
 			height="full"
-			width="full"
 			zIndex={2}
-			w="450px"
+			w={isIpad ? "full" : "450px"}
 			borderRight="1px solid"
 			borderColor="lineBreakColor"
 			overflow="hidden"

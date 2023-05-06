@@ -33,7 +33,6 @@ const LoginForm = () => {
 
 	const onSubmit = async (formData: FormData) => {
 		try {
-			console.log(formData);
 			const { error, data } = await supabase.auth.signInWithPassword(formData);
 			if (error) throw error;
 			if (data.session !== null) {

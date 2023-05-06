@@ -16,6 +16,7 @@ import {
 	Text,
 	VStack,
 	useDisclosure,
+	useMediaQuery,
 	useToast,
 } from "@chakra-ui/react";
 import { IoMdClose } from "react-icons/io";
@@ -38,15 +39,17 @@ const ProfileInformations = () => {
 	const rooms = useRoomStore((state) => state.rooms);
 	const deleteBlockedUser = useRoomStore((state) => state.deleteBlockedUser);
 	const addBlockedUser = useRoomStore((state) => state.addBlockedUser);
-	const isUserBlocked = useIsUserBlocked(parseInt(id));
+	const isUserBlocked = useIsUserBlocked(parseInt(id!));
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const channels = supabase.getChannels();
+	const isChat = id !== undefined;
 	const getChannelRoom = useMemo(() => {
 		const channelRoom = channels.find((chan) => chan.topic.split(":")[1] === `room${id?.toString()}`);
 		if (channelRoom) return channelRoom;
 		return null;
 	}, [channels]);
 	const toast = useToast();
+	const [isIpad] = useMediaQuery("(max-width: 1025px)");
 
 	const actualRoom = rooms.find((roomState) => roomState.room === parseInt(id!));
 
@@ -190,6 +193,8 @@ const ProfileInformations = () => {
 		);
 	};
 
+	const isFull = isIpad && isChat && isProfileActive;
+
 	return (
 		<>
 			<Flex
@@ -197,7 +202,7 @@ const ProfileInformations = () => {
 				borderLeft="1px solid"
 				borderColor="lineBreakColor"
 				transition="0.45s ease"
-				w={isProfileActive ? "25%" : 0}
+				w={isFull ? "full" : isProfileActive ? "25%" : 0}
 				overflow="hidden"
 				h="full"
 				flexDir="column"

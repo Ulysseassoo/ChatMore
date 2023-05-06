@@ -33,21 +33,6 @@ const App: React.FC = () => {
 		},
 	]);
 
-	// return (
-	// 	<ChakraProvider theme={GlobalTheme}>
-	// 		{/* <Authentication> */}
-	// 			{/* In order that the animations knows that we changed pages */}
-	// 			<Routes location={location} key={location.pathname}>
-	// 				<Route path="/" element={<Homepage />} />
-	// 				<Route path="/:id" element={<Homepage />} />
-	// 				<Route path="/login" element={<Login />} />
-	// 				<Route path="/register" element={<Register />} />
-	// 			</Routes>
-	// 		</AnimatePresence>
-	// 		{/* </Authentication> */}
-	// 	</ChakraProvider>
-	// );
-
 	return (
 		<ChakraProvider theme={GlobalTheme}>
 			<RouterProvider router={router} />

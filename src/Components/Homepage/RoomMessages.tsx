@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, Image, Text } from "@chakra-ui/react";
+import { Box, Flex, Grid, Image, Text, useMediaQuery } from "@chakra-ui/react";
 import BackgroundImage from "../../assets/ChatImage.png";
 import React from "react";
 import { useParams } from "react-router";
@@ -9,6 +9,7 @@ import useSettingsStore from "../../Store/settingsStore";
 
 const RoomMessages = () => {
 	const params = useParams<{ id?: string }>();
+	const [isIpad] = useMediaQuery("(max-width: 1025px)");
 
 	if (params.id !== undefined) {
 		return (
@@ -39,7 +40,7 @@ const RoomMessages = () => {
 		<Flex
 			flexDir="column"
 			p="4"
-			w="70%"
+			w={"70%"}
 			borderRight="1px solid"
 			borderColor="lineBreakColor"
 			gap="4"
@@ -48,6 +49,7 @@ const RoomMessages = () => {
 			h="full"
 			justifyContent="center"
 			alignItems="center"
+			display={isIpad ? "none" : "flex"}
 		>
 			<Box h="450px" width="450px" display="flex" alignItems="center" flexDir="column">
 				<Image src={BackgroundImage} alt="Image starting a chat" />
