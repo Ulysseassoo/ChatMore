@@ -7,7 +7,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
 
-select plan(34);
+select plan(37);
 
 -- -----------------------------------------------------------------------------
 -- Comptes de test : alice, bob, carol, dave (dave ne partage rien avec personne)
@@ -44,6 +44,10 @@ insert into public.messages (room_id, content) values ((select v from ids where 
 
 select is(public.get_or_create_direct_room('b0b00000-0000-0000-0000-000000000000'),
           (select v from ids where k = 'ab'), 'Un second appel renvoie la même conversation');
+select isnt_empty(
+  $$ insert into public.messages (room_id, content) values ((select v from ids where k = 'ab'), 'relu aussitôt')
+     returning id, content $$,
+  'Un message inséré peut être relu dans la même requête (insert … returning, utilisé par le front)');
 
 select pg_temp.login('b0b00000-0000-0000-0000-000000000000');
 select is(public.get_or_create_direct_room('a11ce000-0000-0000-0000-000000000000'),
@@ -195,6 +199,10 @@ select throws_ok($$ select phone from public.profiles $$, '42501', null,
   'Le téléphone n''est pas lisible directement');
 select is((select phone from public.get_profile('a11ce000-0000-0000-0000-000000000000')), '+33600000000',
   'Bob, qui partage une conversation avec Alice, voit son téléphone');
+
+-- Disponibilité d'un pseudo (inscription et réglages)
+select ok(not public.is_username_available('alice'), 'Un pseudo déjà pris est signalé indisponible');
+select ok(public.is_username_available('nouveau.nom'), 'Un pseudo libre et valide est disponible');
 
 select * from finish();
 rollback;
