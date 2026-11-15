@@ -1,19 +1,9 @@
 import { Flex, Text } from "@chakra-ui/react";
-import { useSyncExternalStore } from "react";
 import { IconOffline } from "@/components/icons";
-
-const subscribe = (cb: () => void) => {
-	window.addEventListener("online", cb);
-	window.addEventListener("offline", cb);
-	return () => {
-		window.removeEventListener("online", cb);
-		window.removeEventListener("offline", cb);
-	};
-};
+import { useOnline } from "@/lib/useOnline";
 
 export function OfflineBanner() {
-	const online = useSyncExternalStore(subscribe, () => navigator.onLine);
-	if (online) return null;
+	if (useOnline()) return null;
 	return (
 		<Flex
 			role="status"
@@ -28,7 +18,7 @@ export function OfflineBanner() {
 			fontWeight={500}
 		>
 			<IconOffline size={16} aria-hidden="true" />
-			<Text>Hors ligne. L'historique reste consultable ; tes messages pourront être renvoyés au retour du réseau.</Text>
+			<Text>Hors ligne. Tes messages partiront dès le retour du réseau.</Text>
 		</Flex>
 	);
 }

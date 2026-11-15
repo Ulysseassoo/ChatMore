@@ -28,6 +28,7 @@ import {
 	IconTrash,
 } from "@/components/icons";
 import { formatTime } from "@/lib/dates";
+import { useOnline } from "@/lib/useOnline";
 import type { ChatMessage } from "@/lib/types";
 import { useSignedUrl } from "../hooks";
 
@@ -108,6 +109,7 @@ function MessageBubbleInner({
 	const toast = useToast();
 	const { onCopy } = useClipboard(message.content);
 	const [menuOpen, setMenuOpen] = useState(false);
+	const online = useOnline();
 	const pressTimer = useRef<number>();
 	const deleted = !!message.deleted_at;
 	const local = message.status === "pending" || message.status === "failed";
@@ -340,7 +342,13 @@ function MessageBubbleInner({
 				</Flex>
 			)}
 
-			{message.status === "failed" && (
+			{message.status === "failed" && !online && (
+				<Flex align="center" gap={1.5} mt={1} fontSize="xs" color="cm.muted" role="status">
+					<IconPending size={14} aria-hidden="true" />
+					En attente du réseau
+				</Flex>
+			)}
+			{message.status === "failed" && online && (
 				<Flex align="center" gap={2} mt={1} fontSize="xs" color="cm.danger" role="alert">
 					<IconAlert size={15} aria-hidden="true" />
 					Non envoyé

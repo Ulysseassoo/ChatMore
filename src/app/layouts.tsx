@@ -7,6 +7,7 @@ import { IconBack, IconChats, IconSettings } from "@/components/icons";
 import logo from "@/assets/Logo.png";
 import { useAuth, useRequiredUserId } from "@/features/auth/session";
 import { useMyProfile } from "@/features/profile/hooks";
+import { useOutbox } from "@/features/chat/outbox";
 import { RealtimeSubscriptions } from "@/features/realtime/RealtimeSubscriptions";
 import { RoomList } from "@/features/rooms/components/RoomList";
 import { OfflineBanner } from "./OfflineBanner";
@@ -22,6 +23,11 @@ export function PublicLayout() {
 	return <Outlet />;
 }
 
+function Outbox() {
+	useOutbox();
+	return null;
+}
+
 export function ProtectedLayout() {
 	const auth = useAuth();
 	const location = useLocation();
@@ -31,6 +37,7 @@ export function ProtectedLayout() {
 	}
 	return (
 		<>
+			<Outbox />
 			<RealtimeSubscriptions />
 			<Outlet />
 		</>

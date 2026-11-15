@@ -1,5 +1,6 @@
 import type { AuthError } from "@supabase/supabase-js";
 import type { QueryClient } from "@tanstack/react-query";
+import { persister } from "@/lib/queryClient";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./session";
 
@@ -7,6 +8,7 @@ export function startAuthListener(queryClient: QueryClient) {
 	const { data } = supabase.auth.onAuthStateChange((event, session) => {
 		if (event === "SIGNED_OUT") {
 			queryClient.clear();
+			void persister.removeClient();
 			void supabase.removeAllChannels();
 		}
 		useAuth.setState(session ? { status: "signedIn", session } : { status: "signedOut" }, true);
