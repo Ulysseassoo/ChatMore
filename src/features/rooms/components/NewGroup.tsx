@@ -1,4 +1,19 @@
-import { Box, Button, Checkbox, Flex, FormControl, FormLabel, Heading, IconButton, Input, InputGroup, InputLeftElement, Text, VisuallyHidden, useToast } from "@chakra-ui/react";
+import {
+	Box,
+	Button,
+	Checkbox,
+	Flex,
+	FormControl,
+	FormLabel,
+	Heading,
+	IconButton,
+	Input,
+	InputGroup,
+	InputLeftElement,
+	Text,
+	VisuallyHidden,
+	useToast,
+} from "@chakra-ui/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -32,7 +47,10 @@ export function NewGroup() {
 	const create = async () => {
 		setCreating(true);
 		try {
-			const roomId = await createGroup(name.trim(), selected.map((p) => p.id));
+			const roomId = await createGroup(
+				name.trim(),
+				selected.map((p) => p.id),
+			);
 			await qc.invalidateQueries({ queryKey: roomsKey });
 			navigate(`/chat/${roomId}`, { replace: true });
 		} catch {
@@ -55,7 +73,12 @@ export function NewGroup() {
 			<Box px={4} pb={4} borderBottom="1px solid" borderColor="cm.line">
 				<FormControl>
 					<FormLabel>Nom du groupe</FormLabel>
-					<Input maxLength={40} value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex. Anniv' surprise de Nadia" />
+					<Input
+						maxLength={40}
+						value={name}
+						onChange={(e) => setName(e.target.value)}
+						placeholder="Ex. Anniv' surprise de Nadia"
+					/>
 				</FormControl>
 			</Box>
 
@@ -68,7 +91,16 @@ export function NewGroup() {
 						<Flex key={p.id} align="center" gap={1.5} h="36px" pl={1} pr={1} borderRadius="18px" bg="cm.raised">
 							<Avatar name={p.username} seed={p.id} src={p.avatar_url} size={28} />
 							<Text fontSize="sm">{p.username}</Text>
-							<IconButton aria-label={`Retirer ${p.username}`} icon={<IconClose size={13} />} variant="ghost" size="xs" minW="28px" h="28px" borderRadius="full" onClick={() => toggle(p)} />
+							<IconButton
+								aria-label={`Retirer ${p.username}`}
+								icon={<IconClose size={13} />}
+								variant="ghost"
+								size="xs"
+								minW="28px"
+								h="28px"
+								borderRadius="full"
+								onClick={() => toggle(p)}
+							/>
 						</Flex>
 					))}
 				</Flex>
@@ -79,13 +111,33 @@ export function NewGroup() {
 					<VisuallyHidden as="label" htmlFor="member-search">
 						Ajouter des membres
 					</VisuallyHidden>
-					<Input id="member-search" type="search" h="44px" pl="40px" bg="cm.raised" placeholder="Ajouter des membres" value={query} onChange={(e) => setQuery(e.target.value)} autoCapitalize="none" />
+					<Input
+						id="member-search"
+						type="search"
+						h="44px"
+						pl="40px"
+						bg="cm.raised"
+						placeholder="Ajouter des membres"
+						value={query}
+						onChange={(e) => setQuery(e.target.value)}
+						autoCapitalize="none"
+					/>
 				</InputGroup>
 			</Box>
 
 			<Box flex={1} overflowY="auto" px={2} py={2}>
 				{list.map((p) => (
-					<Flex as="label" key={p.id} align="center" gap={3.5} minH="60px" px={3} borderRadius="14px" cursor="pointer" _hover={{ bg: "cm.raised" }}>
+					<Flex
+						as="label"
+						key={p.id}
+						align="center"
+						gap={3.5}
+						minH="60px"
+						px={3}
+						borderRadius="14px"
+						cursor="pointer"
+						_hover={{ bg: "cm.raised" }}
+					>
 						<Avatar name={p.username} seed={p.id} src={p.avatar_url} size={44} />
 						<Text flex={1} fontWeight={600}>
 							@{p.username}
@@ -95,7 +147,13 @@ export function NewGroup() {
 				))}
 			</Box>
 
-			<Box px={4} pt={3} pb={{ base: "max(16px, env(safe-area-inset-bottom))", lg: 6 }} borderTop="1px solid" borderColor="cm.line">
+			<Box
+				px={4}
+				pt={3}
+				pb={{ base: "max(16px, env(safe-area-inset-bottom))", lg: 6 }}
+				borderTop="1px solid"
+				borderColor="cm.line"
+			>
 				<Button variant="primary" size="lg" w="full" isDisabled={!name.trim()} isLoading={creating} onClick={create}>
 					Créer le groupe
 				</Button>

@@ -9,7 +9,10 @@ const colorFor = (seed: string) => {
 };
 
 export const initialsOf = (name: string) => {
-	const parts = name.replace(/[@._-]+/g, " ").trim().split(/\s+/);
+	const parts = name
+		.replace(/[@._-]+/g, " ")
+		.trim()
+		.split(/\s+/);
 	const letters = parts.length > 1 ? (parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "") : name.slice(0, 2);
 	return letters.toUpperCase();
 };

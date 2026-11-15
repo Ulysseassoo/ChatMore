@@ -5,7 +5,7 @@ import { Link as RouterLink, Navigate, Outlet, useMatch, useParams } from "react
 import { MobileBackButton } from "@/app/layouts";
 import { Avatar } from "@/components/Avatar";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
-import { IconInfo } from "@/components/icons";
+import { IconInfo, IconSearch } from "@/components/icons";
 import { useRequiredUserId } from "@/features/auth/session";
 import { blocksKey } from "@/features/profile/hooks";
 import { unblockUser } from "@/features/profile/api";
@@ -13,10 +13,11 @@ import { useRoomPresence } from "@/features/realtime/RealtimeSubscriptions";
 import { roomsKey, useRoom, useRoomMembers, useRooms } from "@/features/rooms/hooks";
 import { getRoomDisplay } from "@/features/rooms/roomDisplay";
 import type { ChatMessage } from "@/lib/types";
-import { deleteMessage, editMessage, setReaction } from "../api";
+import { deleteMessage, editMessage, removeAttachmentFiles, setReaction } from "../api";
 import { messagesKey, patchMessage, removeMessage } from "../cache";
 import { useMarkRead, useMessages, useSendMessage } from "../hooks";
 import { Composer } from "./Composer";
+import { ForwardDialog } from "./ForwardDialog";
 import { MessageList } from "./MessageList";
 import type { MessageActions } from "./MessageBubble";
 
@@ -36,15 +37,21 @@ function ChatRoomContent({ roomId }: { roomId: number }) {
 	const { data: members = [] } = useRoomMembers(roomId);
 	const { data: messages } = useMessages(roomId);
 	const presence = useRoomPresence(roomId, myId);
-	const panelOpen = useMatch("/chat/:roomId/info") !== null;
+	const infoOpen = useMatch("/chat/:roomId/info") !== null;
+	const searchOpen = useMatch("/chat/:roomId/search") !== null;
+	const panelOpen = infoOpen || searchOpen;
 	const markRead = useMarkRead(roomId);
 	const { send, retry } = useSendMessage(roomId, myId);
 
 	const [replyTo, setReplyTo] = useState<{ message: ChatMessage; author: string } | null>(null);
 	const [editing, setEditing] = useState<ChatMessage | null>(null);
 	const [toDelete, setToDelete] = useState<ChatMessage | null>(null);
+	const [toForward, setToForward] = useState<ChatMessage | null>(null);
 
-	const nameOf = useCallback((userId: string) => members.find((m) => m.user_id === userId)?.username ?? "Membre", [members]);
+	const nameOf = useCallback(
+		(userId: string) => members.find((m) => m.user_id === userId)?.username ?? "Membre",
+		[members],
+	);
 	const fail = useCallback(
 		(title: string) => toast({ title, status: "error", duration: 4000, position: "bottom", isClosable: true }),
 		[toast],
@@ -83,7 +90,9 @@ function ChatRoomContent({ roomId }: { roomId: number }) {
 			onReact: (message, emoji) => {
 				const had = message.reactions.some((r) => r.user_id === myId);
 				const others = message.reactions.filter((r) => r.user_id !== myId);
-				const mine = emoji ? [{ message_id: message.id, user_id: myId, emoji, created_at: new Date().toISOString() }] : [];
+				const mine = emoji
+					? [{ message_id: message.id, user_id: myId, emoji, created_at: new Date().toISOString() }]
+					: [];
 				patchMessage(qc, roomId, { id: message.id }, { reactions: [...others, ...mine] });
 				setReaction(message.id, myId, emoji, had).catch(() => {
 					fail("La réaction n'a pas pu être enregistrée.");
@@ -91,6 +100,7 @@ function ChatRoomContent({ roomId }: { roomId: number }) {
 				});
 			},
 			onRetry: (message) => void retry(message),
+			onForward: setToForward,
 		}),
 		[qc, roomId, myId, nameOf, fail, retry],
 	);
@@ -113,23 +123,70 @@ function ChatRoomContent({ roomId }: { roomId: number }) {
 	return (
 		<Flex h="full">
 			<Flex direction="column" flex={1} minW={0} display={{ base: panelOpen ? "none" : "flex", xl: "flex" }}>
-				<Flex as="header" align="center" gap={3} h="68px" px={{ base: 2, lg: 6 }} borderBottom="1px solid" borderColor="cm.line" flexShrink={0} bg={{ base: "cm.surface", lg: "transparent" }}>
+				<Flex
+					as="header"
+					align="center"
+					gap={3}
+					h="68px"
+					px={{ base: 2, lg: 6 }}
+					borderBottom="1px solid"
+					borderColor="cm.line"
+					flexShrink={0}
+					bg={{ base: "cm.surface", lg: "transparent" }}
+				>
 					<MobileBackButton />
 					<Flex as={RouterLink} to="info" align="center" gap={3} flex={1} minW={0} borderRadius="12px" py={1}>
-						<Avatar name={display.title} seed={display.seed} src={display.avatarUrl} size={40} square={display.isGroup} />
+						<Avatar
+							name={display.title}
+							seed={display.seed}
+							src={display.avatarUrl}
+							size={40}
+							square={display.isGroup}
+						/>
 						<Box minW={0}>
 							<Text fontWeight={600} fontSize="16px" noOfLines={1}>
 								{display.title}
 							</Text>
 							{subtitle && (
-								<Flex align="center" gap={1.5} fontSize="13px" color={peerOnline || typingNames.length ? "cm.success" : "cm.muted"} noOfLines={1}>
-									{peerOnline && !typingNames.length && <Box as="span" display="inline-block" w="8px" h="8px" borderRadius="full" bg="cm.successDot" mr={1.5} />}
+								<Flex
+									align="center"
+									gap={1.5}
+									fontSize="13px"
+									color={peerOnline || typingNames.length ? "cm.success" : "cm.muted"}
+									noOfLines={1}
+								>
+									{peerOnline && !typingNames.length && (
+										<Box
+											as="span"
+											display="inline-block"
+											w="8px"
+											h="8px"
+											borderRadius="full"
+											bg="cm.successDot"
+											mr={1.5}
+										/>
+									)}
 									{subtitle}
 								</Flex>
 							)}
 						</Box>
 					</Flex>
-					<IconButton as={RouterLink} to="info" aria-label={display.isGroup ? "Infos du groupe" : "Profil du contact"} icon={<IconInfo size={20} />} variant="ghost" />
+					<IconButton
+						as={RouterLink}
+						to="search"
+						aria-label="Rechercher dans la conversation"
+						aria-current={searchOpen ? "page" : undefined}
+						icon={<IconSearch size={20} />}
+						variant="ghost"
+					/>
+					<IconButton
+						as={RouterLink}
+						to="info"
+						aria-label={display.isGroup ? "Infos du groupe" : "Profil du contact"}
+						aria-current={infoOpen ? "page" : undefined}
+						icon={<IconInfo size={20} />}
+						variant="ghost"
+					/>
 				</Flex>
 
 				<MessageList
@@ -143,7 +200,16 @@ function ChatRoomContent({ roomId }: { roomId: number }) {
 				/>
 
 				{room.i_blocked_peer ? (
-					<Flex direction="column" align="center" gap={2} py={4} px={4} borderTop="1px solid" borderColor="cm.line" textAlign="center">
+					<Flex
+						direction="column"
+						align="center"
+						gap={2}
+						py={4}
+						px={4}
+						borderTop="1px solid"
+						borderColor="cm.line"
+						textAlign="center"
+					>
 						<Text color="cm.muted" fontSize="sm">
 							Tu as bloqué {display.title}. Tu ne reçois plus ses messages.
 						</Text>
@@ -187,10 +253,19 @@ function ChatRoomContent({ roomId }: { roomId: number }) {
 			</Flex>
 
 			{panelOpen && (
-				<Box w={{ base: "full", xl: "380px" }} flexShrink={0} borderLeft={{ xl: "1px solid" }} borderColor="cm.line" bg="cm.surface" overflowY="auto">
+				<Box
+					w={{ base: "full", xl: "380px" }}
+					flexShrink={0}
+					borderLeft={{ xl: "1px solid" }}
+					borderColor="cm.line"
+					bg="cm.surface"
+					overflowY="auto"
+				>
 					<Outlet />
 				</Box>
 			)}
+
+			<ForwardDialog message={toForward} onClose={() => setToForward(null)} />
 
 			<ConfirmDialog
 				isOpen={!!toDelete}
@@ -201,9 +276,16 @@ function ChatRoomContent({ roomId }: { roomId: number }) {
 				onConfirm={async () => {
 					const message = toDelete!;
 					setToDelete(null);
-					patchMessage(qc, roomId, { id: message.id }, { deleted_at: new Date().toISOString(), content: "", attachments: [], reactions: [] });
+					patchMessage(
+						qc,
+						roomId,
+						{ id: message.id },
+						{ deleted_at: new Date().toISOString(), content: "", attachments: [], reactions: [] },
+					);
 					try {
-						await deleteMessage(message.id, true);
+						const unused = await deleteMessage(message.id, true);
+						// Un fichier orphelin n'est pas grave : on ne bloque pas la suppression pour autant.
+						void removeAttachmentFiles(unused).catch(() => undefined);
 					} catch {
 						fail("Le message n'a pas pu être supprimé.");
 						void qc.invalidateQueries({ queryKey: messagesKey(roomId) });

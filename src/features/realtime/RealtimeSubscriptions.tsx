@@ -47,7 +47,10 @@ setInterval(() => {
 	if (!expired) return;
 	useRealtimeStore.setState({
 		typing: Object.fromEntries(
-			Object.entries(typing).map(([room, users]) => [room, Object.fromEntries(Object.entries(users).filter(([, t]) => t >= now))]),
+			Object.entries(typing).map(([room, users]) => [
+				room,
+				Object.fromEntries(Object.entries(users).filter(([, t]) => t >= now)),
+			]),
 		),
 	});
 }, 1_000);
@@ -102,6 +105,8 @@ function RoomChannel({ roomId, myId, shareOnline }: { roomId: number; myId: stri
 						return;
 					case "read":
 						return void qc.invalidateQueries({ queryKey: messagesKey(roomId) });
+					case "room_updated":
+						return void qc.invalidateQueries({ queryKey: roomsKey });
 					case "members_changed":
 						void qc.invalidateQueries({ queryKey: roomMembersKey(roomId) });
 						return void qc.invalidateQueries({ queryKey: roomsKey });
@@ -170,12 +175,7 @@ export function RealtimeSubscriptions() {
 		<>
 			<UserChannel myId={myId} />
 			{rooms.map((r) => (
-				<RoomChannel
-					key={r.room_id}
-					roomId={r.room_id}
-					myId={myId}
-					shareOnline={visibleOnline && !r.i_blocked_peer}
-				/>
+				<RoomChannel key={r.room_id} roomId={r.room_id} myId={myId} shareOnline={visibleOnline && !r.i_blocked_peer} />
 			))}
 		</>
 	);

@@ -1,6 +1,7 @@
 import { Box, Button, Flex, Spinner, Text } from "@chakra-ui/react";
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { IconArrowDown } from "@/components/icons";
+import { useSearchParams } from "react-router-dom";
 import { dayKey, formatDayLabel } from "@/lib/dates";
 import type { ChatMessage, RoomMember } from "@/lib/types";
 import { useMessages } from "../hooks";
@@ -26,11 +27,15 @@ export function MessageList({ roomId, myId, isGroup, members, lastReadAt, action
 	const topRef = useRef<HTMLDivElement>(null);
 	const [atBottom, setAtBottom] = useState(true);
 	const [newCount, setNewCount] = useState(0);
+	const [highlighted, setHighlighted] = useState<number | null>(null);
+	const [params, setParams] = useSearchParams();
+	const target = Number(params.get("m")) || null;
 
 	const messages = useMemo(() => (data ? data.pages.flatMap((p) => p.messages).reverse() : []), [data]);
 	const byId = useMemo(() => new Map(messages.map((m) => [m.id, m])), [messages]);
 	const nameOf = useMemo(() => new Map(members.map((m) => [m.user_id, m.username])), [members]);
-	const colorOf = (userId: string) => AUTHOR_COLORS[[...userId].reduce((a, c) => a + c.charCodeAt(0), 0) % AUTHOR_COLORS.length];
+	const colorOf = (userId: string) =>
+		AUTHOR_COLORS[[...userId].reduce((a, c) => a + c.charCodeAt(0), 0) % AUTHOR_COLORS.length];
 
 	// Figé à l'ouverture : ce qui arrive pendant qu'on regarde n'est pas « non lu ».
 	const [firstUnreadId, setFirstUnreadId] = useState<number | null | undefined>(undefined);
@@ -51,6 +56,33 @@ export function MessageList({ roomId, myId, isGroup, members, lastReadAt, action
 		observer.observe(el);
 		return () => observer.disconnect();
 	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+	// Saut vers un message (?m=) : on charge l'historique jusqu'à lui.
+	useEffect(() => {
+		if (!target || !data) return;
+		if (!messages.some((m) => m.id === target)) {
+			if (hasNextPage) {
+				if (!isFetchingNextPage) void fetchNextPage();
+				return;
+			}
+		} else {
+			document.getElementById(`message-${target}`)?.scrollIntoView({ block: "center" });
+			setHighlighted(target);
+		}
+		setParams(
+			(p) => {
+				p.delete("m");
+				return p;
+			},
+			{ replace: true },
+		);
+	}, [target, data, messages, hasNextPage, isFetchingNextPage, fetchNextPage, setParams]);
+
+	useEffect(() => {
+		if (highlighted === null) return;
+		const timer = setTimeout(() => setHighlighted(null), 2500);
+		return () => clearTimeout(timer);
+	}, [highlighted]);
 
 	const newest = messages.at(-1);
 	const lastSeenNewest = useRef<number | undefined>(undefined);
@@ -95,11 +127,18 @@ export function MessageList({ roomId, myId, isGroup, members, lastReadAt, action
 		const prev = messages[i - 1];
 		const next = messages[i + 1];
 		const joinsPrev =
-			!!prev && prev.user_id === m.user_id && dayKey(prev.created_at) === dayKey(m.created_at) &&
-			Date.parse(m.created_at) - Date.parse(prev.created_at) < GROUP_GAP_MS && prev.id !== firstUnreadId && m.id !== firstUnreadId;
+			!!prev &&
+			prev.user_id === m.user_id &&
+			dayKey(prev.created_at) === dayKey(m.created_at) &&
+			Date.parse(m.created_at) - Date.parse(prev.created_at) < GROUP_GAP_MS &&
+			prev.id !== firstUnreadId &&
+			m.id !== firstUnreadId;
 		const joinsNext =
-			!!next && next.user_id === m.user_id && dayKey(next.created_at) === dayKey(m.created_at) &&
-			Date.parse(next.created_at) - Date.parse(m.created_at) < GROUP_GAP_MS && next.id !== firstUnreadId;
+			!!next &&
+			next.user_id === m.user_id &&
+			dayKey(next.created_at) === dayKey(m.created_at) &&
+			Date.parse(next.created_at) - Date.parse(m.created_at) < GROUP_GAP_MS &&
+			next.id !== firstUnreadId;
 		if (joinsPrev && joinsNext) return "middle";
 		if (joinsPrev) return "last";
 		if (joinsNext) return "first";
@@ -156,13 +195,29 @@ export function MessageList({ roomId, myId, isGroup, members, lastReadAt, action
 							<Fragment key={m.client_id ?? m.id}>
 								{newDay && (
 									<Flex justify="center" my={4}>
-										<Text px={3} py={1} borderRadius="10px" bg="cm.raised" fontSize="xs" fontWeight={500} color="cm.textSoft">
+										<Text
+											px={3}
+											py={1}
+											borderRadius="10px"
+											bg="cm.raised"
+											fontSize="xs"
+											fontWeight={500}
+											color="cm.textSoft"
+										>
 											{formatDayLabel(m.created_at)}
 										</Text>
 									</Flex>
 								)}
 								{m.id === firstUnreadId && (
-									<Flex role="separator" align="center" gap={3} my={4} color="cm.amberText" fontSize="xs" fontWeight={600}>
+									<Flex
+										role="separator"
+										align="center"
+										gap={3}
+										my={4}
+										color="cm.amberText"
+										fontSize="xs"
+										fontWeight={600}
+									>
 										<Box flex={1} h="1px" bg="#5A4A26" />
 										Nouveaux messages
 										<Box flex={1} h="1px" bg="#5A4A26" />
@@ -173,6 +228,7 @@ export function MessageList({ roomId, myId, isGroup, members, lastReadAt, action
 									mine={mine}
 									myId={myId}
 									position={position(i)}
+									highlighted={highlighted === m.id}
 									authorName={isGroup && !mine ? (nameOf.get(m.user_id) ?? "Ancien membre") : undefined}
 									authorColor={colorOf(m.user_id)}
 									replied={replyInfo(m)}
@@ -200,7 +256,13 @@ export function MessageList({ roomId, myId, isGroup, members, lastReadAt, action
 									<Box key={c} w="7px" h="7px" borderRadius="full" bg={c} />
 								))}
 							</Flex>
-							{isGroup ? `${typingNames.join(" et ")} ${typingNames.length > 1 ? "écrivent" : "écrit"}…` : <Box as="span" srOnly>écrit…</Box>}
+							{isGroup ? (
+								`${typingNames.join(" et ")} ${typingNames.length > 1 ? "écrivent" : "écrit"}…`
+							) : (
+								<Box as="span" srOnly>
+									écrit…
+								</Box>
+							)}
 						</Flex>
 					)}
 				</Box>

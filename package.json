@@ -10,9 +10,10 @@
 		"db:reset": "supabase db reset",
 		"db:test": "supabase test db",
 		"db:types": "supabase gen types typescript --local > src/lib/database.types.ts && prettier --write src/lib/database.types.ts",
-		"lint": "eslint .",
+		"lint": "eslint . && prettier --check \"src/**/*.{ts,tsx}\" \"e2e/**/*.ts\"",
 		"typecheck": "tsc --noEmit",
-		"test:e2e": "playwright test"
+		"test:e2e": "playwright test",
+		"format": "prettier --write \"src/**/*.{ts,tsx}\" \"e2e/**/*.ts\""
 	},
 	"dependencies": {
 		"@chakra-ui/react": "^2.6.1",

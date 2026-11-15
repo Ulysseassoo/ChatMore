@@ -39,9 +39,29 @@ export function CheckEmailPage() {
 	return (
 		<AuthScene>
 			<AuthCard alignItems="center" textAlign="center">
-				<Box position="relative" w="160px" h="160px" borderRadius="full" bg="cm.disc" display="flex" alignItems="center" justifyContent="center">
+				<Box
+					position="relative"
+					w="160px"
+					h="160px"
+					borderRadius="full"
+					bg="cm.disc"
+					display="flex"
+					alignItems="center"
+					justifyContent="center"
+				>
 					<LuMail size={84} color="#1B1610" strokeWidth={1.4} aria-hidden="true" />
-					<Flex position="absolute" right="14px" top="18px" w="40px" h="40px" borderRadius="full" bg="cm.amberInk" color="cm.disc" align="center" justify="center">
+					<Flex
+						position="absolute"
+						right="14px"
+						top="18px"
+						w="40px"
+						h="40px"
+						borderRadius="full"
+						bg="cm.amberInk"
+						color="cm.disc"
+						align="center"
+						justify="center"
+					>
 						<LuCheck size={20} strokeWidth={3} aria-hidden="true" />
 					</Flex>
 				</Box>
@@ -55,10 +75,27 @@ export function CheckEmailPage() {
 					</Text>
 					. Clique dessus pour activer ton compte.
 				</Text>
-				<Box w="full" p={4} borderRadius="14px" bg="cm.bg" border="1px solid" borderColor="cm.line" fontSize="sm" color="#C9C0B6" textAlign="left">
+				<Box
+					w="full"
+					p={4}
+					borderRadius="14px"
+					bg="cm.bg"
+					border="1px solid"
+					borderColor="cm.line"
+					fontSize="sm"
+					color="#C9C0B6"
+					textAlign="left"
+				>
 					Rien reçu ? Regarde dans les indésirables. Le lien reste valable 24 heures.
 				</Box>
-				<Button w="full" size="lg" isDisabled={remaining > 0} isLoading={sending} onClick={resend} aria-describedby="resend-help">
+				<Button
+					w="full"
+					size="lg"
+					isDisabled={remaining > 0}
+					isLoading={sending}
+					onClick={resend}
+					aria-describedby="resend-help"
+				>
 					Renvoyer l'e-mail
 				</Button>
 				<Text id="resend-help" fontSize="sm" color="cm.subtle" minH="20px">

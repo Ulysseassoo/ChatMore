@@ -13,7 +13,9 @@ export function subscribeToRoom(roomId: number, userId: string, handlers: RoomHa
 	});
 
 	channel
-		.on("broadcast", { event: "*" }, ({ event, payload }) => handlers.onEvent(event, (payload ?? {}) as Record<string, unknown>))
+		.on("broadcast", { event: "*" }, ({ event, payload }) =>
+			handlers.onEvent(event, (payload ?? {}) as Record<string, unknown>),
+		)
 		.on("presence", { event: "sync" }, () => handlers.onPresence(Object.keys(channel.presenceState())));
 
 	void supabase.realtime.setAuth().then(() =>

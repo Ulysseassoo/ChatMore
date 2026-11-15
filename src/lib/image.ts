@@ -1,4 +1,3 @@
-
 export async function resizeImage(file: File, maxSize = 1600, quality = 0.82) {
 	const bitmap = await createImageBitmap(file);
 	const scale = Math.min(1, maxSize / Math.max(bitmap.width, bitmap.height));

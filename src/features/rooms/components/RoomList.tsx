@@ -1,4 +1,16 @@
-import { Box, Button, Flex, Heading, IconButton, Input, InputGroup, InputLeftElement, Skeleton, Text, VisuallyHidden } from "@chakra-ui/react";
+import {
+	Box,
+	Button,
+	Flex,
+	Heading,
+	IconButton,
+	Input,
+	InputGroup,
+	InputLeftElement,
+	Skeleton,
+	Text,
+	VisuallyHidden,
+} from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import { Link as RouterLink, NavLink } from "react-router-dom";
 import { Avatar } from "@/components/Avatar";
@@ -21,7 +33,12 @@ function Preview({ room, myId }: { room: Room; myId: string }) {
 	const draft = useDrafts((s) => s.drafts[room.room_id]);
 	const last = room.last_message;
 
-	if (typing) return <Text as="span" color="cm.amberText" fontWeight={500}>écrit…</Text>;
+	if (typing)
+		return (
+			<Text as="span" color="cm.amberText" fontWeight={500}>
+				écrit…
+			</Text>
+		);
 	if (draft)
 		return (
 			<>
@@ -36,7 +53,9 @@ function Preview({ room, myId }: { room: Room; myId: string }) {
 	const text = last.deleted_at ? "Message supprimé" : last.content || (last.has_attachment ? "Photo" : "");
 	return (
 		<>
-			{mine && <IconRead size={15} aria-hidden="true" style={{ display: "inline", verticalAlign: "-2px", marginRight: 3 }} />}
+			{mine && (
+				<IconRead size={15} aria-hidden="true" style={{ display: "inline", verticalAlign: "-2px", marginRight: 3 }} />
+			)}
 			{mine ? "Vous : " : ""}
 			{text}
 		</>
@@ -205,7 +224,9 @@ export function RoomList() {
 				)}
 				{rooms && visible.length === 0 && (
 					<Text p={4} color="cm.muted" textAlign="center">
-						{rooms.length === 0 ? "Aucune discussion pour l'instant. Lance-en une !" : "Aucune discussion ne correspond."}
+						{rooms.length === 0
+							? "Aucune discussion pour l'instant. Lance-en une !"
+							: "Aucune discussion ne correspond."}
 					</Text>
 				)}
 				{visible.map((room) => (

@@ -1,4 +1,20 @@
-import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, Heading, Input, InputGroup, InputLeftElement, Select, Switch, Text, Textarea, useToast } from "@chakra-ui/react";
+import {
+	Box,
+	Button,
+	Flex,
+	FormControl,
+	FormErrorMessage,
+	FormLabel,
+	Heading,
+	Input,
+	InputGroup,
+	InputLeftElement,
+	Select,
+	Switch,
+	Text,
+	Textarea,
+	useToast,
+} from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
@@ -17,8 +33,26 @@ import { usePreferences } from "../preferences";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
 	return (
-		<Box as="section" aria-label={title} borderRadius="16px" bg="cm.surface" border="1px solid" borderColor="cm.line" overflow="hidden">
-			<Heading as="h2" fontSize="13px" fontWeight={600} color="cm.muted" textTransform="uppercase" letterSpacing="0.6px" px={5} pt={4} pb={1}>
+		<Box
+			as="section"
+			aria-label={title}
+			borderRadius="16px"
+			bg="cm.surface"
+			border="1px solid"
+			borderColor="cm.line"
+			overflow="hidden"
+		>
+			<Heading
+				as="h2"
+				fontSize="13px"
+				fontWeight={600}
+				color="cm.muted"
+				textTransform="uppercase"
+				letterSpacing="0.6px"
+				px={5}
+				pt={4}
+				pb={1}
+			>
 				{title}
 			</Heading>
 			{children}
@@ -28,7 +62,18 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function Row({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
 	return (
-		<Flex as="label" align="center" gap={4} minH="60px" px={5} py={3} borderTop="1px solid" borderColor="cm.line" _first={{ borderTop: "none" }} cursor="pointer">
+		<Flex
+			as="label"
+			align="center"
+			gap={4}
+			minH="60px"
+			px={5}
+			py={3}
+			borderTop="1px solid"
+			borderColor="cm.line"
+			_first={{ borderTop: "none" }}
+			cursor="pointer"
+		>
 			<Box flex={1}>
 				<Text fontWeight={500}>{label}</Text>
 				{hint && (
@@ -110,14 +155,25 @@ function ProfileForm() {
 					<InputLeftElement h="50px" color="#9A9189" pointerEvents="none">
 						@
 					</InputLeftElement>
-					<Input pl="34px" autoCapitalize="none" value={form.username} aria-describedby="settings-username-status" onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))} />
+					<Input
+						pl="34px"
+						autoCapitalize="none"
+						value={form.username}
+						aria-describedby="settings-username-status"
+						onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))}
+					/>
 				</InputGroup>
 				<UsernameStatus state={usernameState} id="settings-username-status" />
 			</FormControl>
 
 			<FormControl>
 				<FormLabel>Bio</FormLabel>
-				<Textarea rows={3} maxLength={140} value={form.about} onChange={(e) => setForm((f) => ({ ...f, about: e.target.value }))} />
+				<Textarea
+					rows={3}
+					maxLength={140}
+					value={form.about}
+					onChange={(e) => setForm((f) => ({ ...f, about: e.target.value }))}
+				/>
 				<Text textAlign="right" fontSize="xs" color="cm.subtle" mt={1}>
 					{form.about.length} / 140
 				</Text>
@@ -130,12 +186,21 @@ function ProfileForm() {
 						facultatif, visible seulement par tes contacts
 					</Text>
 				</FormLabel>
-				<Input type="tel" placeholder="+33 6 00 00 00 00" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} />
+				<Input
+					type="tel"
+					placeholder="+33 6 00 00 00 00"
+					value={form.phone}
+					onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+				/>
 				<FormErrorMessage>32 caractères maximum</FormErrorMessage>
 			</FormControl>
 
 			<Flex justify="flex-end" gap={2}>
-				<Button variant="ghost" isDisabled={!dirty} onClick={() => me && setForm({ username: me.username, about: me.about, phone: me.phone ?? "" })}>
+				<Button
+					variant="ghost"
+					isDisabled={!dirty}
+					onClick={() => me && setForm({ username: me.username, about: me.about, phone: me.phone ?? "" })}
+				>
 					Annuler
 				</Button>
 				<Button
@@ -144,7 +209,11 @@ function ProfileForm() {
 					isLoading={saving}
 					onClick={async () => {
 						setSaving(true);
-						await save({ username: form.username.trim().toLowerCase(), about: form.about, phone: form.phone.trim() || null });
+						await save({
+							username: form.username.trim().toLowerCase(),
+							about: form.about,
+							phone: form.phone.trim() || null,
+						});
 						setSaving(false);
 					}}
 				>
@@ -169,7 +238,13 @@ export function SettingsPage() {
 
 	return (
 		<Box h="full" overflowY="auto">
-			<Box maxW="680px" mx="auto" px={{ base: 4, lg: 8 }} pt={{ base: "max(12px, env(safe-area-inset-top))", lg: 10 }} pb={16}>
+			<Box
+				maxW="680px"
+				mx="auto"
+				px={{ base: 4, lg: 8 }}
+				pt={{ base: "max(12px, env(safe-area-inset-top))", lg: 10 }}
+				pb={16}
+			>
 				<Flex align="center" gap={1} mb={6} ml={{ base: -2, lg: 0 }}>
 					<MobileBackButton />
 					<Heading as="h1" fontSize={{ base: "22px", lg: "26px" }} fontWeight={800}>
@@ -186,16 +261,40 @@ export function SettingsPage() {
 					</Box>
 
 					<Section title="Confidentialité">
-						<Row label="Confirmations de lecture" hint="Si tu les désactives, tu ne verras plus non plus celles des autres.">
-							<Switch size="lg" isChecked={me?.read_receipts ?? true} onChange={(e) => savePrivacy({ read_receipts: e.target.checked })} />
+						<Row
+							label="Confirmations de lecture"
+							hint="Si tu les désactives, tu ne verras plus non plus celles des autres."
+						>
+							<Switch
+								size="lg"
+								isChecked={me?.read_receipts ?? true}
+								onChange={(e) => savePrivacy({ read_receipts: e.target.checked })}
+							/>
 						</Row>
 						<Row label="Qui voit quand je suis en ligne" hint="Les personnes bloquées ne le voient jamais.">
-							<Select w="auto" h="40px" bg="cm.raised" borderColor="cm.lineStrong" value={me?.show_online ?? "contacts"} onChange={(e) => savePrivacy({ show_online: e.target.value as OnlineVisibility })}>
+							<Select
+								w="auto"
+								h="40px"
+								bg="cm.raised"
+								borderColor="cm.lineStrong"
+								value={me?.show_online ?? "contacts"}
+								onChange={(e) => savePrivacy({ show_online: e.target.value as OnlineVisibility })}
+							>
 								<option value="contacts">Mes contacts</option>
 								<option value="nobody">Personne</option>
 							</Select>
 						</Row>
-						<Flex as={RouterLink} to="/settings/blocked" align="center" gap={3} minH="60px" px={5} borderTop="1px solid" borderColor="cm.line" _hover={{ bg: "cm.raised" }}>
+						<Flex
+							as={RouterLink}
+							to="/settings/blocked"
+							align="center"
+							gap={3}
+							minH="60px"
+							px={5}
+							borderTop="1px solid"
+							borderColor="cm.line"
+							_hover={{ bg: "cm.raised" }}
+						>
 							<Text flex={1} fontWeight={500}>
 								Utilisateurs bloqués
 							</Text>
@@ -213,7 +312,14 @@ export function SettingsPage() {
 						</Row>
 					</Section>
 
-					<Button variant="dangerGhost" size="lg" border="1px solid" borderColor="#4A2C26" leftIcon={<IconLogout size={20} />} onClick={() => void signOut()}>
+					<Button
+						variant="dangerGhost"
+						size="lg"
+						border="1px solid"
+						borderColor="#4A2C26"
+						leftIcon={<IconLogout size={20} />}
+						onClick={() => void signOut()}
+					>
 						Se déconnecter
 					</Button>
 				</Flex>

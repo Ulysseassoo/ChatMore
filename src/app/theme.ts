@@ -136,7 +136,12 @@ export const theme = extendTheme({
 			baseStyle: {
 				control: {
 					borderColor: "cm.muted",
-					_checked: { bg: "cm.amber", borderColor: "cm.amber", color: "cm.amberInk", _hover: { bg: "cm.amberHover", borderColor: "cm.amberHover" } },
+					_checked: {
+						bg: "cm.amber",
+						borderColor: "cm.amber",
+						color: "cm.amberInk",
+						_hover: { bg: "cm.amberHover", borderColor: "cm.amberHover" },
+					},
 				},
 			},
 		},

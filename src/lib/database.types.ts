@@ -180,6 +180,7 @@ export type Database = {
 					created_at: string;
 					deleted_at: string | null;
 					edited_at: string | null;
+					forwarded: boolean;
 					id: number;
 					is_blocked: boolean;
 					reply_to_id: number | null;
@@ -194,6 +195,7 @@ export type Database = {
 					created_at?: string;
 					deleted_at?: string | null;
 					edited_at?: string | null;
+					forwarded?: boolean;
 					id?: never;
 					is_blocked?: boolean;
 					reply_to_id?: number | null;
@@ -206,6 +208,7 @@ export type Database = {
 					created_at?: string;
 					deleted_at?: string | null;
 					edited_at?: string | null;
+					forwarded?: boolean;
 					id?: never;
 					is_blocked?: boolean;
 					reply_to_id?: number | null;
@@ -369,13 +372,15 @@ export type Database = {
 			add_members: { Args: { p_member_ids: string[]; p_room_id: number }; Returns: undefined };
 			attachment_room_id: { Args: { p_name: string }; Returns: number };
 			can_listen_topic: { Args: { p_topic: string }; Returns: boolean };
+			can_read_attachment: { Args: { p_name: string }; Returns: boolean };
 			can_see_message: { Args: { p_message_id: number }; Returns: boolean };
 			can_track_presence: { Args: { p_topic: string }; Returns: boolean };
 			create_group: { Args: { p_member_ids: string[]; p_name: string }; Returns: number };
-			delete_message: { Args: { p_for_everyone: boolean; p_message_id: number }; Returns: undefined };
+			delete_message: { Args: { p_for_everyone: boolean; p_message_id: number }; Returns: string[] };
 			direct_peer: { Args: { p_room_id: number; p_user_id: string }; Returns: string };
 			edit_message: { Args: { p_content: string; p_message_id: number }; Returns: undefined };
 			ensure_group_admin: { Args: { p_room_id: number }; Returns: undefined };
+			forward_message: { Args: { p_message_id: number; p_room_ids: number[] }; Returns: number };
 			get_messages: {
 				Args: { p_before_created_at?: string; p_before_id?: number; p_limit?: number; p_room_id: number };
 				Returns: {
@@ -384,6 +389,7 @@ export type Database = {
 					created_at: string;
 					deleted_at: string;
 					edited_at: string;
+					forwarded: boolean;
 					id: number;
 					read_count: number;
 					reply_to_id: number;
@@ -450,6 +456,15 @@ export type Database = {
 			};
 			my_joined_at: { Args: { p_room_id: number }; Returns: string };
 			remove_member: { Args: { p_room_id: number; p_user_id: string }; Returns: undefined };
+			search_messages: {
+				Args: { p_limit?: number; p_query: string; p_room_id: number };
+				Returns: {
+					content: string;
+					created_at: string;
+					id: number;
+					user_id: string;
+				}[];
+			};
 			search_profiles: {
 				Args: { p_limit?: number; p_query: string };
 				Returns: {

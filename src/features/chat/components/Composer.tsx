@@ -21,7 +21,17 @@ type Props = {
 	onError: (message: string) => void;
 };
 
-export function Composer({ roomId, myId, replyTo, editing, onCancelReply, onCancelEdit, onSend, onSaveEdit, onError }: Props) {
+export function Composer({
+	roomId,
+	myId,
+	replyTo,
+	editing,
+	onCancelReply,
+	onCancelEdit,
+	onSend,
+	onSaveEdit,
+	onError,
+}: Props) {
 	const draft = useDrafts((s) => s.drafts[roomId] ?? "");
 	const setDraft = useDrafts((s) => s.setDraft);
 	const [text, setText] = useState(draft);
@@ -104,7 +114,12 @@ export function Composer({ roomId, myId, replyTo, editing, onCancelReply, onCanc
 				},
 			}
 		: replyTo
-			? { icon: <IconReply size={15} />, label: `Réponse à ${replyTo.author}`, text: replyTo.message.content || "Photo", cancel: onCancelReply }
+			? {
+					icon: <IconReply size={15} />,
+					label: `Réponse à ${replyTo.author}`,
+					text: replyTo.message.content || "Photo",
+					cancel: onCancelReply,
+				}
 			: null;
 
 	return (
@@ -131,7 +146,13 @@ export function Composer({ roomId, myId, replyTo, editing, onCancelReply, onCanc
 								{banner.text}
 							</Text>
 						</Box>
-						<IconButton aria-label="Annuler" icon={<IconClose size={16} />} variant="ghost" size="sm" onClick={banner.cancel} />
+						<IconButton
+							aria-label="Annuler"
+							icon={<IconClose size={16} />}
+							variant="ghost"
+							size="sm"
+							onClick={banner.cancel}
+						/>
 					</Flex>
 				)}
 				<Flex align="flex-end" gap={2}>
@@ -193,7 +214,14 @@ export function Composer({ roomId, myId, replyTo, editing, onCancelReply, onCanc
 						isDisabled={!text.trim()}
 					/>
 				</Flex>
-				<Text id={`composer-hint-${roomId}`} mt={1.5} pl="52px" fontSize="xs" color="#9A9189" display={{ base: "none", lg: "block" }}>
+				<Text
+					id={`composer-hint-${roomId}`}
+					mt={1.5}
+					pl="52px"
+					fontSize="xs"
+					color="#9A9189"
+					display={{ base: "none", lg: "block" }}
+				>
 					Entrée pour envoyer · Maj + Entrée pour aller à la ligne
 				</Text>
 			</Box>

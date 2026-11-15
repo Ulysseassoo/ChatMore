@@ -24,8 +24,15 @@ export function EmptyChat() {
 				</Button>
 			</Flex>
 			<Box mt={4} fontSize="sm" color="#9A9189">
-				Astuce : <Kbd bg="transparent" borderColor="cm.lineStrong" color="cm.textSoft">Ctrl</Kbd> +{" "}
-				<Kbd bg="transparent" borderColor="cm.lineStrong" color="cm.textSoft">K</Kbd> pour rechercher une discussion
+				Astuce :{" "}
+				<Kbd bg="transparent" borderColor="cm.lineStrong" color="cm.textSoft">
+					Ctrl
+				</Kbd>{" "}
+				+{" "}
+				<Kbd bg="transparent" borderColor="cm.lineStrong" color="cm.textSoft">
+					K
+				</Kbd>{" "}
+				pour rechercher une discussion
 			</Box>
 		</Flex>
 	);

@@ -19,7 +19,16 @@ export function ConfirmDialog({ isOpen, title, description, confirmLabel, icon, 
 			<ModalContent mx={4} aria-labelledby="confirm-title">
 				<ModalBody p={7}>
 					{icon && (
-						<Flex w="48px" h="48px" borderRadius="14px" bg="cm.dangerTint" color="cm.danger" align="center" justify="center" mb={4}>
+						<Flex
+							w="48px"
+							h="48px"
+							borderRadius="14px"
+							bg="cm.dangerTint"
+							color="cm.danger"
+							align="center"
+							justify="center"
+							mb={4}
+						>
 							{icon}
 						</Flex>
 					)}

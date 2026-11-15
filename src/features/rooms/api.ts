@@ -1,3 +1,4 @@
+import { resizeImage } from "@/lib/image";
 import { supabase } from "@/lib/supabase";
 import type { LastMessage, MemberRole, Peer, Room } from "@/lib/types";
 
@@ -54,9 +55,18 @@ export async function setRoomMuted(roomId: number, userId: string, muted: boolea
 	if (error) throw error;
 }
 
-export async function renameGroup(roomId: number, name: string) {
-	const { error } = await supabase.from("rooms").update({ name }).eq("id", roomId);
+export async function updateGroup(roomId: number, values: { name?: string; avatar_url?: string }) {
+	const { data, error } = await supabase.from("rooms").update(values).eq("id", roomId).select("id");
 	if (error) throw error;
+	if (!data.length) throw new Error("Seuls les admins peuvent modifier le groupe.");
+}
+
+export async function uploadGroupAvatar(roomId: number, file: File) {
+	const { blob } = await resizeImage(file, 512, 0.85);
+	const path = `room-${roomId}/${crypto.randomUUID()}.webp`;
+	const { error } = await supabase.storage.from("avatars").upload(path, blob, { contentType: "image/webp" });
+	if (error) throw error;
+	return supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl;
 }
 
 export async function searchProfiles(query: string) {

@@ -1,6 +1,32 @@
-import { Box, Button, Flex, IconButton, Image, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text, Tooltip, useClipboard, useToast } from "@chakra-ui/react";
+import {
+	Box,
+	Button,
+	Flex,
+	IconButton,
+	Image,
+	Menu,
+	MenuButton,
+	MenuDivider,
+	MenuItem,
+	MenuList,
+	Text,
+	Tooltip,
+	useClipboard,
+	useToast,
+} from "@chakra-ui/react";
 import { memo, useRef, useState } from "react";
-import { IconAlert, IconCheck, IconCopy, IconEdit, IconMore, IconPending, IconRead, IconReply, IconTrash } from "@/components/icons";
+import {
+	IconAlert,
+	IconCheck,
+	IconCopy,
+	IconEdit,
+	IconForward,
+	IconMore,
+	IconPending,
+	IconRead,
+	IconReply,
+	IconTrash,
+} from "@/components/icons";
 import { formatTime } from "@/lib/dates";
 import type { ChatMessage } from "@/lib/types";
 import { useSignedUrl } from "../hooks";
@@ -15,6 +41,7 @@ export type MessageActions = {
 	onDelete: (m: ChatMessage, forEveryone: boolean) => void;
 	onReact: (m: ChatMessage, emoji: string | null) => void;
 	onRetry: (m: ChatMessage) => void;
+	onForward: (m: ChatMessage) => void;
 };
 
 type Props = {
@@ -25,6 +52,7 @@ type Props = {
 	authorColor?: string;
 	replied?: { author: string; text: string } | null;
 	myId: string;
+	highlighted?: boolean;
 	actions: MessageActions;
 };
 
@@ -66,7 +94,17 @@ function AttachmentImage({ message }: { message: ChatMessage }) {
 	);
 }
 
-function MessageBubbleInner({ message, mine, position, authorName, authorColor, replied, myId, actions }: Props) {
+function MessageBubbleInner({
+	message,
+	mine,
+	position,
+	authorName,
+	authorColor,
+	replied,
+	myId,
+	highlighted,
+	actions,
+}: Props) {
 	const toast = useToast();
 	const { onCopy } = useClipboard(message.content);
 	const [menuOpen, setMenuOpen] = useState(false);
@@ -89,6 +127,7 @@ function MessageBubbleInner({ message, mine, position, authorName, authorColor, 
 
 	return (
 		<Flex
+			id={message.id > 0 ? `message-${message.id}` : undefined}
 			direction="column"
 			align={mine ? "flex-end" : "flex-start"}
 			mt={position === "single" || position === "first" ? 3 : "2px"}
@@ -100,6 +139,8 @@ function MessageBubbleInner({ message, mine, position, authorName, authorColor, 
 					px={message.attachments.length || message.localFile ? 1 : 3}
 					py={message.attachments.length || message.localFile ? 1 : 2}
 					borderRadius={radius(mine, position)}
+					boxShadow={highlighted ? "0 0 0 3px #F0C04F" : "none"}
+					transition="box-shadow 0.4s"
 					bg={mine ? (message.status === "failed" ? "#6B5524" : "cm.amber") : "cm.raised"}
 					color={message.status === "failed" ? "cm.text" : ink}
 					minW={0}
@@ -116,6 +157,20 @@ function MessageBubbleInner({ message, mine, position, authorName, authorColor, 
 						<Text fontSize="xs" fontWeight={700} color={authorColor} mb={0.5} px={message.attachments.length ? 2 : 0}>
 							{authorName}
 						</Text>
+					)}
+					{message.forwarded && !deleted && (
+						<Flex
+							align="center"
+							gap={1}
+							mb={0.5}
+							px={message.attachments.length ? 2 : 0}
+							fontSize="xs"
+							fontStyle="italic"
+							opacity={0.8}
+						>
+							<IconForward size={13} aria-hidden="true" />
+							Transféré
+						</Flex>
 					)}
 					{replied && !deleted && (
 						<Box
@@ -136,7 +191,10 @@ function MessageBubbleInner({ message, mine, position, authorName, authorColor, 
 						</Box>
 					)}
 					{!deleted && <AttachmentImage message={message} />}
-					<Box px={message.attachments.length || message.localFile ? 2 : 0} pt={message.attachments.length || message.localFile ? 1 : 0}>
+					<Box
+						px={message.attachments.length || message.localFile ? 2 : 0}
+						pt={message.attachments.length || message.localFile ? 1 : 0}
+					>
 						{deleted ? (
 							<Text as="span" fontStyle="italic" opacity={0.8}>
 								Ce message a été supprimé
@@ -169,7 +227,13 @@ function MessageBubbleInner({ message, mine, position, authorName, authorColor, 
 				</Box>
 
 				{!local && !deleted && (
-					<Menu isOpen={menuOpen} onOpen={() => setMenuOpen(true)} onClose={() => setMenuOpen(false)} placement={mine ? "bottom-end" : "bottom-start"} isLazy>
+					<Menu
+						isOpen={menuOpen}
+						onOpen={() => setMenuOpen(true)}
+						onClose={() => setMenuOpen(false)}
+						placement={mine ? "bottom-end" : "bottom-start"}
+						isLazy
+					>
 						<MenuButton
 							as={IconButton}
 							aria-label="Actions sur le message"
@@ -210,6 +274,9 @@ function MessageBubbleInner({ message, mine, position, authorName, authorColor, 
 							<MenuItem icon={<IconReply size={18} />} onClick={() => actions.onReply(message)}>
 								Répondre
 							</MenuItem>
+							<MenuItem icon={<IconForward size={18} />} onClick={() => actions.onForward(message)}>
+								Transférer
+							</MenuItem>
 							{message.content && (
 								<MenuItem
 									icon={<IconCopy size={18} />}
@@ -227,11 +294,19 @@ function MessageBubbleInner({ message, mine, position, authorName, authorColor, 
 								</MenuItem>
 							)}
 							<MenuDivider borderColor="cm.line" />
-							<MenuItem icon={<IconTrash size={18} />} color="cm.danger" onClick={() => actions.onDelete(message, false)}>
+							<MenuItem
+								icon={<IconTrash size={18} />}
+								color="cm.danger"
+								onClick={() => actions.onDelete(message, false)}
+							>
 								Supprimer pour moi
 							</MenuItem>
 							{mine && (
-								<MenuItem icon={<IconTrash size={18} />} color="cm.danger" onClick={() => actions.onDelete(message, true)}>
+								<MenuItem
+									icon={<IconTrash size={18} />}
+									color="cm.danger"
+									onClick={() => actions.onDelete(message, true)}
+								>
 									Supprimer pour tous
 								</MenuItem>
 							)}
@@ -269,7 +344,14 @@ function MessageBubbleInner({ message, mine, position, authorName, authorColor, 
 				<Flex align="center" gap={2} mt={1} fontSize="xs" color="cm.danger" role="alert">
 					<IconAlert size={15} aria-hidden="true" />
 					Non envoyé
-					<Button variant="ghost" size="xs" h="28px" color="cm.amberText" textDecoration="underline" onClick={() => actions.onRetry(message)}>
+					<Button
+						variant="ghost"
+						size="xs"
+						h="28px"
+						color="cm.amberText"
+						textDecoration="underline"
+						onClick={() => actions.onRetry(message)}
+					>
 						Réessayer
 					</Button>
 				</Flex>

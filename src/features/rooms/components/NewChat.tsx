@@ -1,4 +1,15 @@
-import { Box, Flex, Heading, Input, InputGroup, InputLeftElement, Spinner, Text, VisuallyHidden, useToast } from "@chakra-ui/react";
+import {
+	Box,
+	Flex,
+	Heading,
+	Input,
+	InputGroup,
+	InputLeftElement,
+	Spinner,
+	Text,
+	VisuallyHidden,
+	useToast,
+} from "@chakra-ui/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link as RouterLink, useNavigate, useSearchParams } from "react-router-dom";
@@ -85,7 +96,16 @@ export function NewChat() {
 			</Box>
 
 			<Box flex={1} overflowY="auto" px={2}>
-				<Flex as={RouterLink} to="/new/group" align="center" gap={3.5} minH="64px" px={3} borderRadius="14px" _hover={{ bg: "cm.raised" }}>
+				<Flex
+					as={RouterLink}
+					to="/new/group"
+					align="center"
+					gap={3.5}
+					minH="64px"
+					px={3}
+					borderRadius="14px"
+					_hover={{ bg: "cm.raised" }}
+				>
 					<Flex w="44px" h="44px" borderRadius="full" bg="cm.amber" color="cm.amberInk" align="center" justify="center">
 						<IconAddUser size={22} />
 					</Flex>
@@ -94,7 +114,14 @@ export function NewChat() {
 
 				{debounced.length >= 2 && (
 					<Flex align="center" gap={2} mx={3} mt={4} mb={1.5}>
-						<Heading as="h2" fontSize="13px" fontWeight={600} color="cm.muted" textTransform="uppercase" letterSpacing="0.6px">
+						<Heading
+							as="h2"
+							fontSize="13px"
+							fontWeight={600}
+							color="cm.muted"
+							textTransform="uppercase"
+							letterSpacing="0.6px"
+						>
 							Résultats pour « {debounced} »
 						</Heading>
 						{isFetching && <Spinner size="xs" color="cm.amber" />}

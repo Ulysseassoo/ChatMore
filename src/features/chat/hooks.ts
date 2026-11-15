@@ -24,6 +24,7 @@ const draftMessage = (roomId: number, userId: string, content: string, replyToId
 	edited_at: null,
 	deleted_at: null,
 	created_at: new Date().toISOString(),
+	forwarded: false,
 	status: "pending",
 	read_count: 0,
 	attachments: [],
@@ -43,7 +44,12 @@ export function useSendMessage(roomId: number, userId: string) {
 					patchMessage(qc, roomId, { client_id: clientId }, { status: "sent" });
 					void qc.invalidateQueries({ queryKey: messagesKey(roomId) });
 				} else {
-					const saved = await sendMessage({ roomId, content: message.content, clientId, replyToId: message.reply_to_id });
+					const saved = await sendMessage({
+						roomId,
+						content: message.content,
+						clientId,
+						replyToId: message.reply_to_id,
+					});
 					upsertMessage(qc, roomId, { ...message, ...saved, status: "sent", read_count: 0 });
 				}
 				void qc.invalidateQueries({ queryKey: roomsKey });
@@ -55,7 +61,11 @@ export function useSendMessage(roomId: number, userId: string) {
 	);
 
 	const send = useCallback(
-		(content: string, replyToId: number | null, file?: { file: File; url: string; width?: number; height?: number }) => {
+		(
+			content: string,
+			replyToId: number | null,
+			file?: { file: File; url: string; width?: number; height?: number },
+		) => {
 			const message = draftMessage(roomId, userId, content, replyToId);
 			if (file) message.localFile = file;
 			upsertMessage(qc, roomId, message);

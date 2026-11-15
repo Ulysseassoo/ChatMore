@@ -9,7 +9,11 @@ export function useRooms() {
 }
 
 export function useRoom(roomId: number) {
-	return useQuery({ queryKey: roomsKey, queryFn: fetchRooms, select: (rooms) => rooms.find((r) => r.room_id === roomId) });
+	return useQuery({
+		queryKey: roomsKey,
+		queryFn: fetchRooms,
+		select: (rooms) => rooms.find((r) => r.room_id === roomId),
+	});
 }
 
 export function useRoomMembers(roomId: number) {

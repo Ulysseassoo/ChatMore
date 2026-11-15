@@ -21,6 +21,7 @@ export {
 	LuSendHorizontal as IconSend,
 	LuSlidersHorizontal as IconSettings,
 	LuSmilePlus as IconReact,
+	LuForward as IconForward,
 	LuSquarePen as IconCompose,
 	LuTrash2 as IconTrash,
 	LuUserPlus as IconAddUser,

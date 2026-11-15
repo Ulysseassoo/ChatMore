@@ -1,4 +1,19 @@
-import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, Heading, Input, InputGroup, InputLeftElement, Link, List, ListItem, Text } from "@chakra-ui/react";
+import {
+	Box,
+	Button,
+	Flex,
+	FormControl,
+	FormErrorMessage,
+	FormLabel,
+	Heading,
+	Input,
+	InputGroup,
+	InputLeftElement,
+	Link,
+	List,
+	ListItem,
+	Text,
+} from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -70,7 +85,14 @@ export function RegisterPage() {
 				align={{ base: "center", lg: "flex-start" }}
 				textAlign={{ base: "center", lg: "left" }}
 			>
-				<Flex w={{ base: "120px", lg: "160px" }} h={{ base: "120px", lg: "160px" }} borderRadius="full" bg="cm.disc" align="center" justify="center">
+				<Flex
+					w={{ base: "120px", lg: "160px" }}
+					h={{ base: "120px", lg: "160px" }}
+					borderRadius="full"
+					bg="cm.disc"
+					align="center"
+					justify="center"
+				>
 					<Box as="img" src={logo} alt="" w="74%" />
 				</Flex>
 				<Heading as="h1" fontSize={{ base: "30px", lg: "38px" }} fontWeight={800} lineHeight={1.15}>
@@ -79,7 +101,15 @@ export function RegisterPage() {
 				<List spacing={3.5} display={{ base: "none", lg: "block" }} color="cm.textSoft" fontSize="md">
 					{PERKS.map(({ icon: Icon, text }) => (
 						<ListItem key={text} display="flex" alignItems="center" gap={3}>
-							<Flex flex="0 0 32px" h="32px" borderRadius="10px" bg="cm.amberTint" color="cm.amberText" align="center" justify="center">
+							<Flex
+								flex="0 0 32px"
+								h="32px"
+								borderRadius="10px"
+								bg="cm.amberTint"
+								color="cm.amberText"
+								align="center"
+								justify="center"
+							>
 								<Icon size={18} aria-hidden="true" />
 							</Flex>
 							{text}
@@ -99,7 +129,13 @@ export function RegisterPage() {
 							<InputLeftElement h="50px" color="#9A9189" pointerEvents="none">
 								@
 							</InputLeftElement>
-							<Input autoComplete="username" autoCapitalize="none" pl="34px" aria-describedby="username-status" {...register("username")} />
+							<Input
+								autoComplete="username"
+								autoCapitalize="none"
+								pl="34px"
+								aria-describedby="username-status"
+								{...register("username")}
+							/>
 						</InputGroup>
 						{errors.username ? (
 							<FormErrorMessage>{errors.username.message}</FormErrorMessage>
@@ -117,7 +153,13 @@ export function RegisterPage() {
 						<PasswordInput autoComplete="new-password" aria-describedby="password-strength" {...register("password")} />
 						<Flex gap={1} mt={2} aria-hidden="true">
 							{[1, 2, 3, 4].map((i) => (
-								<Box key={i} flex={1} h="4px" borderRadius="2px" bg={i <= strength.score ? "cm.amber" : "cm.lineStrong"} />
+								<Box
+									key={i}
+									flex={1}
+									h="4px"
+									borderRadius="2px"
+									bg={i <= strength.score ? "cm.amber" : "cm.lineStrong"}
+								/>
 							))}
 						</Flex>
 						{errors.password ? (

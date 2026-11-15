@@ -28,7 +28,17 @@ export function BlockedUsersPage() {
 				position: "bottom",
 				duration: 5000,
 				render: (toastProps) => (
-					<Flex role="status" align="center" gap={3} p={3} pl={4} borderRadius="14px" bg="cm.text" color="cm.amberInk" boxShadow="0 10px 30px rgba(0,0,0,0.5)">
+					<Flex
+						role="status"
+						align="center"
+						gap={3}
+						p={3}
+						pl={4}
+						borderRadius="14px"
+						bg="cm.text"
+						color="cm.amberInk"
+						boxShadow="0 10px 30px rgba(0,0,0,0.5)"
+					>
 						<Text flex={1}>{username} a été débloqué.</Text>
 						<Button
 							size="sm"
@@ -53,7 +63,13 @@ export function BlockedUsersPage() {
 
 	return (
 		<Box h="full" overflowY="auto">
-			<Box maxW="680px" mx="auto" px={{ base: 4, lg: 8 }} pt={{ base: "max(12px, env(safe-area-inset-top))", lg: 10 }} pb={16}>
+			<Box
+				maxW="680px"
+				mx="auto"
+				px={{ base: 4, lg: 8 }}
+				pt={{ base: "max(12px, env(safe-area-inset-top))", lg: 10 }}
+				pb={16}
+			>
 				<Flex align="center" gap={1} mb={3} ml={-2}>
 					<MobileBackButton to="/settings" label="Retour aux réglages" />
 					<Heading as="h1" fontSize={{ base: "20px", lg: "24px" }} fontWeight={800}>
@@ -61,13 +77,23 @@ export function BlockedUsersPage() {
 					</Heading>
 				</Flex>
 				<Text color="cm.muted" fontSize="sm" lineHeight={1.6} mb={5}>
-					Ces personnes ne peuvent plus t'envoyer de messages ni voir quand tu es en ligne. Elles ne sont pas prévenues. Le blocage ne s'applique pas dans les groupes.
+					Ces personnes ne peuvent plus t'envoyer de messages ni voir quand tu es en ligne. Elles ne sont pas prévenues.
+					Le blocage ne s'applique pas dans les groupes.
 				</Text>
 				{!isPending && blocks.length === 0 && <Text color="cm.subtle">Tu n'as bloqué personne.</Text>}
 				{blocks.length > 0 && (
 					<Box borderRadius="16px" bg="cm.surface" border="1px solid" borderColor="cm.line">
 						{blocks.map((b) => (
-							<Flex key={b.blocked_id} align="center" gap={3} minH="68px" px={4} borderTop="1px solid" borderColor="cm.line" _first={{ borderTop: "none" }}>
+							<Flex
+								key={b.blocked_id}
+								align="center"
+								gap={3}
+								minH="68px"
+								px={4}
+								borderTop="1px solid"
+								borderColor="cm.line"
+								_first={{ borderTop: "none" }}
+							>
 								<Avatar name={b.profile?.username ?? "?"} seed={b.blocked_id} src={b.profile?.avatar_url} size={44} />
 								<Box flex={1} minW={0}>
 									<Text fontWeight={600}>@{b.profile?.username}</Text>
@@ -75,7 +101,11 @@ export function BlockedUsersPage() {
 										Bloqué le {date.format(new Date(b.created_at))}
 									</Text>
 								</Box>
-								<Button size="sm" h="38px" onClick={() => unblock(b.blocked_id, b.profile?.username ?? "Cette personne")}>
+								<Button
+									size="sm"
+									h="38px"
+									onClick={() => unblock(b.blocked_id, b.profile?.username ?? "Cette personne")}
+								>
 									Débloquer
 								</Button>
 							</Flex>

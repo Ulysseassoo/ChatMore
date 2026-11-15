@@ -1,4 +1,15 @@
-import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, Heading, Input, Link, Text } from "@chakra-ui/react";
+import {
+	Box,
+	Button,
+	Flex,
+	FormControl,
+	FormErrorMessage,
+	FormLabel,
+	Heading,
+	Input,
+	Link,
+	Text,
+} from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -97,7 +108,10 @@ export function LoginPage() {
 								fontSize="sm"
 								color="cm.amberText"
 								onClick={() =>
-									withEmail(resetPassword, "Si un compte existe pour {email}, un lien de réinitialisation vient d'être envoyé.")
+									withEmail(
+										resetPassword,
+										"Si un compte existe pour {email}, un lien de réinitialisation vient d'être envoyé.",
+									)
 								}
 							>
 								Oublié ?

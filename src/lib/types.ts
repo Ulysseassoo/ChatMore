@@ -36,6 +36,7 @@ export type ChatMessage = {
 	edited_at: string | null;
 	deleted_at: string | null;
 	created_at: string;
+	forwarded: boolean;
 	status: "pending" | "failed" | "sent" | "read" | null;
 	read_count: number | null;
 	attachments: Attachment[];

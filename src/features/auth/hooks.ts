@@ -33,7 +33,7 @@ export function passwordStrength(password: string): { score: number; label: stri
 	if (password.length >= 8) score++;
 	if (password.length >= 12) score++;
 	if (/[a-z]/i.test(password) && /\d/.test(password)) score++;
-	if (/[^a-z0-9]/i.test(password) || /[a-z]/.test(password) && /[A-Z]/.test(password)) score++;
+	if (/[^a-z0-9]/i.test(password) || (/[a-z]/.test(password) && /[A-Z]/.test(password))) score++;
 	if (password.length < 8) return { score: 1, label: "Trop court : 8 caractères minimum." };
 	const labels = ["", "Faible.", "Moyen : ajoute un symbole ou une majuscule pour le renforcer.", "Bon.", "Excellent."];
 	return { score, label: labels[score] ?? "" };

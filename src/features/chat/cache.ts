@@ -6,8 +6,7 @@ export const messagesKey = (roomId: number) => ["messages", roomId] as const;
 
 type Data = InfiniteData<MessagesPage, unknown>;
 
-const newerFirst = (a: ChatMessage, b: ChatMessage) =>
-	b.created_at.localeCompare(a.created_at) || b.id - a.id;
+const newerFirst = (a: ChatMessage, b: ChatMessage) => b.created_at.localeCompare(a.created_at) || b.id - a.id;
 
 const sameMessage = (a: ChatMessage, b: Partial<ChatMessage>) =>
 	a.id === b.id || (!!a.client_id && a.client_id === b.client_id);
@@ -32,24 +31,33 @@ export function upsertMessage(qc: QueryClient, roomId: number, message: ChatMess
 	});
 }
 
-export function patchMessage(qc: QueryClient, roomId: number, match: Partial<ChatMessage>, patch: Partial<ChatMessage>) {
-	qc.setQueryData<Data>(messagesKey(roomId), (data) =>
-		data && {
-			...data,
-			pages: data.pages.map((page) => ({
-				...page,
-				messages: page.messages.map((m) => (sameMessage(m, match) ? { ...m, ...patch } : m)),
-			})),
-		},
+export function patchMessage(
+	qc: QueryClient,
+	roomId: number,
+	match: Partial<ChatMessage>,
+	patch: Partial<ChatMessage>,
+) {
+	qc.setQueryData<Data>(
+		messagesKey(roomId),
+		(data) =>
+			data && {
+				...data,
+				pages: data.pages.map((page) => ({
+					...page,
+					messages: page.messages.map((m) => (sameMessage(m, match) ? { ...m, ...patch } : m)),
+				})),
+			},
 	);
 }
 
 export function removeMessage(qc: QueryClient, roomId: number, match: Partial<ChatMessage>) {
-	qc.setQueryData<Data>(messagesKey(roomId), (data) =>
-		data && {
-			...data,
-			pages: data.pages.map((page) => ({ ...page, messages: page.messages.filter((m) => !sameMessage(m, match)) })),
-		},
+	qc.setQueryData<Data>(
+		messagesKey(roomId),
+		(data) =>
+			data && {
+				...data,
+				pages: data.pages.map((page) => ({ ...page, messages: page.messages.filter((m) => !sameMessage(m, match)) })),
+			},
 	);
 }
 

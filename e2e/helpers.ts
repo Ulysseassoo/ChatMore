@@ -17,26 +17,45 @@ function getServiceKey() {
 
 export const uniqueName = (prefix: string) => `${prefix}${Date.now().toString(36)}${Math.floor(Math.random() * 1e4)}`;
 
-export type TestUser = { email: string; username: string; password: string };
+export type TestUser = { id: string; email: string; username: string; password: string };
 
 // Compte déjà confirmé : évite l'e-mail de confirmation et sa limite d'envoi.
 export async function createUser(prefix = "user"): Promise<TestUser> {
 	const username = uniqueName(prefix);
-	const user = { email: `${username}@e2e.local`, username, password: PASSWORD };
 	const key = getServiceKey();
 	const res = await fetch(`${API_URL}/auth/v1/admin/users`, {
 		method: "POST",
 		headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
 		body: JSON.stringify({
-			email: user.email,
-			password: user.password,
+			email: `${username}@e2e.local`,
+			password: PASSWORD,
 			email_confirm: true,
 			user_metadata: { username },
 		}),
 	});
 	if (!res.ok) throw new Error(`Création du compte impossible : ${res.status} ${await res.text()}`);
-	return user;
+	const { id } = (await res.json()) as { id: string };
+	return { id, email: `${username}@e2e.local`, username, password: PASSWORD };
 }
+
+// Clé service : contourne la RLS, réservé à la préparation des données de test.
+export async function adminRest(path: string, init: { method?: string; body?: unknown } = {}) {
+	const key = getServiceKey();
+	const res = await fetch(`${API_URL}${path}`, {
+		method: init.method ?? "GET",
+		headers: {
+			apikey: key,
+			Authorization: `Bearer ${key}`,
+			"Content-Type": "application/json",
+			Prefer: "return=minimal",
+		},
+		body: init.body === undefined ? undefined : JSON.stringify(init.body),
+	});
+	if (!res.ok) throw new Error(`${path} : ${res.status} ${await res.text()}`);
+	return res.status === 204 || res.status === 201 ? null : ((await res.json()) as unknown);
+}
+
+export const roomIdFromUrl = (page: Page) => Number(/\/chat\/(\d+)/.exec(page.url())?.[1]);
 
 export async function login(page: Page, user: Pick<TestUser, "email" | "password">) {
 	await page.goto("/login");

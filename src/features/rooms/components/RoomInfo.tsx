@@ -1,29 +1,43 @@
-import { Badge, Box, Button, Flex, Heading, IconButton, Input, Menu, MenuButton, MenuItem, MenuList, Switch, Text, useToast } from "@chakra-ui/react";
+import {
+	Badge,
+	Box,
+	Button,
+	Flex,
+	Heading,
+	IconButton,
+	Input,
+	Menu,
+	MenuButton,
+	MenuItem,
+	MenuList,
+	Switch,
+	Text,
+	useToast,
+} from "@chakra-ui/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
+import { useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Avatar } from "@/components/Avatar";
+import { PanelHeader } from "@/components/PanelHeader";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
-import { IconAddUser, IconBlock, IconClose, IconLogout, IconMore, IconMuted } from "@/components/icons";
+import { IconAddUser, IconBlock, IconCamera, IconEdit, IconLogout, IconMore, IconMuted } from "@/components/icons";
 import { useRequiredUserId } from "@/features/auth/session";
 import { blockUser, unblockUser } from "@/features/profile/api";
 import { blocksKey, useProfile } from "@/features/profile/hooks";
 import { useDebouncedValue } from "@/lib/useDebouncedValue";
 import type { Room } from "@/lib/types";
-import { addMembers, leaveRoom, removeMember, searchProfiles, setMemberRole, setRoomMuted } from "../api";
+import {
+	addMembers,
+	leaveRoom,
+	removeMember,
+	searchProfiles,
+	setMemberRole,
+	setRoomMuted,
+	updateGroup,
+	uploadGroupAvatar,
+} from "../api";
 import { roomMembersKey, roomsKey, useRoom, useRoomMembers } from "../hooks";
 import { getRoomDisplay } from "../roomDisplay";
-
-function PanelHeader({ title }: { title: string }) {
-	return (
-		<Flex align="center" h="68px" pl={5} pr={2} borderBottom="1px solid" borderColor="cm.line" position="sticky" top={0} bg="cm.surface" zIndex={1}>
-			<Heading as="h2" flex={1} fontSize="16px" fontWeight={700}>
-				{title}
-			</Heading>
-			<IconButton as={RouterLink} to=".." relative="path" aria-label="Fermer" icon={<IconClose size={18} />} variant="ghost" />
-		</Flex>
-	);
-}
 
 function MuteRow({ room }: { room: Room }) {
 	const myId = useRequiredUserId();
@@ -92,14 +106,22 @@ function ContactInfo({ room }: { room: Room }) {
 						justifyContent="flex-start"
 						leftIcon={<IconBlock size={20} />}
 						onClick={async () => {
-							await unblockUser(myId, display.peerId!).catch(() => toast({ title: "Le déblocage a échoué.", status: "error" }));
+							await unblockUser(myId, display.peerId!).catch(() =>
+								toast({ title: "Le déblocage a échoué.", status: "error" }),
+							);
 							refresh();
 						}}
 					>
 						Débloquer {display.title}
 					</Button>
 				) : (
-					<Button variant="dangerGhost" w="full" justifyContent="flex-start" leftIcon={<IconBlock size={20} />} onClick={() => setConfirming(true)}>
+					<Button
+						variant="dangerGhost"
+						w="full"
+						justifyContent="flex-start"
+						leftIcon={<IconBlock size={20} />}
+						onClick={() => setConfirming(true)}
+					>
 						Bloquer {display.title}
 					</Button>
 				)}
@@ -133,10 +155,23 @@ function AddMembers({ roomId, existing }: { roomId: number; existing: string[] }
 	const [query, setQuery] = useState("");
 	const debounced = useDebouncedValue(query.trim(), 250);
 	const qc = useQueryClient();
-	const { data = [] } = useQuery({ queryKey: ["users", "search", debounced], queryFn: () => searchProfiles(debounced), enabled: debounced.length >= 2 });
+	const { data = [] } = useQuery({
+		queryKey: ["users", "search", debounced],
+		queryFn: () => searchProfiles(debounced),
+		enabled: debounced.length >= 2,
+	});
 	return (
 		<Box px={5} pb={4}>
-			<Input h="44px" bg="cm.raised" placeholder="Nom d'utilisateur" aria-label="Rechercher un membre à ajouter" value={query} onChange={(e) => setQuery(e.target.value)} autoFocus autoCapitalize="none" />
+			<Input
+				h="44px"
+				bg="cm.raised"
+				placeholder="Nom d'utilisateur"
+				aria-label="Rechercher un membre à ajouter"
+				value={query}
+				onChange={(e) => setQuery(e.target.value)}
+				autoFocus
+				autoCapitalize="none"
+			/>
 			{data
 				.filter((p) => !existing.includes(p.id))
 				.map((p) => (
@@ -155,6 +190,109 @@ function AddMembers({ roomId, existing }: { roomId: number; existing: string[] }
 					</Flex>
 				))}
 		</Box>
+	);
+}
+
+function GroupIdentity({ room, iAmAdmin, memberCount }: { room: Room; iAmAdmin: boolean; memberCount: number }) {
+	const display = getRoomDisplay(room);
+	const qc = useQueryClient();
+	const toast = useToast();
+	const fileRef = useRef<HTMLInputElement>(null);
+	const [editing, setEditing] = useState(false);
+	const [name, setName] = useState(display.title);
+	const [busy, setBusy] = useState(false);
+
+	const save = async (
+		values: { name?: string; avatar_url?: string },
+		run?: () => Promise<{ name?: string; avatar_url?: string }>,
+	) => {
+		setBusy(true);
+		try {
+			await updateGroup(room.room_id, run ? await run() : values);
+			await qc.invalidateQueries({ queryKey: roomsKey });
+			setEditing(false);
+		} catch {
+			toast({ title: "La modification du groupe a échoué.", status: "error", position: "bottom" });
+		} finally {
+			setBusy(false);
+		}
+	};
+
+	return (
+		<Flex direction="column" align="center" gap={1} px={5} pt={7} pb={5} textAlign="center">
+			<Box position="relative">
+				<Avatar name={display.title} seed={display.seed} src={display.avatarUrl} size={96} square />
+				{iAmAdmin && (
+					<IconButton
+						aria-label="Changer la photo du groupe"
+						icon={<IconCamera size={18} />}
+						variant="primary"
+						size="sm"
+						position="absolute"
+						right="-8px"
+						bottom="-8px"
+						borderRadius="full"
+						w="36px"
+						h="36px"
+						isLoading={busy && !editing}
+						onClick={() => fileRef.current?.click()}
+					/>
+				)}
+				<input
+					ref={fileRef}
+					type="file"
+					hidden
+					accept="image/jpeg,image/png,image/webp"
+					onChange={(e) => {
+						const file = e.target.files?.[0];
+						e.target.value = "";
+						if (file) void save({}, async () => ({ avatar_url: await uploadGroupAvatar(room.room_id, file) }));
+					}}
+				/>
+			</Box>
+			{editing ? (
+				<Flex
+					as="form"
+					mt={3}
+					gap={2}
+					w="full"
+					onSubmit={(e) => {
+						e.preventDefault();
+						if (name.trim()) void save({ name: name.trim() });
+					}}
+				>
+					<Input
+						h="44px"
+						maxLength={40}
+						value={name}
+						onChange={(e) => setName(e.target.value)}
+						aria-label="Nom du groupe"
+						autoFocus
+					/>
+					<Button type="submit" variant="primary" isLoading={busy} isDisabled={!name.trim()}>
+						OK
+					</Button>
+				</Flex>
+			) : (
+				<Flex align="center" gap={1} mt={3}>
+					<Text fontSize="21px" fontWeight={700}>
+						{display.title}
+					</Text>
+					{iAmAdmin && (
+						<IconButton
+							aria-label="Renommer le groupe"
+							icon={<IconEdit size={16} />}
+							variant="ghost"
+							size="sm"
+							onClick={() => setEditing(true)}
+						/>
+					)}
+				</Flex>
+			)}
+			<Text color="cm.subtle" fontSize="sm">
+				Groupe · {memberCount} membre{memberCount > 1 ? "s" : ""}
+			</Text>
+		</Flex>
 	);
 }
 
@@ -181,26 +319,32 @@ function GroupInfo({ room }: { room: Room }) {
 	return (
 		<Box>
 			<PanelHeader title="Infos du groupe" />
-			<Flex direction="column" align="center" gap={1} px={5} pt={7} pb={5} textAlign="center">
-				<Avatar name={display.title} seed={display.seed} src={display.avatarUrl} size={96} square />
-				<Text mt={3} fontSize="21px" fontWeight={700}>
-					{display.title}
-				</Text>
-				<Text color="cm.subtle" fontSize="sm">
-					Groupe · {members.length} membre{members.length > 1 ? "s" : ""}
-				</Text>
-			</Flex>
+			<GroupIdentity room={room} iAmAdmin={iAmAdmin} memberCount={members.length} />
 
 			<Box px={3} pb={2}>
 				<MuteRow room={room} />
 			</Box>
 
 			<Flex align="center" justify="space-between" px={5} pt={3} pb={1} borderTop="1px solid" borderColor="cm.line">
-				<Heading as="h3" fontSize="13px" fontWeight={600} color="cm.muted" textTransform="uppercase" letterSpacing="0.6px">
+				<Heading
+					as="h3"
+					fontSize="13px"
+					fontWeight={600}
+					color="cm.muted"
+					textTransform="uppercase"
+					letterSpacing="0.6px"
+				>
 					{members.length} membres
 				</Heading>
 				{iAmAdmin && (
-					<Button size="sm" variant="ghost" color="cm.amberText" leftIcon={<IconAddUser size={16} />} onClick={() => setAdding((a) => !a)} aria-expanded={adding}>
+					<Button
+						size="sm"
+						variant="ghost"
+						color="cm.amberText"
+						leftIcon={<IconAddUser size={16} />}
+						onClick={() => setAdding((a) => !a)}
+						aria-expanded={adding}
+					>
 						Ajouter
 					</Button>
 				)}
@@ -225,12 +369,30 @@ function GroupInfo({ room }: { room: Room }) {
 						)}
 						{iAmAdmin && m.user_id !== myId && (
 							<Menu placement="bottom-end" isLazy>
-								<MenuButton as={IconButton} aria-label={`Options pour ${m.username}`} icon={<IconMore size={18} />} variant="ghost" size="sm" />
+								<MenuButton
+									as={IconButton}
+									aria-label={`Options pour ${m.username}`}
+									icon={<IconMore size={18} />}
+									variant="ghost"
+									size="sm"
+								/>
 								<MenuList>
-									<MenuItem onClick={() => act(() => setMemberRole(room.room_id, m.user_id, m.role === "admin" ? "member" : "admin"), "Le rôle n'a pas pu être modifié.")}>
+									<MenuItem
+										onClick={() =>
+											act(
+												() => setMemberRole(room.room_id, m.user_id, m.role === "admin" ? "member" : "admin"),
+												"Le rôle n'a pas pu être modifié.",
+											)
+										}
+									>
 										{m.role === "admin" ? "Retirer le rôle d'admin" : "Nommer admin"}
 									</MenuItem>
-									<MenuItem color="cm.danger" onClick={() => act(() => removeMember(room.room_id, m.user_id), "Le membre n'a pas pu être retiré.")}>
+									<MenuItem
+										color="cm.danger"
+										onClick={() =>
+											act(() => removeMember(room.room_id, m.user_id), "Le membre n'a pas pu être retiré.")
+										}
+									>
 										Retirer du groupe
 									</MenuItem>
 								</MenuList>
@@ -241,7 +403,13 @@ function GroupInfo({ room }: { room: Room }) {
 			</Box>
 
 			<Box px={3} py={2} borderTop="1px solid" borderColor="cm.line">
-				<Button variant="dangerGhost" w="full" justifyContent="flex-start" leftIcon={<IconLogout size={20} />} onClick={() => setLeaving(true)}>
+				<Button
+					variant="dangerGhost"
+					w="full"
+					justifyContent="flex-start"
+					leftIcon={<IconLogout size={20} />}
+					onClick={() => setLeaving(true)}
+				>
 					Quitter le groupe
 				</Button>
 			</Box>
@@ -250,7 +418,11 @@ function GroupInfo({ room }: { room: Room }) {
 				isOpen={leaving}
 				icon={<IconLogout size={24} />}
 				title={`Quitter « ${display.title} » ?`}
-				description={iAmAdmin && members.filter((m) => m.role === "admin").length === 1 ? "Tu es le seul admin : le membre le plus ancien le deviendra." : "Tu ne recevras plus les messages de ce groupe."}
+				description={
+					iAmAdmin && members.filter((m) => m.role === "admin").length === 1
+						? "Tu es le seul admin : le membre le plus ancien le deviendra."
+						: "Tu ne recevras plus les messages de ce groupe."
+				}
 				confirmLabel="Quitter"
 				onClose={() => setLeaving(false)}
 				onConfirm={async () => {

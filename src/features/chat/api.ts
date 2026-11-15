@@ -5,7 +5,8 @@ import type { Attachment, ChatMessage, Reaction } from "@/lib/types";
 export const PAGE_SIZE = 40;
 
 // Jamais is_blocked : la colonne est illisible pour les utilisateurs.
-const MESSAGE_COLUMNS = "id, room_id, user_id, content, reply_to_id, client_id, edited_at, deleted_at, created_at";
+const MESSAGE_COLUMNS =
+	"id, room_id, user_id, content, reply_to_id, client_id, edited_at, deleted_at, created_at, forwarded";
 
 export type MessagesCursor = { createdAt: string; id: number } | null;
 export type MessagesPage = { messages: ChatMessage[]; nextCursor: MessagesCursor };
@@ -52,7 +53,12 @@ export async function fetchMessage(id: number) {
 	return { ...data, attachments, reactions };
 }
 
-export async function sendMessage(input: { roomId: number; content: string; clientId: string; replyToId: number | null }) {
+export async function sendMessage(input: {
+	roomId: number;
+	content: string;
+	clientId: string;
+	replyToId: number | null;
+}) {
 	const { data, error } = await supabase
 		.from("messages")
 		.insert({ room_id: input.roomId, content: input.content, client_id: input.clientId, reply_to_id: input.replyToId })
@@ -103,7 +109,25 @@ export async function editMessage(id: number, content: string) {
 }
 
 export async function deleteMessage(id: number, forEveryone: boolean) {
-	const { error } = await supabase.rpc("delete_message", { p_message_id: id, p_for_everyone: forEveryone });
+	const { data, error } = await supabase.rpc("delete_message", { p_message_id: id, p_for_everyone: forEveryone });
+	if (error) throw error;
+	return data;
+}
+
+export async function removeAttachmentFiles(paths: string[]) {
+	if (!paths.length) return;
+	const { error } = await supabase.storage.from("attachments").remove(paths);
+	if (error) throw error;
+}
+
+export async function searchMessages(roomId: number, query: string) {
+	const { data, error } = await supabase.rpc("search_messages", { p_room_id: roomId, p_query: query });
+	if (error) throw error;
+	return data;
+}
+
+export async function forwardMessage(messageId: number, roomIds: number[]) {
+	const { error } = await supabase.rpc("forward_message", { p_message_id: messageId, p_room_ids: roomIds });
 	if (error) throw error;
 }
 

@@ -56,6 +56,11 @@ export const router = createBrowserRouter([
 										path: "info",
 										lazy: () => import("@/features/rooms/components/RoomInfo").then((m) => ({ Component: m.RoomInfo })),
 									},
+									{
+										path: "search",
+										lazy: () =>
+											import("@/features/chat/components/MessageSearch").then((m) => ({ Component: m.MessageSearch })),
+									},
 								],
 							},
 							{
