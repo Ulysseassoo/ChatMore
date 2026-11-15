@@ -4,7 +4,12 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"db:start": "supabase start",
+		"db:stop": "supabase stop",
+		"db:reset": "supabase db reset",
+		"db:test": "supabase test db",
+		"db:types": "supabase gen types typescript --local > src/lib/database.types.ts && prettier --write src/lib/database.types.ts"
 	},
 	"dependencies": {
 		"@chakra-ui/react": "^2.6.1",
@@ -41,6 +46,8 @@
 		"@types/underscore": "^1.11.4",
 		"@vitejs/plugin-react": "^4.0.0",
 		"emoji-mart": "^5.5.2",
+		"prettier": "3.3.3",
+		"supabase": "2.122.1",
 		"typescript": "^5.0.4",
 		"vite": "^4.3.1"
 	}

@@ -1,0 +1,29 @@
+name: Base de données
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  database:
+    name: Migrations, RLS et types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.122.1
+
+      - name: Démarrer Supabase (applique les migrations et seed.sql)
+        run: supabase start -x studio,imgproxy,vector,logflare,edge-runtime,supavisor,mailpit
+
+      - name: Tests de sécurité (pgTAP)
+        run: supabase test db
+
+      - name: Vérifier que les types TypeScript sont à jour
+        run: |
+          supabase gen types typescript --local > src/lib/database.types.ts
+          npx --yes prettier@3.3.3 --write src/lib/database.types.ts
+          git diff --exit-code src/lib/database.types.ts
