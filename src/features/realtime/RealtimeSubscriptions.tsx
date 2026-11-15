@@ -92,7 +92,7 @@ function RoomChannel({ roomId, myId, shareOnline }: { roomId: number; myId: stri
 
 		const channel = subscribeToRoom(roomId, myId, {
 			onEvent: (event, payload) => {
-				const id = Number(payload.id ?? payload.message_id);
+				const id = Number(payload.message_id ?? payload.id);
 				switch (event) {
 					case "message_created":
 					case "message_updated":

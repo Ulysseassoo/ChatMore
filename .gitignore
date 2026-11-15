@@ -24,3 +24,6 @@ sketch
 .wakatime-project
 .vscode
 rome.json
+# Playwright
+test-results
+playwright-report
