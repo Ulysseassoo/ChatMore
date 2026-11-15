@@ -11,18 +11,17 @@ import { roomMembersKey, roomsKey, useRooms } from "@/features/rooms/hooks";
 import type { ChatMessage } from "@/lib/types";
 import { sendTyping, setOnline, subscribeToRoom, subscribeToUser, unsubscribe } from "./realtime";
 
-const TYPING_TTL = 6_000; // sans nouvelle, « écrit… » disparaît
-const TYPING_REFRESH = 3_000; // pendant la frappe, on se signale toutes les 3 s
+const TYPING_TTL = 6_000;
+const TYPING_REFRESH = 3_000;
 
 type Store = {
 	channels: Record<number, RealtimeChannel>;
 	online: Record<number, string[]>;
-	typing: Record<number, Record<string, number>>; // userId → expiration
+	typing: Record<number, Record<string, number>>;
 };
 
 const useRealtimeStore = create<Store>(() => ({ channels: {}, online: {}, typing: {} }));
 
-/** Qui est en ligne et qui écrit dans une conversation (moi exclu). */
 export function useRoomPresence(roomId: number, myId: string) {
 	return useRealtimeStore(
 		useShallow((s) => ({
@@ -41,7 +40,6 @@ function setTypingState(roomId: number, userId: string, typing: boolean) {
 	});
 }
 
-// Nettoyage des « écrit… » expirés (onglet fermé en pleine frappe, réseau coupé…).
 setInterval(() => {
 	const now = Date.now();
 	const { typing } = useRealtimeStore.getState();
@@ -56,10 +54,6 @@ setInterval(() => {
 
 const lastTypingSent: Record<number, number> = {};
 
-/**
- * Appelé par la zone de saisie : un signal au plus toutes les 3 s pendant la frappe,
- * puis un signal d'arrêt.
- */
 export function setTyping(roomId: number, myId: string, typing: boolean) {
 	const channel = useRealtimeStore.getState().channels[roomId];
 	if (!channel || channel.state !== "joined") return;
@@ -80,7 +74,7 @@ function RoomChannel({ roomId, myId, shareOnline }: { roomId: number; myId: stri
 	shareRef.current = shareOnline;
 
 	useEffect(() => {
-		// On ne croit pas le contenu de l'événement : on relit le message en base (RLS).
+		// Un événement n'est qu'une notification : on relit le message à travers la RLS.
 		const syncMessage = async (id: number) => {
 			const fresh = await fetchMessage(id).catch(() => null);
 			if (!fresh) return;
@@ -91,7 +85,6 @@ function RoomChannel({ roomId, myId, shareOnline }: { roomId: number; myId: stri
 					: fresh.user_id === myId
 						? "sent"
 						: null;
-			// Dédoublonné par id ou par client_id avec l'envoi optimiste.
 			upsertMessage(qc, roomId, { ...fresh, status, read_count: existing?.read_count ?? 0 });
 			if (fresh.user_id !== myId) setTypingState(roomId, fresh.user_id, false);
 			void qc.invalidateQueries({ queryKey: roomsKey });
@@ -108,7 +101,6 @@ function RoomChannel({ roomId, myId, shareOnline }: { roomId: number; myId: stri
 						if (Number.isInteger(id)) void syncMessage(id);
 						return;
 					case "read":
-						// Statuts « lu » recalculés par la base.
 						return void qc.invalidateQueries({ queryKey: messagesKey(roomId) });
 					case "members_changed":
 						void qc.invalidateQueries({ queryKey: roomMembersKey(roomId) });
@@ -119,7 +111,7 @@ function RoomChannel({ roomId, myId, shareOnline }: { roomId: number; myId: stri
 			},
 			onPresence: (ids) => useRealtimeStore.setState((s) => ({ online: { ...s.online, [roomId]: ids } })),
 			onSubscribed: () => {
-				// Les diffusions ne sont pas stockées : après une coupure, on recharge.
+				// Les diffusions ne sont pas stockées : après une coupure, on rattrape.
 				void qc.invalidateQueries({ queryKey: messagesKey(roomId) });
 				void qc.invalidateQueries({ queryKey: roomsKey });
 				if (shareRef.current) void setOnline(channel, myId, true).catch(() => undefined);
@@ -138,7 +130,6 @@ function RoomChannel({ roomId, myId, shareOnline }: { roomId: number; myId: stri
 		};
 	}, [qc, roomId, myId]);
 
-	// Changement de réglage (ou blocage) pendant la session.
 	const previous = useRef(shareOnline);
 	useEffect(() => {
 		if (previous.current === shareOnline) return;
@@ -169,10 +160,6 @@ function UserChannel({ myId }: { myId: string }) {
 	return null;
 }
 
-/**
- * Un abonnement par conversation, géré par React : il s'ouvre quand la conversation
- * apparaît dans la liste et se ferme quand elle disparaît ou à la déconnexion.
- */
 export function RealtimeSubscriptions() {
 	const myId = useRequiredUserId();
 	const { data: rooms = [] } = useRooms();
@@ -187,7 +174,6 @@ export function RealtimeSubscriptions() {
 					key={r.room_id}
 					roomId={r.room_id}
 					myId={myId}
-					// Jamais visible en ligne pour quelqu'un que j'ai bloqué (la base le refuserait aussi).
 					shareOnline={visibleOnline && !r.i_blocked_peer}
 				/>
 			))}

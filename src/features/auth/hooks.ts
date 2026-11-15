@@ -6,7 +6,6 @@ export const USERNAME_PATTERN = /^[a-z0-9._]{3,24}$/;
 
 export type UsernameCheck = "idle" | "invalid" | "checking" | "available" | "taken" | "unchanged";
 
-/** Vérification en direct d'un nom d'utilisateur (avec un léger délai pendant la frappe). */
 export function useUsernameCheck(value: string, current?: string): UsernameCheck {
 	const normalized = value.trim().toLowerCase();
 	const debounced = useDebouncedValue(normalized, 350);
@@ -28,7 +27,6 @@ export function useUsernameCheck(value: string, current?: string): UsernameCheck
 	return query.data ? "available" : "taken";
 }
 
-/** Force d'un mot de passe, sur 4. */
 export function passwordStrength(password: string): { score: number; label: string } {
 	if (!password) return { score: 0, label: "" };
 	let score = 0;

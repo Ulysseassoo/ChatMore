@@ -21,21 +21,12 @@ type Props = {
 	onError: (message: string) => void;
 };
 
-/**
- * Zone de saisie : s'agrandit avec le texte, garde un brouillon par conversation,
- * Entrée pour envoyer sur ordinateur (Maj + Entrée pour aller à la ligne).
- */
 export function Composer({ roomId, myId, replyTo, editing, onCancelReply, onCancelEdit, onSend, onSaveEdit, onError }: Props) {
 	const draft = useDrafts((s) => s.drafts[roomId] ?? "");
 	const setDraft = useDrafts((s) => s.setDraft);
 	const [text, setText] = useState(draft);
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const fileRef = useRef<HTMLInputElement>(null);
-
-	// Le composant est réutilisé d'une conversation à l'autre : on recharge le bon brouillon.
-	useEffect(() => {
-		setText(useDrafts.getState().drafts[roomId] ?? "");
-	}, [roomId]);
 
 	useEffect(() => {
 		if (editing) {
@@ -48,8 +39,6 @@ export function Composer({ roomId, myId, replyTo, editing, onCancelReply, onCanc
 		if (replyTo) textareaRef.current?.focus();
 	}, [replyTo]);
 
-	// « écrit… » : un signal toutes les 3 s au plus pendant la frappe, un signal d'arrêt
-	// après 3 s sans frappe (ou à l'envoi).
 	const settled = useDebouncedValue(text, 3000);
 	const typing = text.trim() !== "" && text !== settled && !editing;
 	useEffect(() => {
@@ -57,7 +46,6 @@ export function Composer({ roomId, myId, replyTo, editing, onCancelReply, onCanc
 	}, [roomId, myId, typing]);
 	useEffect(() => () => setTyping(roomId, myId, false), [roomId, myId]);
 
-	// Hauteur automatique, jusqu'à six lignes environ.
 	useLayoutEffect(() => {
 		const el = textareaRef.current;
 		if (!el) return;
@@ -78,7 +66,7 @@ export function Composer({ roomId, myId, replyTo, editing, onCancelReply, onCanc
 		if (editing) {
 			if (value !== editing.content) onSaveEdit(editing, value);
 			onCancelEdit();
-			setText(useDrafts.getState().drafts[roomId] ?? ""); // on retrouve son brouillon
+			setText(useDrafts.getState().drafts[roomId] ?? "");
 			return;
 		} else {
 			onSend(value);

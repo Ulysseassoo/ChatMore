@@ -1,11 +1,9 @@
--- =============================================================================
 -- Données de démo (supabase db reset). Mot de passe de tous les comptes : chatmore2026
 --   demo@chatmore.local    @demo
 --   lea@chatmore.local     @lea.martin
 --   karim@chatmore.local   @karim.b
 --   ines@chatmore.local    @ines.roux
 --   thomas@chatmore.local  @thomas.d
--- =============================================================================
 
 create or replace function pg_temp.seed_user(p_id uuid, p_email text, p_username text)
 returns void

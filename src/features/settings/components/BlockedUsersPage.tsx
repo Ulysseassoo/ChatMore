@@ -24,7 +24,6 @@ export function BlockedUsersPage() {
 		try {
 			await unblockUser(myId, userId);
 			refresh();
-			// Comme les bonnes pratiques le demandent : une action réversible tout de suite.
 			toast({
 				position: "bottom",
 				duration: 5000,

@@ -14,7 +14,6 @@ export const dayKey = (iso: string) => {
 	return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 };
 
-/** Séparateur de jour dans une conversation : « Aujourd'hui », « Hier », « samedi 8 novembre »… */
 export function formatDayLabel(iso: string, now = new Date()): string {
 	const d = new Date(iso);
 	const diff = Math.round((startOfDay(now) - startOfDay(d)) / DAY);
@@ -24,7 +23,6 @@ export function formatDayLabel(iso: string, now = new Date()): string {
 	return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
-/** Horodatage dans la liste des discussions : « 14:32 », « Hier », « mar. », « 02/11 ». */
 export function formatListTime(iso: string, now = new Date()): string {
 	const d = new Date(iso);
 	const diff = Math.round((startOfDay(now) - startOfDay(d)) / DAY);

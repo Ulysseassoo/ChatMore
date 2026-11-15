@@ -25,7 +25,6 @@ export function ChatRoom() {
 	const { data: rooms, isPending } = useRooms();
 	if (isPending) return null;
 	if (!Number.isInteger(roomId) || !rooms?.some((r) => r.room_id === roomId)) return <Navigate to="/" replace />;
-	// key : on repart d'un état propre en changeant de conversation (réponse, édition, scroll…).
 	return <ChatRoomContent key={roomId} roomId={roomId} />;
 }
 
@@ -51,7 +50,6 @@ function ChatRoomContent({ roomId }: { roomId: number }) {
 		[toast],
 	);
 
-	// Lecture : quand la conversation est visible et qu'il y a du nouveau.
 	const newestOther = messages?.pages[0]?.messages.find((m) => m.user_id !== myId)?.created_at;
 	useEffect(() => {
 		if (!room) return;
@@ -110,7 +108,7 @@ function ChatRoomContent({ roomId }: { roomId: number }) {
 			? members.map((m) => (m.user_id === myId ? "vous" : m.username)).join(", ")
 			: peerOnline
 				? "En ligne"
-				: null; // « En ligne » ou rien : on ne distingue pas « hors ligne » de « masqué »
+				: null; // jamais « hors ligne » : ce serait trahir un statut masqué
 
 	return (
 		<Flex h="full">

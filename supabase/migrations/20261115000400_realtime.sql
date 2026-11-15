@@ -1,10 +1,8 @@
--- =============================================================================
 -- ChatMore — temps réel
 -- Channels privés uniquement :
 --   room:<id>   messages, lectures, réactions, présence (« en ligne », « écrit… »)
 --   user:<uuid> événements personnels (nouvelle conversation, blocages)
 -- Les clients n'émettent que de la présence. Tout le reste est diffusé par la base.
--- =============================================================================
 
 -- Qui peut écouter un channel ?
 create or replace function public.can_listen_topic(p_topic text)
@@ -44,10 +42,8 @@ create policy "members share presence in their rooms"
     and public.can_track_presence((select realtime.topic()))
   );
 
--- -----------------------------------------------------------------------------
 -- Messages : on diffuse une sélection de colonnes (jamais is_blocked).
 -- Un message bloqué n'est pas diffusé du tout.
--- -----------------------------------------------------------------------------
 create or replace function public.message_payload(m public.messages)
 returns jsonb
 language sql immutable set search_path = ''
@@ -115,10 +111,8 @@ create trigger message_attachments_broadcast
   after insert on public.message_attachments
   for each row execute function public.broadcast_message_children();
 
--- -----------------------------------------------------------------------------
 -- Membres : la personne ajoutée ou retirée est prévenue sur son channel perso,
 -- les autres membres sur le channel de la room.
--- -----------------------------------------------------------------------------
 create or replace function public.broadcast_membership()
 returns trigger
 language plpgsql security definer set search_path = ''
@@ -141,9 +135,7 @@ create trigger room_members_broadcast
   after insert or delete or update of role on public.room_members
   for each row execute function public.broadcast_membership();
 
--- -----------------------------------------------------------------------------
 -- Blocages : seul celui qui bloque est prévenu (synchronisation de ses appareils).
--- -----------------------------------------------------------------------------
 create or replace function public.broadcast_block()
 returns trigger
 language plpgsql security definer set search_path = ''

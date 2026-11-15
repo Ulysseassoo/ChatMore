@@ -28,7 +28,6 @@ type Props = {
 	actions: MessageActions;
 };
 
-/** Coins resserrés entre les messages d'un même groupe, côté auteur. */
 function radius(mine: boolean, pos: BubblePosition) {
 	const big = "18px";
 	const small = "6px";
@@ -53,7 +52,6 @@ function AttachmentImage({ message }: { message: ChatMessage }) {
 	const width = attachment?.width ?? message.localFile?.width ?? 4;
 	const height = attachment?.height ?? message.localFile?.height ?? 3;
 	if (!attachment && !message.localFile) return null;
-	// La place est réservée avant le chargement : la conversation ne « saute » pas.
 	return (
 		<Box
 			w="min(300px, 62vw)"
@@ -182,7 +180,6 @@ function MessageBubbleInner({ message, mine, position, authorName, authorColor, 
 							h="32px"
 							borderRadius="full"
 							color="cm.muted"
-							// Visible au survol ou au clavier ; sur mobile, l'appui long ouvre le même menu.
 							opacity={menuOpen ? 1 : 0}
 							_groupHover={{ opacity: 1 }}
 							_focusVisible={{ opacity: 1 }}

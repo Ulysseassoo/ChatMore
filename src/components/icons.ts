@@ -1,4 +1,3 @@
-// Jeu d'icônes unique de l'app (Lucide), pour garder un trait cohérent.
 export {
 	LuArrowDown as IconArrowDown,
 	LuArrowLeft as IconBack,

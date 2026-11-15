@@ -3,12 +3,6 @@ import { ChatRoom } from "@/features/chat/components/ChatRoom";
 import { EmptyChat } from "@/features/chat/components/EmptyChat";
 import { AppShell, ProtectedLayout, PublicLayout } from "./layouts";
 
-/**
- * Tout ce que l'utilisateur peut vouloir retrouver avec « Retour », recharger
- * ou partager est dans l'URL. Créé une seule fois, au niveau du module.
- * Les écrans secondaires sont chargés à la demande (la mascotte Lottie, par
- * exemple, n'est téléchargée que sur les pages de connexion).
- */
 export const router = createBrowserRouter([
 	{
 		element: <PublicLayout />,

@@ -8,7 +8,6 @@ export function useRooms() {
 	return useQuery({ queryKey: roomsKey, queryFn: fetchRooms });
 }
 
-/** Une conversation de la liste (pas de requête supplémentaire). */
 export function useRoom(roomId: number) {
 	return useQuery({ queryKey: roomsKey, queryFn: fetchRooms, select: (rooms) => rooms.find((r) => r.room_id === roomId) });
 }

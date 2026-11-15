@@ -22,7 +22,6 @@ type Props = BoxProps & {
 	square?: boolean;
 };
 
-/** Avatar : photo si disponible, sinon initiales sur une couleur stable dérivée de l'identifiant. */
 export function Avatar({ name, seed, src, size = 48, square = false, ...rest }: Props) {
 	const radius = square ? `${Math.round(size * 0.3)}px` : "full";
 	return (

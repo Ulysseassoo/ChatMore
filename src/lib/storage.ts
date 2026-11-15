@@ -1,4 +1,4 @@
-// Accès au localStorage protégé : il peut être indisponible (navigation privée, stockage bloqué).
+// Le stockage peut être indisponible (navigation privée, données bloquées).
 export function readLocal<T>(key: string, fallback: T): T {
 	try {
 		const raw = window.localStorage.getItem(key);
@@ -13,6 +13,6 @@ export function writeLocal(key: string, value: unknown): void {
 		if (value === undefined || value === null || value === "") window.localStorage.removeItem(key);
 		else window.localStorage.setItem(key, JSON.stringify(value));
 	} catch {
-		// Pas de stockage disponible : on continue sans.
+		return;
 	}
 }

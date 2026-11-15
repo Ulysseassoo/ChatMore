@@ -4,7 +4,7 @@ import type { Attachment, ChatMessage, Reaction } from "@/lib/types";
 
 export const PAGE_SIZE = 40;
 
-/** Colonnes lisibles d'un message : jamais is_blocked (refusé par la base de toute façon). */
+// Jamais is_blocked : la colonne est illisible pour les utilisateurs.
 const MESSAGE_COLUMNS = "id, room_id, user_id, content, reply_to_id, client_id, edited_at, deleted_at, created_at";
 
 export type MessagesCursor = { createdAt: string; id: number } | null;
@@ -21,7 +21,6 @@ async function fetchChildren(ids: number[]) {
 	return { attachments: attachments.data, reactions: reactions.data };
 }
 
-/** Une page de messages, du plus récent au plus ancien (pagination par curseur). */
 export async function fetchMessagesPage(roomId: number, cursor: MessagesCursor): Promise<MessagesPage> {
 	const { data, error } = await supabase.rpc("get_messages", {
 		p_room_id: roomId,
@@ -45,7 +44,6 @@ export async function fetchMessagesPage(roomId: number, cursor: MessagesCursor):
 	};
 }
 
-/** Un message seul (après une notification temps réel « réaction » ou « pièce jointe »). */
 export async function fetchMessage(id: number) {
 	const { data, error } = await supabase.from("messages").select(MESSAGE_COLUMNS).eq("id", id).maybeSingle();
 	if (error) throw error;
@@ -64,7 +62,6 @@ export async function sendMessage(input: { roomId: number; content: string; clie
 	return data;
 }
 
-/** Image : redimensionnée, déposée dans le bucket privé, puis message + pièce jointe en une transaction. */
 export async function sendImage(input: { roomId: number; file: File; clientId: string; caption: string }) {
 	const { blob, width, height } = await resizeImage(input.file);
 	const path = `${input.roomId}/${crypto.randomUUID()}.webp`;
@@ -83,7 +80,7 @@ export async function sendImage(input: { roomId: number; file: File; clientId: s
 		p_height: height,
 	});
 	if (error) {
-		await supabase.storage.from("attachments").remove([path]); // pas de fichier orphelin
+		await supabase.storage.from("attachments").remove([path]);
 		throw error;
 	}
 	return data;
@@ -110,7 +107,6 @@ export async function deleteMessage(id: number, forEveryone: boolean) {
 	if (error) throw error;
 }
 
-/** Une réaction par personne : on l'ajoute, la change ou la retire (emoji = null). */
 export async function setReaction(messageId: number, userId: string, emoji: string | null, hadReaction: boolean) {
 	const table = supabase.from("message_reactions");
 	const { error } =

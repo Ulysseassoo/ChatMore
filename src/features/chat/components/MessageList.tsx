@@ -19,10 +19,7 @@ type Props = {
 	typingNames: string[];
 };
 
-/**
- * Liste des messages. Le conteneur est en column-reverse : on démarre en bas,
- * et charger l'historique au-dessus ne déplace pas ce qu'on lit.
- */
+// column-reverse : on démarre en bas et l'historique chargé au-dessus ne déplace pas la lecture.
 export function MessageList({ roomId, myId, isGroup, members, lastReadAt, actions, typingNames }: Props) {
 	const { data, isPending, isError, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } = useMessages(roomId);
 	const scrollRef = useRef<HTMLDivElement>(null);
@@ -30,20 +27,18 @@ export function MessageList({ roomId, myId, isGroup, members, lastReadAt, action
 	const [atBottom, setAtBottom] = useState(true);
 	const [newCount, setNewCount] = useState(0);
 
-	// Ancien → récent, pour l'affichage.
 	const messages = useMemo(() => (data ? data.pages.flatMap((p) => p.messages).reverse() : []), [data]);
 	const byId = useMemo(() => new Map(messages.map((m) => [m.id, m])), [messages]);
 	const nameOf = useMemo(() => new Map(members.map((m) => [m.user_id, m.username])), [members]);
 	const colorOf = (userId: string) => AUTHOR_COLORS[[...userId].reduce((a, c) => a + c.charCodeAt(0), 0) % AUTHOR_COLORS.length];
 
-	// Séparateur « nouveaux messages » : figé à l'ouverture de la conversation.
-	const [unreadFrom] = useState(lastReadAt);
-	const firstUnreadId = useMemo(
-		() => messages.find((m) => m.user_id !== myId && unreadFrom && m.created_at > unreadFrom)?.id,
-		[messages, myId, unreadFrom],
-	);
+	// Figé à l'ouverture : ce qui arrive pendant qu'on regarde n'est pas « non lu ».
+	const [firstUnreadId, setFirstUnreadId] = useState<number | null | undefined>(undefined);
+	useEffect(() => {
+		if (firstUnreadId !== undefined || !data) return;
+		setFirstUnreadId(messages.find((m) => m.user_id !== myId && !!lastReadAt && m.created_at > lastReadAt)?.id ?? null);
+	}, [data, messages, myId, lastReadAt, firstUnreadId]);
 
-	// Charger l'historique en remontant.
 	useEffect(() => {
 		const el = topRef.current;
 		if (!el) return;
@@ -57,7 +52,6 @@ export function MessageList({ roomId, myId, isGroup, members, lastReadAt, action
 		return () => observer.disconnect();
 	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-	// Nouveau message : on suit si on est en bas ; sinon on ne bouge pas et on propose un raccourci.
 	const newest = messages.at(-1);
 	const lastSeenNewest = useRef<number | undefined>(undefined);
 	useLayoutEffect(() => {

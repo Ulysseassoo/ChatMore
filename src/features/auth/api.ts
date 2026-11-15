@@ -3,15 +3,11 @@ import type { QueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./session";
 
-/**
- * Le seul écouteur d'authentification de l'app. Il reçoit la session initiale,
- * les connexions, les rafraîchissements de jeton et la déconnexion.
- */
 export function startAuthListener(queryClient: QueryClient) {
 	const { data } = supabase.auth.onAuthStateChange((event, session) => {
 		if (event === "SIGNED_OUT") {
-			queryClient.clear(); // plus aucune donnée de l'utilisateur précédent
-			void supabase.removeAllChannels(); // plus aucun abonnement temps réel
+			queryClient.clear();
+			void supabase.removeAllChannels();
 		}
 		useAuth.setState(session ? { status: "signedIn", session } : { status: "signedOut" }, true);
 	});
@@ -33,7 +29,6 @@ export async function sendMagicLink(email: string) {
 	if (error) throw error;
 }
 
-/** Renvoie true si une confirmation par e-mail est nécessaire. */
 export async function signUp(input: { email: string; password: string; username: string }) {
 	const { data, error } = await supabase.auth.signUp({
 		email: input.email,
@@ -67,7 +62,6 @@ export async function isUsernameAvailable(username: string) {
 	return data;
 }
 
-/** Messages d'erreur d'authentification compréhensibles, en français. */
 export function authErrorMessage(error: unknown): string {
 	const e = error as Partial<AuthError> & { message?: string };
 	switch (e.code) {

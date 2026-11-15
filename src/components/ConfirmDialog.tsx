@@ -11,7 +11,6 @@ type Props = {
 	onClose: () => void;
 };
 
-/** Confirmation d'une action destructive : le bouton « Annuler » a le focus par défaut. */
 export function ConfirmDialog({ isOpen, title, description, confirmLabel, icon, onConfirm, onClose }: Props) {
 	const cancelRef = useRef<HTMLButtonElement>(null);
 	return (

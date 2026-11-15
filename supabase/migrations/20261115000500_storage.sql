@@ -1,8 +1,6 @@
--- =============================================================================
 -- ChatMore — Storage
 --   avatars      public : <user_id>/<fichier>    (photos de profil et de groupe)
 --   attachments  privé  : <room_id>/<uuid>.<ext> (pièces jointes, URL signées)
--- =============================================================================
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values

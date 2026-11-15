@@ -1,32 +1,28 @@
 import { extendTheme, type ThemeConfig } from "@chakra-ui/react";
 
-/**
- * Thème « Ambre nuit » : un seul thème sombre, chaud, avec l'ambre du logo.
- * Les noms de couleurs décrivent un rôle, pas une teinte.
- */
 const config: ThemeConfig = { initialColorMode: "dark", useSystemColorMode: false };
 
 export const theme = extendTheme({
 	config,
 	colors: {
 		cm: {
-			bg: "#141211", // fond général, rail
-			surface: "#1C1917", // panneaux (liste, profil)
-			chat: "#191716", // fond de conversation
-			raised: "#2B2826", // bulles reçues, champs
-			line: "#2A2522", // séparateurs
-			lineStrong: "#3A3430", // bordures de champs
+			bg: "#141211",
+			surface: "#1C1917",
+			chat: "#191716",
+			raised: "#2B2826",
+			line: "#2A2522",
+			lineStrong: "#3A3430",
 			text: "#F3EFEA",
 			textSoft: "#D9D2CA",
 			muted: "#B8AFA6",
-			subtle: "#A39A90", // horodatages (contraste ≥ 4.5:1 sur raised)
-			amber: "#E6AF2E", // surfaces ambre (bulles envoyées, boutons)
+			subtle: "#A39A90",
+			amber: "#E6AF2E",
 			amberHover: "#F0BD45",
-			amberText: "#F0C04F", // texte ambre sur fond sombre
-			amberTint: "#3A2F1A", // fond d'élément actif
-			amberInk: "#1B1610", // texte sur ambre
-			amberInkSoft: "#5A4310", // horodatage sur ambre
-			disc: "#F6E7C1", // disque derrière la mascotte
+			amberText: "#F0C04F",
+			amberTint: "#3A2F1A",
+			amberInk: "#1B1610",
+			amberInkSoft: "#5A4310",
+			disc: "#F6E7C1",
 			danger: "#FF9C8A",
 			dangerSolid: "#E8735A",
 			dangerTint: "#3D2420",

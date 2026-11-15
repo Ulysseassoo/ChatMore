@@ -1,12 +1,7 @@
--- =============================================================================
 -- ChatMore — fonctions, triggers et RPC
 -- Toutes les fonctions security definer ont search_path = '' et qualifient
 -- chaque objet, pour qu'on ne puisse pas les détourner.
--- =============================================================================
 
--- -----------------------------------------------------------------------------
--- Fonctions utilitaires (utilisées par la RLS)
--- -----------------------------------------------------------------------------
 create or replace function public.is_room_member(p_room_id bigint)
 returns boolean
 language sql stable security definer set search_path = ''
@@ -36,7 +31,6 @@ as $$
   where room_id = p_room_id and user_id = (select auth.uid());
 $$;
 
--- L'autre membre d'une conversation privée.
 create or replace function public.direct_peer(p_room_id bigint, p_user_id uuid)
 returns uuid
 language sql stable security definer set search_path = ''
@@ -48,7 +42,6 @@ as $$
   limit 1;
 $$;
 
--- Ai-je bloqué l'autre personne de cette conversation privée ?
 create or replace function public.i_blocked_peer(p_room_id bigint)
 returns boolean
 language sql stable security definer set search_path = ''
@@ -60,7 +53,6 @@ as $$
   );
 $$;
 
--- Un message est-il visible par l'utilisateur connecté ?
 create or replace function public.can_see_message(p_message_id bigint)
 returns boolean
 language sql stable security definer set search_path = ''
@@ -80,10 +72,8 @@ as $$
   );
 $$;
 
--- -----------------------------------------------------------------------------
 -- Inscription : le profil est créé par la base, dans la même transaction.
 -- Si le pseudo est invalide ou déjà pris, toute l'inscription échoue.
--- -----------------------------------------------------------------------------
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql security definer set search_path = ''
@@ -113,9 +103,7 @@ create trigger profiles_touch_updated_at
   before update on public.profiles
   for each row execute function public.touch_updated_at();
 
--- -----------------------------------------------------------------------------
 -- Messages : ce que le client envoie n'est jamais cru sur parole.
--- -----------------------------------------------------------------------------
 create or replace function public.prepare_message()
 returns trigger
 language plpgsql security definer set search_path = ''
@@ -172,11 +160,6 @@ create trigger messages_bump_room
   after insert on public.messages
   for each row execute function public.bump_room_activity();
 
--- -----------------------------------------------------------------------------
--- RPC : conversations
--- -----------------------------------------------------------------------------
-
--- Renvoie la conversation privée avec p_other, ou la crée. Sans doublon possible.
 create or replace function public.get_or_create_direct_room(p_other uuid)
 returns bigint
 language plpgsql security definer set search_path = ''
@@ -335,9 +318,6 @@ begin
 end;
 $$;
 
--- -----------------------------------------------------------------------------
--- RPC : lecture
--- -----------------------------------------------------------------------------
 create or replace function public.mark_room_read(p_room_id bigint)
 returns void
 language plpgsql security definer set search_path = ''
@@ -369,9 +349,6 @@ begin
 end;
 $$;
 
--- -----------------------------------------------------------------------------
--- RPC : messages
--- -----------------------------------------------------------------------------
 create or replace function public.edit_message(p_message_id bigint, p_content text)
 returns void
 language plpgsql security definer set search_path = ''
@@ -536,9 +513,6 @@ begin
 end;
 $$;
 
--- -----------------------------------------------------------------------------
--- RPC : liste des conversations, en une seule requête (fin du N+1).
--- -----------------------------------------------------------------------------
 create or replace function public.get_my_rooms()
 returns table (
   room_id bigint,
@@ -638,11 +612,6 @@ begin
 end;
 $$;
 
--- -----------------------------------------------------------------------------
--- RPC : profils
--- -----------------------------------------------------------------------------
-
--- Recherche par pseudo, insensible aux accents et à la casse.
 create or replace function public.search_profiles(p_query text, p_limit integer default 20)
 returns table (id uuid, username text, avatar_url text, direct_room_id bigint)
 language sql stable security definer set search_path = ''

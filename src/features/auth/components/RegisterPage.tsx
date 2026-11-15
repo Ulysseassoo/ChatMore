@@ -53,7 +53,6 @@ export function RegisterPage() {
 		try {
 			const needsConfirmation = await signUp(values);
 			if (needsConfirmation) navigate("/check-email", { state: { email: values.email } });
-			// Sinon une session existe déjà : PublicLayout redirige vers l'app.
 		} catch (e) {
 			setError(authErrorMessage(e));
 		}

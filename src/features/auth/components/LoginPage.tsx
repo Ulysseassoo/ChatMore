@@ -32,13 +32,12 @@ export function LoginPage() {
 		setFeedback(null);
 		try {
 			await signIn(email, password);
-			// Pas de navigate : le listener met la session à jour et PublicLayout redirige.
+			// PublicLayout redirige dès que le listener reçoit la session.
 		} catch (e) {
 			setFeedback({ status: "error", text: authErrorMessage(e) });
 		}
 	};
 
-	// « Lien magique » et « mot de passe oublié » n'ont besoin que de l'e-mail.
 	const withEmail = async (action: (email: string) => Promise<void>, success: string) => {
 		setFeedback(null);
 		if (!(await trigger("email"))) return;

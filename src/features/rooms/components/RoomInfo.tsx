@@ -268,7 +268,6 @@ function GroupInfo({ room }: { room: Room }) {
 	);
 }
 
-/** Panneau d'infos d'une conversation : profil du contact ou infos du groupe. */
 export function RoomInfo() {
 	const { data: room } = useRoom(Number(useParams().roomId));
 	if (!room) return null;

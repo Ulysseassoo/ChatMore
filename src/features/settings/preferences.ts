@@ -2,7 +2,6 @@ import { useSyncExternalStore } from "react";
 import { create } from "zustand";
 import { readLocal, writeLocal } from "@/lib/storage";
 
-/** Préférences propres à cet appareil (pas besoin de les stocker en base). */
 type Preferences = {
 	reduceMotion: boolean;
 	largeText: boolean;
@@ -42,7 +41,6 @@ const subscribe = (cb: () => void) => {
 	return () => mq.removeEventListener("change", cb);
 };
 
-/** Vrai si le système OU l'utilisateur (dans les réglages) demande moins d'animations. */
 export function useReducedMotion(): boolean {
 	const system = useSyncExternalStore(subscribe, () => window.matchMedia(query).matches);
 	const local = usePreferences((s) => s.reduceMotion);

@@ -1,9 +1,7 @@
--- =============================================================================
 -- ChatMore — compléments pour le front
 --   is_username_available : vérification en direct du pseudo (inscription, réglages)
 --   get_my_rooms          : renvoie aussi ma dernière lecture, pour afficher le
 --                           séparateur « nouveaux messages » à l'ouverture
--- =============================================================================
 
 create or replace function public.is_username_available(p_username text)
 returns boolean

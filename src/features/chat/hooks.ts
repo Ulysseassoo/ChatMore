@@ -15,7 +15,7 @@ export function useMessages(roomId: number) {
 }
 
 const draftMessage = (roomId: number, userId: string, content: string, replyToId: number | null): ChatMessage => ({
-	id: -Date.now(), // identifiant provisoire, remplacé par celui de la base
+	id: -Date.now(),
 	room_id: roomId,
 	user_id: userId,
 	content,
@@ -30,10 +30,6 @@ const draftMessage = (roomId: number, userId: string, content: string, replyToId
 	reactions: [],
 });
 
-/**
- * Envoi optimiste : le message s'affiche tout de suite (« envoi… »), puis prend
- * l'identifiant de la base. En cas d'échec, il reste affiché avec « Réessayer ».
- */
 export function useSendMessage(roomId: number, userId: string) {
 	const qc = useQueryClient();
 
@@ -45,7 +41,6 @@ export function useSendMessage(roomId: number, userId: string) {
 				if (message.localFile) {
 					await sendImage({ roomId, file: message.localFile.file, clientId, caption: message.content });
 					patchMessage(qc, roomId, { client_id: clientId }, { status: "sent" });
-					// La pièce jointe arrive par le temps réel ; on recharge par sécurité.
 					void qc.invalidateQueries({ queryKey: messagesKey(roomId) });
 				} else {
 					const saved = await sendMessage({ roomId, content: message.content, clientId, replyToId: message.reply_to_id });
@@ -75,16 +70,14 @@ export function useSendMessage(roomId: number, userId: string) {
 export function useMarkRead(roomId: number) {
 	const qc = useQueryClient();
 	return useCallback(async () => {
-		try {
-			await markRoomRead(roomId);
-			void qc.invalidateQueries({ queryKey: roomsKey });
-		} catch {
-			// Sans gravité : on réessaiera à la prochaine lecture.
-		}
+		const ok = await markRoomRead(roomId).then(
+			() => true,
+			() => false,
+		);
+		if (ok) void qc.invalidateQueries({ queryKey: roomsKey });
 	}, [qc, roomId]);
 }
 
-/** URL signée d'une pièce jointe privée, mise en cache 50 minutes (elle expire au bout d'une heure). */
 export function useSignedUrl(path: string | undefined) {
 	return useQuery({
 		queryKey: ["signed-url", path],

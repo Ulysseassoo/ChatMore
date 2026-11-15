@@ -1,10 +1,8 @@
--- =============================================================================
 -- Correctif : relire un message juste après l'avoir inséré (insert … returning).
 -- L'ancienne règle appelait can_see_message(id), qui recherche la ligne en base :
 -- dans la même requête que l'insert, la nouvelle ligne n'est pas encore visible
 -- pour cette recherche, et l'envoi était refusé (403). La règle utilise maintenant
 -- directement les colonnes de la ligne.
--- =============================================================================
 
 drop policy "members read visible messages" on public.messages;
 

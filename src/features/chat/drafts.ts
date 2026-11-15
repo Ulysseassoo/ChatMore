@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { readLocal, writeLocal } from "@/lib/storage";
 
-/** Brouillons par conversation : on ne perd pas son texte en changeant de discussion. */
 type Drafts = { drafts: Record<number, string>; setDraft: (roomId: number, text: string) => void };
 
 export const useDrafts = create<Drafts>((set) => ({

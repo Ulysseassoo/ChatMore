@@ -22,7 +22,6 @@ export async function updateMyProfile(userId: string, values: ProfileUpdate) {
 	if (error) throw error;
 }
 
-/** Photo de profil : redimensionnée, déposée dans avatars/<user_id>/, URL publique. */
 export async function uploadAvatar(userId: string, file: File) {
 	const { blob } = await resizeImage(file, 512, 0.85);
 	const path = `${userId}/${crypto.randomUUID()}.webp`;

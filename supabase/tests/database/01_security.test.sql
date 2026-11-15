@@ -1,17 +1,13 @@
--- =============================================================================
 -- Tests de sécurité (pgTAP) — lancer avec : supabase test db
 -- Chaque test se connecte comme un utilisateur et vérifie ce que la base accepte.
 -- Tout est annulé à la fin (rollback).
--- =============================================================================
 begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
 
 select plan(37);
 
--- -----------------------------------------------------------------------------
 -- Comptes de test : alice, bob, carol, dave (dave ne partage rien avec personne)
--- -----------------------------------------------------------------------------
 insert into auth.users (instance_id, id, aud, role, email, raw_user_meta_data) values
   ('00000000-0000-0000-0000-000000000000', 'a11ce000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'alice@test.local', '{"username":"alice"}'),
   ('00000000-0000-0000-0000-000000000000', 'b0b00000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'bob@test.local',   '{"username":"bob"}'),

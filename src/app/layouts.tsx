@@ -11,7 +11,6 @@ import { RealtimeSubscriptions } from "@/features/realtime/RealtimeSubscriptions
 import { RoomList } from "@/features/rooms/components/RoomList";
 import { OfflineBanner } from "./OfflineBanner";
 
-/** Pages publiques : si on est déjà connecté, on file vers l'app (ou la page demandée avant). */
 export function PublicLayout() {
 	const auth = useAuth();
 	const location = useLocation();
@@ -23,7 +22,6 @@ export function PublicLayout() {
 	return <Outlet />;
 }
 
-/** Zone connectée : seul endroit qui décide d'une redirection vers /login. */
 export function ProtectedLayout() {
 	const auth = useAuth();
 	const location = useLocation();
@@ -62,10 +60,6 @@ function RailLink({ to, label, icon, end }: { to: string; label: string; icon: R
 	);
 }
 
-/**
- * Coque de l'app : rail, liste des discussions, contenu.
- * Sur mobile, une seule vue à la fois : la liste sur « / », sinon le contenu.
- */
 export function AppShell() {
 	const myId = useRequiredUserId();
 	const { data: me } = useMyProfile();
@@ -73,7 +67,6 @@ export function AppShell() {
 	const inSettings = useMatch("/settings/*") !== null;
 	const navigate = useNavigate();
 
-	// Ctrl + K (ou Cmd + K) : rechercher une discussion.
 	useEffect(() => {
 		const onKey = (e: KeyboardEvent) => {
 			if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {

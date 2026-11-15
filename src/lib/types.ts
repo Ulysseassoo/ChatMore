@@ -18,7 +18,6 @@ export type LastMessage = {
 	has_attachment: boolean;
 };
 
-/** Une ligne de la liste des conversations (RPC get_my_rooms). */
 export type Room = Omit<Fn<"get_my_rooms">["Returns"][number], "peer" | "last_message"> & {
 	peer: Peer | null;
 	last_message: LastMessage | null;
@@ -27,10 +26,6 @@ export type Room = Omit<Fn<"get_my_rooms">["Returns"][number], "peer" | "last_me
 export type Attachment = Row<"message_attachments">;
 export type Reaction = Row<"message_reactions">;
 
-/**
- * Un message tel que l'affiche le front.
- * status : null pour les messages des autres ; pending/failed n'existent que côté client.
- */
 export type ChatMessage = {
 	id: number;
 	room_id: number;
@@ -45,7 +40,6 @@ export type ChatMessage = {
 	read_count: number | null;
 	attachments: Attachment[];
 	reactions: Reaction[];
-	/** Fichier local d'un envoi optimiste, pour l'aperçu et le renvoi. */
 	localFile?: { url: string; file: File; width?: number; height?: number };
 };
 

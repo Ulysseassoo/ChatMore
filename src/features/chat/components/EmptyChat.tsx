@@ -3,7 +3,6 @@ import { Link as RouterLink } from "react-router-dom";
 import { IconCompose, IconGroup } from "@/components/icons";
 import logo from "@/assets/Logo.png";
 
-/** Accueil desktop quand aucune conversation n'est ouverte. */
 export function EmptyChat() {
 	return (
 		<Flex h="full" direction="column" align="center" justify="center" gap={4} px={8} textAlign="center">

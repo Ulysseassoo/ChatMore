@@ -5,10 +5,6 @@ import mascot from "@/assets/lottie/chatmore-logo.json";
 import logo from "@/assets/Logo.png";
 import { useReducedMotion } from "@/features/settings/preferences";
 
-/**
- * La mascotte animée : apparition (images 0 à 40), puis boucle douce (40 à 120).
- * Si l'utilisateur demande moins d'animations, elle s'affiche directement dans sa pose finale.
- */
 export function Mascot({ size, ...rest }: BoxProps & { size: string }) {
 	const reduce = useReducedMotion();
 	const ref = useRef<LottieRefCurrentProps>(null);

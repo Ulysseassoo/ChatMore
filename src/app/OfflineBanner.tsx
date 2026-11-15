@@ -11,7 +11,6 @@ const subscribe = (cb: () => void) => {
 	};
 };
 
-/** Indique la perte de connexion : les messages restent affichés, l'envoi reprendra au retour. */
 export function OfflineBanner() {
 	const online = useSyncExternalStore(subscribe, () => navigator.onLine);
 	if (online) return null;

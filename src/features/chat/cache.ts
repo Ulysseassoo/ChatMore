@@ -12,11 +12,7 @@ const newerFirst = (a: ChatMessage, b: ChatMessage) =>
 const sameMessage = (a: ChatMessage, b: Partial<ChatMessage>) =>
 	a.id === b.id || (!!a.client_id && a.client_id === b.client_id);
 
-/**
- * Ajoute ou met à jour un message dans le cache, de façon idempotente :
- * qu'il arrive par la réponse de l'insert, par le temps réel ou par un rechargement,
- * il n'apparaît qu'une fois (dédoublonnage par id ou par client_id).
- */
+// Idempotent : un message reçu par l'insert, le temps réel ou un rechargement n'apparaît qu'une fois.
 export function upsertMessage(qc: QueryClient, roomId: number, message: ChatMessage) {
 	qc.setQueryData<Data>(messagesKey(roomId), (data) => {
 		if (!data) return data;
@@ -26,7 +22,6 @@ export function upsertMessage(qc: QueryClient, roomId: number, message: ChatMess
 			messages: page.messages.map((m) => {
 				if (!sameMessage(m, message)) return m;
 				found = true;
-				// On garde l'aperçu local d'une image tant que la version serveur n'a pas sa pièce jointe.
 				return { ...m, ...message, localFile: message.attachments.length ? undefined : m.localFile };
 			}),
 		}));

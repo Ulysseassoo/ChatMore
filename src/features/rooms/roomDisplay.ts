@@ -1,9 +1,5 @@
 import type { Room } from "@/lib/types";
 
-/**
- * Le seul endroit qui sait si une conversation est privée ou de groupe.
- * Les composants affichent un titre, un avatar et un identifiant, sans se poser la question.
- */
 export function getRoomDisplay(room: Room) {
 	if (room.type === "direct") {
 		const peer = room.peer;

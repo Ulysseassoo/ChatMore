@@ -13,7 +13,6 @@ const schema = z.object({
 	password: z.string().min(8, "8 caractères minimum").regex(/[a-z]/i, "Ajoute au moins une lettre").regex(/\d/, "Ajoute au moins un chiffre"),
 });
 
-/** Atteinte depuis le lien « mot de passe oublié » : Supabase a ouvert une session temporaire. */
 export function ResetPasswordPage() {
 	const navigate = useNavigate();
 	const [error, setError] = useState<string | null>(null);

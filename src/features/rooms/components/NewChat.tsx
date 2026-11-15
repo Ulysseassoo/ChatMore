@@ -10,7 +10,6 @@ import type { ProfileSearchResult } from "@/lib/types";
 import { getOrCreateDirectRoom, searchProfiles } from "../api";
 import { roomsKey } from "../hooks";
 
-/** Surligne la partie du pseudo qui correspond (sans tenir compte des accents). */
 function Highlight({ text, query }: { text: string; query: string }) {
 	const fold = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 	const i = fold(text).indexOf(fold(query));
@@ -27,7 +26,6 @@ function Highlight({ text, query }: { text: string; query: string }) {
 }
 
 export function NewChat() {
-	// La recherche est dans l'URL (/new?q=…) : Retour et rechargement la conservent.
 	const [params, setParams] = useSearchParams();
 	const q = params.get("q") ?? "";
 	const debounced = useDebouncedValue(q.trim(), 250);

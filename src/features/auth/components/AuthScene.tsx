@@ -12,7 +12,6 @@ const BUBBLES = [
 	{ left: "52%", bottom: "6%", size: 30, delay: "-6s", duration: "11s" },
 ];
 
-/** Fond des écrans d'authentification : les petites bulles du logo qui flottent. */
 export function AuthScene({ children, ...rest }: FlexProps) {
 	return (
 		<Flex

@@ -1,7 +1,5 @@
--- =============================================================================
 -- ChatMore — schéma de base
 -- Nouveau départ : aucune reprise des anciennes tables (message, userHasRoom…).
--- =============================================================================
 
 create extension if not exists pg_trgm with schema extensions;
 create extension if not exists unaccent with schema extensions;
@@ -11,9 +9,7 @@ create type public.member_role as enum ('admin', 'member');
 create type public.attachment_kind as enum ('image', 'file', 'audio');
 create type public.online_visibility as enum ('contacts', 'nobody');
 
--- -----------------------------------------------------------------------------
 -- Profils (une ligne par compte, créée par le trigger handle_new_user)
--- -----------------------------------------------------------------------------
 create table public.profiles (
   id            uuid primary key references auth.users (id) on delete cascade,
   username      text not null unique
@@ -30,11 +26,9 @@ create table public.profiles (
 create index profiles_username_trgm on public.profiles
   using gin (username extensions.gin_trgm_ops);
 
--- -----------------------------------------------------------------------------
 -- Conversations
 -- direct_key garantit une seule conversation privée par paire d'utilisateurs,
 -- même si les deux personnes la créent au même instant.
--- -----------------------------------------------------------------------------
 create table public.rooms (
   id              bigint generated always as identity primary key,
   type            public.room_type not null,
@@ -65,9 +59,7 @@ create table public.room_members (
 
 create index room_members_user_id on public.room_members (user_id);
 
--- -----------------------------------------------------------------------------
 -- Messages
--- -----------------------------------------------------------------------------
 create table public.messages (
   id          bigint generated always as identity primary key,
   room_id     bigint not null references public.rooms (id) on delete cascade,
@@ -119,9 +111,7 @@ create table public.message_reactions (
   primary key (message_id, user_id)
 );
 
--- -----------------------------------------------------------------------------
 -- Blocages : par personne. N'ont d'effet que dans les conversations privées.
--- -----------------------------------------------------------------------------
 create table public.blocks (
   blocker_id uuid not null default auth.uid() references public.profiles (id) on delete cascade,
   blocked_id uuid not null references public.profiles (id) on delete cascade,
