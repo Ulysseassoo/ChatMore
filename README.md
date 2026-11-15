@@ -27,9 +27,8 @@ On this chatapp the user can do almost anything that we normaly do in a chatapp 
 
 ## Développement local
 
-> Le projet est en cours de refonte. La base de données est maintenant décrite dans le dossier `supabase/`
-> (migrations, règles RLS, données de démo et tests). Le front sera migré vers ce nouveau schéma dans une
-> prochaine étape : en attendant, il ne fonctionne pas avec la nouvelle base.
+> ChatMore a été entièrement refait : base de données sécurisée (RLS), temps réel en channels privés,
+> nouvelle architecture front et nouveau design « Ambre nuit ».
 
 Prérequis : Node 20+, Yarn et Docker.
 
@@ -46,10 +45,32 @@ yarn dev
 | `yarn db:reset` | Recréer la base locale depuis zéro (migrations puis données de démo) |
 | `yarn db:test` | Lancer les tests de sécurité pgTAP (`supabase/tests`) |
 | `yarn db:types` | Régénérer `src/lib/database.types.ts` après une migration |
+| `yarn lint` / `yarn typecheck` | ESLint et TypeScript |
 
 Comptes de démo (mot de passe `chatmore2026`) : `demo@chatmore.local`, `lea@chatmore.local`,
 `karim@chatmore.local`, `ines@chatmore.local`, `thomas@chatmore.local`. Les e-mails envoyés en local
 (confirmation d'inscription…) sont visibles dans Mailpit, sur http://127.0.0.1:54324.
+
+
+### Organisation du front
+
+```
+src/
+├── app/          routes, layouts (public / protégé / coque de l'app), thème
+├── lib/          client Supabase, types générés, utilitaires (dates, images, stockage)
+├── components/   composants partagés (avatar, mascotte Lottie, dialogue de confirmation…)
+└── features/
+    ├── auth/      connexion, inscription, session (un seul écouteur d'authentification)
+    ├── rooms/     liste des discussions, nouvelle discussion, groupes, panneau d'infos
+    ├── chat/      conversation : messages, envoi optimiste, brouillons, pièces jointes
+    ├── realtime/  channels privés, présence « en ligne », « écrit… »
+    ├── profile/   profils et blocages
+    └── settings/  réglages et préférences de l'appareil
+```
+
+- Seuls les fichiers `api.ts` et `realtime.ts` importent le client Supabase (règle ESLint).
+- Les données serveur vivent dans TanStack Query ; Zustand ne garde que l'état de l'interface.
+- Un événement temps réel est une notification : le front relit toujours la donnée en base.
 
 Règles du dossier `supabase/` :
 

@@ -401,6 +401,7 @@ export type Database = {
 					last_message: Json;
 					member_count: number;
 					muted: boolean;
+					my_last_read_at: string;
 					name: string;
 					peer: Json;
 					room_id: number;
@@ -435,6 +436,7 @@ export type Database = {
 			i_blocked_peer: { Args: { p_room_id: number }; Returns: boolean };
 			is_room_admin: { Args: { p_room_id: number }; Returns: boolean };
 			is_room_member: { Args: { p_room_id: number }; Returns: boolean };
+			is_username_available: { Args: { p_username: string }; Returns: boolean };
 			leave_room: { Args: { p_room_id: number }; Returns: undefined };
 			mark_room_read: { Args: { p_room_id: number }; Returns: undefined };
 			message_payload: {
