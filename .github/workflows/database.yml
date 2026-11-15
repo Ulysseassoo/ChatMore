@@ -16,6 +16,9 @@ jobs:
         with:
           version: 2.122.1
 
+      - name: Clés VAPID de test
+        run: node scripts/generate-push-keys.mjs
+
       - name: Démarrer Supabase (applique les migrations et seed.sql)
         run: supabase start -x studio,imgproxy,vector,logflare,edge-runtime,supavisor,mailpit
 

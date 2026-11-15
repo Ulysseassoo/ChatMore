@@ -13,7 +13,8 @@
 		"lint": "eslint . && prettier --check \"src/**/*.{ts,tsx}\" \"e2e/**/*.ts\"",
 		"typecheck": "tsc --noEmit",
 		"test:e2e": "playwright test",
-		"format": "prettier --write \"src/**/*.{ts,tsx}\" \"e2e/**/*.ts\""
+		"format": "prettier --write \"src/**/*.{ts,tsx}\" \"e2e/**/*.ts\"",
+		"push:keys": "node scripts/generate-push-keys.mjs"
 	},
 	"dependencies": {
 		"@chakra-ui/react": "^2.6.1",
@@ -45,11 +46,16 @@
 		"eslint": "^9.39.5",
 		"eslint-plugin-react-hooks": "^5.2.0",
 		"globals": "^15.15.0",
+		"http_ece": "1.2.0",
 		"prettier": "3.3.3",
 		"supabase": "2.122.1",
 		"typescript": "~5.6.3",
 		"typescript-eslint": "^8.72.2",
-		"vite": "^4.3.1"
+		"vite": "^4.3.1",
+		"vite-plugin-pwa": "0.20.5",
+		"workbox-core": "7.1.0",
+		"workbox-precaching": "7.1.0",
+		"workbox-routing": "7.1.0"
 	},
 	"type": "module"
 }

@@ -34,8 +34,9 @@ Prérequis : Node 20+, Yarn et Docker.
 
 ```bash
 yarn install
+cp .env.example .env.local   # puis renseigner la PUBLISHABLE_KEY affichée par db:start
+yarn push:keys         # clés des notifications push (supabase/.env et .env.local)
 yarn db:start          # lance Supabase en local, applique les migrations et seed.sql
-cp .env.example .env.local   # puis renseigner la PUBLISHABLE_KEY affichée
 yarn dev
 ```
 
@@ -45,7 +46,9 @@ yarn dev
 | `yarn db:reset` | Recréer la base locale depuis zéro (migrations puis données de démo) |
 | `yarn db:test` | Lancer les tests de sécurité pgTAP (`supabase/tests`) |
 | `yarn db:types` | Régénérer `src/lib/database.types.ts` après une migration |
-| `yarn lint` / `yarn typecheck` | ESLint et TypeScript |
+| `yarn lint` / `yarn typecheck` | ESLint, Prettier et TypeScript |
+| `yarn test:e2e` | Tests de bout en bout Playwright (Supabase local requis) |
+| `yarn push:keys` | Génère les clés VAPID locales des notifications push |
 
 Comptes de démo (mot de passe `chatmore2026`) : `demo@chatmore.local`, `lea@chatmore.local`,
 `karim@chatmore.local`, `ines@chatmore.local`, `thomas@chatmore.local`. Les e-mails envoyés en local

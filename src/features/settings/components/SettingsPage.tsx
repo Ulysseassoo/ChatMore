@@ -27,6 +27,7 @@ import { UsernameStatus } from "@/features/auth/components/UsernameStatus";
 import { useRequiredUserId } from "@/features/auth/session";
 import { updateMyProfile, uploadAvatar, type ProfileUpdate } from "@/features/profile/api";
 import { profileKey, useBlocks, useMyProfile } from "@/features/profile/hooks";
+import { disablePush, useDevicePush } from "@/features/notifications/device";
 import { roomsKey } from "@/features/rooms/hooks";
 import type { OnlineVisibility } from "@/lib/types";
 import { usePreferences } from "../preferences";
@@ -224,6 +225,41 @@ function ProfileForm() {
 	);
 }
 
+function NotificationsSection({ preview, onPreview }: { preview: boolean; onPreview: (value: boolean) => void }) {
+	const push = useDevicePush();
+	const toast = useToast();
+	const hint = !push.supported
+		? "Non pris en charge par ce navigateur."
+		: push.denied
+			? "Bloquées : autorise les notifications dans les réglages du navigateur."
+			: "Reçois un message même quand ChatMore est fermé.";
+
+	return (
+		<Section title="Notifications">
+			<Row label="Notifications sur cet appareil" hint={hint}>
+				<Switch
+					size="lg"
+					isChecked={push.enabled}
+					isDisabled={!push.supported || push.busy}
+					onChange={(e) =>
+						void push
+							.toggle(e.target.checked)
+							.catch(() =>
+								toast({ title: "Impossible d'activer les notifications.", status: "error", position: "bottom" }),
+							)
+					}
+				/>
+			</Row>
+			<Row
+				label="Aperçu du message dans les notifications"
+				hint="Sinon, la notification indique seulement « Nouveau message »."
+			>
+				<Switch size="lg" isChecked={preview} onChange={(e) => onPreview(e.target.checked)} />
+			</Row>
+		</Section>
+	);
+}
+
 export function SettingsPage() {
 	const myId = useRequiredUserId();
 	const { data: me } = useMyProfile();
@@ -232,6 +268,8 @@ export function SettingsPage() {
 	const { reduceMotion, largeText, setReduceMotion, setLargeText } = usePreferences();
 
 	const savePrivacy = async (values: ProfileUpdate) => {
+		await qc.cancelQueries({ queryKey: profileKey(myId) });
+		qc.setQueryData(profileKey(myId), (old: object | null | undefined) => old && { ...old, ...values });
 		await updateMyProfile(myId, values).catch(() => undefined);
 		void qc.invalidateQueries({ queryKey: profileKey(myId) });
 	};
@@ -303,6 +341,11 @@ export function SettingsPage() {
 						</Flex>
 					</Section>
 
+					<NotificationsSection
+						preview={me?.notification_preview ?? true}
+						onPreview={(value) => savePrivacy({ notification_preview: value })}
+					/>
+
 					<Section title="Accessibilité">
 						<Row label="Réduire les animations" hint="S'applique aussi si ton système le demande.">
 							<Switch size="lg" isChecked={reduceMotion} onChange={(e) => setReduceMotion(e.target.checked)} />
@@ -318,7 +361,10 @@ export function SettingsPage() {
 						border="1px solid"
 						borderColor="#4A2C26"
 						leftIcon={<IconLogout size={20} />}
-						onClick={() => void signOut()}
+						onClick={async () => {
+							await disablePush().catch(() => undefined);
+							await signOut();
+						}}
 					>
 						Se déconnecter
 					</Button>

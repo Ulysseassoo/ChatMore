@@ -82,3 +82,7 @@ from public.messages where content = 'Visite possible demain à 18h';
 
 insert into public.message_reactions (message_id, user_id, emoji)
 select id, '00000000-0000-0000-0000-00000000d3e0', '❤️' from public.messages where content = 'Ça te va ?';
+
+-- Notifications push en local : l'Edge Function est joignable depuis la base via la passerelle Kong.
+select vault.create_secret('http://kong:8000/functions/v1/send-push', 'push_function_url');
+select vault.create_secret('local-push-secret', 'push_webhook_secret');

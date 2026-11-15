@@ -245,6 +245,7 @@ export type Database = {
 					avatar_url: string | null;
 					created_at: string;
 					id: string;
+					notification_preview: boolean;
 					phone: string | null;
 					read_receipts: boolean;
 					show_online: Database["public"]["Enums"]["online_visibility"];
@@ -257,6 +258,7 @@ export type Database = {
 					avatar_url?: string | null;
 					created_at?: string;
 					id: string;
+					notification_preview?: boolean;
 					phone?: string | null;
 					read_receipts?: boolean;
 					show_online?: Database["public"]["Enums"]["online_visibility"];
@@ -268,6 +270,7 @@ export type Database = {
 					avatar_url?: string | null;
 					created_at?: string;
 					id?: string;
+					notification_preview?: boolean;
 					phone?: string | null;
 					read_receipts?: boolean;
 					show_online?: Database["public"]["Enums"]["online_visibility"];
@@ -275,6 +278,45 @@ export type Database = {
 					username?: string;
 				};
 				Relationships: [];
+			};
+			push_subscriptions: {
+				Row: {
+					auth: string;
+					created_at: string;
+					endpoint: string;
+					id: number;
+					p256dh: string;
+					user_agent: string | null;
+					user_id: string;
+				};
+				ComputedFields: never;
+				Insert: {
+					auth: string;
+					created_at?: string;
+					endpoint: string;
+					id?: never;
+					p256dh: string;
+					user_agent?: string | null;
+					user_id: string;
+				};
+				Update: {
+					auth?: string;
+					created_at?: string;
+					endpoint?: string;
+					id?: never;
+					p256dh?: string;
+					user_agent?: string | null;
+					user_id?: string;
+				};
+				Relationships: [
+					{
+						foreignKeyName: "push_subscriptions_user_id_fkey";
+						columns: ["user_id"];
+						isOneToOne: false;
+						referencedRelation: "profiles";
+						referencedColumns: ["id"];
+					},
+				];
 			};
 			room_members: {
 				Row: {
@@ -422,6 +464,7 @@ export type Database = {
 					about: string;
 					avatar_url: string;
 					id: string;
+					notification_preview: boolean;
 					phone: string;
 					read_receipts: boolean;
 					show_online: Database["public"]["Enums"]["online_visibility"];
@@ -455,6 +498,22 @@ export type Database = {
 				Returns: Json;
 			};
 			my_joined_at: { Args: { p_room_id: number }; Returns: string };
+			push_targets: {
+				Args: { p_message_id: number };
+				Returns: {
+					auth: string;
+					body: string;
+					endpoint: string;
+					p256dh: string;
+					room_id: number;
+					subscription_id: number;
+					title: string;
+				}[];
+			};
+			register_push_subscription: {
+				Args: { p_auth: string; p_endpoint: string; p_p256dh: string; p_user_agent?: string };
+				Returns: undefined;
+			};
 			remove_member: { Args: { p_room_id: number; p_user_id: string }; Returns: undefined };
 			search_messages: {
 				Args: { p_limit?: number; p_query: string; p_room_id: number };

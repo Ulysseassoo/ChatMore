@@ -17,8 +17,11 @@ jobs:
         with:
           version: 2.122.1
 
-      - name: Démarrer Supabase (avec Mailpit pour les e-mails)
-        run: supabase start -x studio,imgproxy,vector,logflare,edge-runtime,supavisor
+      - name: Clés VAPID de test
+        run: node scripts/generate-push-keys.mjs
+
+      - name: Démarrer Supabase (avec Mailpit et les Edge Functions)
+        run: supabase start -x studio,imgproxy,vector,logflare,supavisor
 
       - name: Variables d'environnement locales
         run: |
@@ -26,7 +29,7 @@ jobs:
           {
             echo "VITE_SUPABASE_URL=$API_URL"
             echo "VITE_SUPABASE_PUBLIC_KEY=$PUBLISHABLE_KEY"
-          } > .env.local
+          } >> .env.local
           echo "SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY" >> "$GITHUB_ENV"
 
       - uses: actions/setup-node@v4

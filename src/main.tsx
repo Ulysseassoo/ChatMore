@@ -10,6 +10,7 @@ import { Analytics } from "@vercel/analytics/react";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
+import { registerSW } from "virtual:pwa-register";
 import { router } from "@/app/router";
 import { theme } from "@/app/theme";
 import { startAuthListener } from "@/features/auth/api";
@@ -17,6 +18,7 @@ import { applyStoredPreferences } from "@/features/settings/preferences";
 import { persistOptions, queryClient } from "@/lib/queryClient";
 
 applyStoredPreferences();
+void registerSW({ immediate: true });
 startAuthListener(queryClient);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

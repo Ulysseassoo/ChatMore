@@ -15,6 +15,7 @@ export type ProfileUpdate = Partial<{
 	avatar_url: string | null;
 	read_receipts: boolean;
 	show_online: OnlineVisibility;
+	notification_preview: boolean;
 }>;
 
 export async function updateMyProfile(userId: string, values: ProfileUpdate) {

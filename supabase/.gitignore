@@ -6,3 +6,6 @@
 .env.keys
 .env.local
 .env.*.local
+
+# Clés locales (yarn push:keys)
+.env

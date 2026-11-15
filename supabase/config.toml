@@ -403,8 +403,15 @@ inspector_port = 8083
 # The Deno major version to use.
 deno_version = 2
 
-# [edge_runtime.secrets]
-# secret_key = "env(SECRET_VALUE)"
+# Clés générées par `yarn push:keys` dans supabase/.env (non versionné).
+[edge_runtime.secrets]
+VAPID_PUBLIC_KEY = "env(VAPID_PUBLIC_KEY)"
+VAPID_PRIVATE_KEY = "env(VAPID_PRIVATE_KEY)"
+VAPID_SUBJECT = "mailto:contact@chatmore.local"
+PUSH_WEBHOOK_SECRET = "local-push-secret"
+
+[functions.send-push]
+verify_jwt = false
 
 [analytics]
 enabled = true
